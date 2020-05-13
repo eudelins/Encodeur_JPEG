@@ -15,25 +15,31 @@ static void fermer_fichier(FILE *fichier) {
      int ret = fclose(fichier);
 }
 
-/* Prend un fichier ppm en argument sur ligne de commande et renvoie l'en-tête de ce fichier */
-void main(int argc, char **argv) {
-    FILE *fichier = ouvrir_fichier("../jpeg_boulhole_rousseau_eudelins/images/zig-zag.ppm", "r");
+/* Prend un fichier ppm en argument et renvoie l'en-tête de ce fichier */
+uint32_t *paras(FILE *fichier) {
 
-    char dimensions[10];
     char ligne[10];
-    char largeur[10];
-    char hauteur[10];
+    uint32_t number;
+    char dimensions[10];
+    uint32_t largeur;
+    uint32_t hauteur;
     char nb_vals[10];
+    uint32_t vals;
     char *chaine_trouvee;
 
-    /* On récupère les dimensions du fichier */
-    fgets(dimensions, 10, fichier);
-    printf("magic number : %s \n", dimensions);
+    uint32_t *en_tete;
+    en_tete = malloc(4*sizeof(uint32_t));  /*MEMOIRE A LIBERER*/
+
+    /* On récupère le magic number du fichier */
+    fgets(ligne, 10, fichier);
+    sscanf(ligne, "P%u", &number);
+    en_tete[0] = number;
 
     /* On récupère la largeur et la hauteur du fichier */
-    fgets(ligne, 10, fichier);
-    sscanf(ligne, "%s %s", &largeur, &hauteur);
-    printf("largeur : %s, hauteur : %s\n\n", largeur, hauteur);
+    fgets(dimensions, 10, fichier);
+    sscanf(dimensions, "%u %u", &largeur, &hauteur);
+    en_tete[1] = largeur;
+    en_tete[2] = hauteur;
 
     /* On récupère le nombre de valeurs d'une composante
      * Pour faire face à un problème qui survient dans certains fichiers,
@@ -48,7 +54,23 @@ void main(int argc, char **argv) {
     if (chaine_trouvee == nb_vals) {
         fgets(nb_vals, 10, fichier);
     }
-    printf("nombre de valeurs d'une composante : %s \n", nb_vals);
+    sscanf(nb_vals, "%u", &vals);
+    en_tete[3] = vals;
+
+    return en_tete;
+
+   }
+
+int main() {
+    char *ad_fichier = "../images/complexite.pgm";
+    FILE *fichier = ouvrir_fichier(ad_fichier, "r");
+
+    uint32_t *parametres;
+    parametres = malloc(4*sizeof(uint32_t));
+    parametres = paras(fichier);
+    printf("%u, %u, %u, %u\n", parametres[0], parametres[1], parametres[2], parametres[3]);
+    return 0;
 
     fermer_fichier(fichier);
+
 }
