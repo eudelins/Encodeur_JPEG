@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdint.h>
 
+
 /******************************************/
 /* Module de découpage de l'image en MCUs */
 /******************************************/
