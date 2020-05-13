@@ -49,7 +49,7 @@ uint32_t *calcul_dimensions_MCUs(uint32_t largeur_image, uint32_t hauteur_image,
 
 
 /* Découpe l'image en MCUs */
-struct MCU **decoupage(FILE *fichier, uint8_t largeur_MCU, uint8_t hauteur_MCU)
+struct MCU ***decoupage(FILE *fichier, uint8_t largeur_MCU, uint8_t hauteur_MCU)
 {
     // On récupère l'en-tête (P5 ou P6)
     char en_tete[10];
@@ -71,8 +71,9 @@ struct MCU **decoupage(FILE *fichier, uint8_t largeur_MCU, uint8_t hauteur_MCU)
     free(dimensions_MCUs);
 
     // On découpe en MCUs
-    struct MCU **MCUs = malloc(largeur_MCUs * hauteur_MCUs * sizeof(struct MCU));
+    struct MCU ***MCUs = malloc(hauteur_MCUs * sizeof(struct MCU**));
     for (uint32_t hauteur = 0; hauteur < hauteur_MCUs; hauteur++){
+        struct MCU **ligne_MCUs = malloc(largeur_MCUs * sizeof(struct MCU));
         for (uint32_t largeur = 0; largeur < largeur_MCUs; largeur++){
             struct MCU *MCU = malloc(sizeof(struct MCU));
             MCU->largeur = largeur_MCU;
@@ -89,8 +90,9 @@ struct MCU **decoupage(FILE *fichier, uint8_t largeur_MCU, uint8_t hauteur_MCU)
             }
             MCU->pixels = pixels;
 
-            MCUs[hauteur * largeur_MCUs + largeur] = MCU;       
-        }   
+            ligne_MCUs[largeur] = MCU;       
+        }
+        MCUs[hauteur] = ligne_MCUs;  
     }
     return MCUs;
 }
@@ -107,16 +109,17 @@ void free_pixel(uint8_t **pixels)
 
 
 /* Libère la mémoire allouée aux MCUs */
-void free_MCUs(struct MCU **MCUs, uint32_t* dimensions_MCUs)
+void free_MCUs(struct MCU ***MCUs, uint32_t* dimensions_MCUs)
 {
     uint32_t hauteur_MCUs, largeur_MCUs;
     largeur_MCUs = dimensions_MCUs[0];
     hauteur_MCUs = dimensions_MCUs[1];
     for (int32_t hauteur = hauteur_MCUs - 1; hauteur >= 0; hauteur--){
         for (int32_t largeur = largeur_MCUs - 1; largeur >= 0; largeur--){
-            free_pixel(MCUs[hauteur * largeur_MCUs + largeur]->pixels);
-            free(MCUs[hauteur * largeur_MCUs + largeur]);
+            free_pixel(MCUs[hauteur][largeur]->pixels);
+            free(MCUs[hauteur][largeur]);
         }
+        free(MCUs[hauteur]);
     }
     free(MCUs);
     free(dimensions_MCUs);
@@ -137,14 +140,15 @@ void print_MCU(struct MCU *MCU)
 
 
 /* Affiche les MCUs */
-void print_MCUs(struct MCU **MCUs, uint32_t *dimensions_MCUs)
+void print_MCUs(struct MCU ***MCUs, uint32_t *dimensions_MCUs)
 {
     uint32_t hauteur_MCUs, largeur_MCUs;
     largeur_MCUs = dimensions_MCUs[0];
     hauteur_MCUs = dimensions_MCUs[1];
     for (int32_t hauteur = 0; hauteur < hauteur_MCUs ; hauteur++){
         for (int32_t largeur = 0; largeur < largeur_MCUs; largeur++){
-            print_MCU(MCUs[hauteur * largeur_MCUs + largeur]);
+            print_MCU(MCUs[hauteur][largeur]);
+            printf("\n\n");
         }
     }
 }
@@ -152,9 +156,9 @@ void print_MCUs(struct MCU **MCUs, uint32_t *dimensions_MCUs)
 
 int main(void)
 {
-    FILE *fichier = ouvrir_fichier("../images/invader.pgm", "r");
-    struct MCU **MCUs = decoupage(fichier, 8, 8);
-    uint32_t *dimensions_MCUs = calcul_dimensions_MCUs(8, 8, 8, 8);
+    FILE *fichier = ouvrir_fichier("../images/gris.pgm", "r");
+    struct MCU ***MCUs = decoupage(fichier, 8, 8);
+    uint32_t *dimensions_MCUs = calcul_dimensions_MCUs(320, 320, 8, 8);
     print_MCUs(MCUs, dimensions_MCUs);
     free_MCUs(MCUs, dimensions_MCUs);
 
