@@ -28,7 +28,7 @@ uint32_t *paras(FILE *fichier) {
     char *chaine_trouvee;
 
     uint32_t *en_tete;
-    en_tete = malloc(4*sizeof(uint32_t));  /*MEMOIRE A LIBERER*/
+    en_tete = malloc(4*sizeof(uint32_t));
 
     /* On récupère le magic number du fichier */
     fgets(ligne, 10, fichier);
@@ -66,9 +66,9 @@ int main() {
     FILE *fichier = ouvrir_fichier(ad_fichier, "r");
 
     uint32_t *parametres;
-    parametres = malloc(4*sizeof(uint32_t));
     parametres = paras(fichier);
     printf("%u, %u, %u, %u\n", parametres[0], parametres[1], parametres[2], parametres[3]);
+    free(parametres);
     return 0;
 
     fermer_fichier(fichier);
