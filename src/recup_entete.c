@@ -69,8 +69,7 @@ int main() {
     parametres = paras(fichier);
     printf("%u, %u, %u, %u\n", parametres[0], parametres[1], parametres[2], parametres[3]);
     free(parametres);
-    return 0;
-
     fermer_fichier(fichier);
 
+    return 0;
 }
