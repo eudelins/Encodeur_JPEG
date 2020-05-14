@@ -18,9 +18,11 @@ FILE *ouvrir_fichier(const char *filename, const char *mode) {
 
 /* Ferme le fichier passé en paramètre. */
 void fermer_fichier(FILE *fichier) {
-     int ret = fclose(fichier);
+    fclose(fichier);
 }
 
+
+/* Défini une MCU */
 struct MCU {
     uint8_t largeur;
     uint8_t hauteur;
@@ -49,6 +51,16 @@ uint32_t *calcul_dimensions_MCUs(uint32_t largeur_image, uint32_t hauteur_image,
 }
 
 
+/* Libère la mémoire alloué pour les pixels d'une MCU */
+void free_pixel(uint8_t **pixels)
+{
+    for (int8_t hauteur_pix = 7; hauteur_pix >= 0; hauteur_pix--){
+        free(pixels[hauteur_pix]);
+    }
+    free(pixels);
+}
+
+
 /* Découpe l'image en MCUs */
 struct MCU ***decoupage(FILE *fichier, uint8_t largeur_MCU, uint8_t hauteur_MCU)
 {
@@ -62,9 +74,21 @@ struct MCU ***decoupage(FILE *fichier, uint8_t largeur_MCU, uint8_t hauteur_MCU)
     fgets(dimensions, 10, fichier);
     sscanf(dimensions, "%u %u", &largeur_image, &hauteur_image);
     
+    // On saute une ligne
     char couleurs_max[10];
     fgets(couleurs_max, 10, fichier);
 
+    // On récupère les pixels dans une matrice
+    uint8_t **pixels_image = malloc(hauteur_image * sizeof(uint8_t *));
+    for (uint32_t hauteur = 0; hauteur < hauteur_image; hauteur++){
+        uint8_t *ligne_pixels_image = malloc(largeur_image * sizeof(uint8_t*)); 
+        for (uint32_t largeur = 0; largeur < largeur_image; largeur++){
+            ligne_pixels_image[largeur] = fgetc(fichier);
+        }
+        pixels_image[hauteur] = ligne_pixels_image;   
+    }
+
+    // On calcule les dimensions des MCUs
     uint32_t *dimensions_MCUs = calcul_dimensions_MCUs(largeur_image, hauteur_image, largeur_MCU, hauteur_MCU);
     uint32_t hauteur_MCUs, largeur_MCUs;
     largeur_MCUs = dimensions_MCUs[0];
@@ -85,7 +109,7 @@ struct MCU ***decoupage(FILE *fichier, uint8_t largeur_MCU, uint8_t hauteur_MCU)
             for (uint8_t hauteur_pix = 0; hauteur_pix < hauteur_MCU; hauteur_pix++){
                 uint8_t *ligne_pixels = malloc(hauteur_MCU * sizeof(uint8_t)); 
                 for (uint8_t largeur_pix = 0; largeur_pix < largeur_MCU; largeur_pix++){
-                    ligne_pixels[largeur_pix] = fgetc(fichier);
+                    ligne_pixels[largeur_pix] = pixels_image[hauteur * 8 + hauteur_pix][largeur * 8 + largeur_pix];
                 }
                 pixels[hauteur_pix] = ligne_pixels;   
             }
@@ -95,17 +119,10 @@ struct MCU ***decoupage(FILE *fichier, uint8_t largeur_MCU, uint8_t hauteur_MCU)
         }
         MCUs[hauteur] = ligne_MCUs;  
     }
+
+    free_pixel(pixels_image);
+
     return MCUs;
-}
-
-
-/* Libère la mémoire alloué pour les pixels d'une MCU */
-void free_pixel(uint8_t **pixels)
-{
-    for (int8_t hauteur_pix = 7; hauteur_pix >= 0; hauteur_pix--){
-        free(pixels[hauteur_pix]);
-    }
-    free(pixels);
 }
 
 
@@ -133,7 +150,7 @@ void print_MCU(struct MCU *MCU)
     uint8_t **pixels = MCU->pixels;
     for (uint8_t hauteur_pix = 0; hauteur_pix < hauteur_MCU; hauteur_pix++){
         for (uint8_t largeur_pix = 0; largeur_pix < largeur_MCU; largeur_pix++){
-            printf("%u\t", pixels[hauteur_pix][largeur_pix]);
+            printf("%x\t", pixels[hauteur_pix][largeur_pix]);
         }
         printf("\n");        
     }
@@ -146,8 +163,8 @@ void print_MCUs(struct MCU ***MCUs, uint32_t *dimensions_MCUs)
     uint32_t hauteur_MCUs, largeur_MCUs;
     largeur_MCUs = dimensions_MCUs[0];
     hauteur_MCUs = dimensions_MCUs[1];
-    for (int32_t hauteur = 0; hauteur < hauteur_MCUs ; hauteur++){
-        for (int32_t largeur = 0; largeur < largeur_MCUs; largeur++){
+    for (uint32_t hauteur = 0; hauteur < hauteur_MCUs ; hauteur++){
+        for (uint32_t largeur = 0; largeur < largeur_MCUs; largeur++){
             print_MCU(MCUs[hauteur][largeur]);
             printf("\n\n");
         }
@@ -155,13 +172,19 @@ void print_MCUs(struct MCU ***MCUs, uint32_t *dimensions_MCUs)
 }
 
 
-int main(void)
-{
-    FILE *fichier = ouvrir_fichier("../images/gris.pgm", "r");
-    struct MCU ***MCUs = decoupage(fichier, 8, 8);
-    uint32_t *dimensions_MCUs = calcul_dimensions_MCUs(320, 320, 8, 8);
-    print_MCUs(MCUs, dimensions_MCUs);
-    free_MCUs(MCUs, dimensions_MCUs);
+// int main(void)
+// {
+//     FILE *fichier = ouvrir_fichier("../images/gris.pgm", "r");
+//     struct MCU ***MCUs = decoupage(fichier, 8, 8);
+//     uint32_t *dimensions_MCUs = calcul_dimensions_MCUs(320, 320, 8, 8);
+//     print_MCUs(MCUs, dimensions_MCUs);
+//     free_MCUs(MCUs, dimensions_MCUs);
+
+//     fermer_fichier(fichier);
+//     return 0;
+// }
+
+
 
     // char ligne[10];
     // for (uint8_t i = 0; i < 3; i++){ // Lecture de l'en-tête
@@ -175,7 +198,3 @@ int main(void)
     //     caractere_lu = fgetc(fichier);
     // }
     // printf("\n");
-
-    fermer_fichier(fichier);
-    return 0;
-}
