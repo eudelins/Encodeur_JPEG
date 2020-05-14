@@ -12,10 +12,8 @@ char *chemin_fichier(char *nom_fichier) {
 }
 
 
-int main() {
-    char *nom_fichier = "invaders.pgm";
-
-    char *chemin = chemin_fichier(nom_fichier);
+int main(uint16_t argc, char **argv) {
+    char *chemin = chemin_fichier(argv[1]);
     printf("%s\n", chemin);
 
     free(chemin);
