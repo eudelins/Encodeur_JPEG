@@ -258,7 +258,7 @@ void free_MCUs_zigzag(struct MCU_zigzag ***MCUs_zigzag, uint32_t largeur_MCUs, u
 
 
 /****************************************/
-/* Partie consacrée à la Quantification */
+/* Partie consacrée à la quantification */
 /****************************************/
 
 /* Applique la quantification à une MCU */
@@ -282,37 +282,81 @@ void quantification(struct MCU_zigzag ***MCUs_zigzag, uint32_t largeur_MCUs, uin
 
 
 /**************************************************/
-/* Fin de la partie consacrée à la Quantification */
+/* Fin de la partie consacrée à la quantification */
 /**************************************************/
 
 
-int main(void)
-{    
-    FILE *fichier = ouvrir_fichier("../images/gris.pgm", "r");
-    
-    struct MCU ***MCUs = decoupage(fichier, 8, 8);
-    uint32_t *dimensions_MCUs = calcul_dimensions_MCUs(320, 320, 8, 8);
-    print_MCU(MCUs[dimensions_MCUs[0] - 1][dimensions_MCUs[1] - 1]);
-    printf("\n");
 
-    uint32_t largeur_MCUs = dimensions_MCUs[0], hauteur_MCUs = dimensions_MCUs[1];
-    struct MCU_freq ***MCUs_freq = transf_cos(MCUs, largeur_MCUs, hauteur_MCUs);
-    print_MCU_freq(MCUs_freq[hauteur_MCUs - 1][largeur_MCUs - 1]);
-    printf("\n");
+/************************************/
+/* Partie consacrée au codage AC/DC */
+/************************************/
+
+
+// int8_t *codage_AC_DC(int16_t *pixels)
+// {
+//     int8_t pixels_AC_DC = malloc(64 * sizeof(int8_t));
+
+//     // Codage AC
+//     uint8_t compteur_0;
+//     for(uint8_t indice = 1; indice < 64; indice++){
+//         if (pixels[indice] == 0 and compteur_0 < 16) {
+//             compteur_0 += 1;
+//         } else if (pixels[indice] == 0 and compteur_0 < 16) {
+//             compteur_0 = 0;
+//             pixels_AC_DC[indice] = 0xF0;
+//         } else {
+//             // On décale le nombre de 0 de 4 bits vers la gauche (bits de poids forts)
+//             compteur = compteur_0 << 4;
+
+//             // On calcule la magnitude du pixel
+//             int8_t magnitude = 1;
+//             while (!(-(2**magnitude) < pixels[indice] < 2**magnitude)){
+//                 magnitude += 1;
+//             }
+
+//             pixels_AC_DC[indice] = compteur_0 + magnitude;
+
+//             // On remet le compteur à 0
+//             compteur_0 = 0;
+//         }
+
+//     }
+// }
+
+
+/**********************************************/
+/* Fin de la partie consacrée au codage AC/DC */
+/**********************************************/
+
+
+
+// int main(void)
+// {    
+//     FILE *fichier = ouvrir_fichier("../images/gris.pgm", "r");
     
-    struct MCU_zigzag ***MCUs_zigzag = zigzag(MCUs_freq, largeur_MCUs, hauteur_MCUs);
-    print_MCU_zigzag(MCUs_zigzag[hauteur_MCUs - 1][largeur_MCUs - 1]);
-    printf("\n");
+//     struct MCU ***MCUs = decoupage(fichier, 8, 8);
+//     uint32_t *dimensions_MCUs = calcul_dimensions_MCUs(320, 320, 8, 8);
+//     print_MCU(MCUs[dimensions_MCUs[0] - 1][dimensions_MCUs[1] - 1]);
+//     printf("\n");
+
+//     uint32_t largeur_MCUs = dimensions_MCUs[0], hauteur_MCUs = dimensions_MCUs[1];
+//     struct MCU_freq ***MCUs_freq = transf_cos(MCUs, largeur_MCUs, hauteur_MCUs);
+//     print_MCU_freq(MCUs_freq[hauteur_MCUs - 1][largeur_MCUs - 1]);
+//     printf("\n");
     
-    quantification(MCUs_zigzag, largeur_MCUs, hauteur_MCUs);
-    print_MCU_zigzag(MCUs_zigzag[hauteur_MCUs - 1][largeur_MCUs - 1]);
+//     struct MCU_zigzag ***MCUs_zigzag = zigzag(MCUs_freq, largeur_MCUs, hauteur_MCUs);
+//     print_MCU_zigzag(MCUs_zigzag[hauteur_MCUs - 1][largeur_MCUs - 1]);
+//     printf("\n");
     
-    free_MCUs_zigzag(MCUs_zigzag, largeur_MCUs, hauteur_MCUs);
-    free_MCUs_freq(MCUs_freq, largeur_MCUs, hauteur_MCUs);
-    free_MCUs(MCUs, dimensions_MCUs);
-    fermer_fichier(fichier);
-    return 0;
-}
+//     quantification(MCUs_zigzag, largeur_MCUs, hauteur_MCUs);
+//     print_MCU_zigzag(MCUs_zigzag[hauteur_MCUs - 1][largeur_MCUs - 1]);
+    
+//     free_MCUs_zigzag(MCUs_zigzag, largeur_MCUs, hauteur_MCUs);
+//     free_MCUs_freq(MCUs_freq, largeur_MCUs, hauteur_MCUs);
+//     free_MCUs(MCUs, dimensions_MCUs);
+//     fermer_fichier(fichier);
+//     return 0;
+// }
 
     
 
