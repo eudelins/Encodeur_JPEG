@@ -197,7 +197,7 @@ int main(uint16_t argc, char **argv) {
         char *chemin = chemin_fichier(argv[1]);
         FILE *fichier = ouvrir_fichier(chemin, "r");
         if (fichier == NULL) {
-            printf("Fichier non connu");
+            printf("Fichier non connu\n");
         }
         else {
             uint32_t *param;
@@ -226,7 +226,7 @@ int main(uint16_t argc, char **argv) {
     else if (parametres[0] == 'o') {
         FILE *fichier = ouvrir_fichier(argv[2], "r");
         if (fichier == NULL) {
-            printf("Fichier non connu");
+            printf("Fichier non connu/Chemin non connu\n");
         }
         else {
             uint32_t *param;
@@ -241,7 +241,7 @@ int main(uint16_t argc, char **argv) {
         char *chemin = chemin_fichier(argv[3]);
         FILE *fichier = ouvrir_fichier(chemin, "r");
         if (fichier == NULL) {
-            printf("Fichier non connu");
+            printf("Fichier non connu/Chemin non connu\n");
         }
         else {
             uint32_t *param;
