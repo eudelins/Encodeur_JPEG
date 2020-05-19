@@ -75,6 +75,11 @@ int main(uint8_t argc, char **argv)
     
     // Option renommer le fichier
     else if (parametres[0] == 'o') {
+        char *sortie = NULL;
+        char *poubelle = NULL;
+        sscanf(argv[2], "%s=%s", poubelle, sortie);
+        ppm2jpeg_niveau_de_gris(sortie);
+        
         FILE *fichier = ouvrir_fichier(argv[2], "r");
         if (fichier == NULL) {
             printf("Fichier non connu/Chemin non connu\n");
