@@ -46,27 +46,31 @@ struct MCU {
     struct bloc **blocs;
 
 
-    /* Calcule le nombre de MCUs dans l'image */
-    uint32_t *calcul_dimensions_MCUs(uint32_t largeur_image, uint32_t hauteur_image,
-                                     uint8_t largeur_MCU, uint8_t hauteur_MCU)
+    /* Calcule le nombre de MCUs en largeur et en hauteur dans l'image */
+    uint32_t *calcul_dimensions_MCUs(uint32_t largeur_image,
+                                     uint32_t hauteur_image,
+                                     uint8_t largeur_MCU,
+                                     uint8_t hauteur_MCU,
+                                     uint8_t largeur_bloc,
+                                     uint8_t hauteur_bloc)
     {
         uint32_t *dimensions = malloc(2 * sizeof(uint32_t));
-        if (largeur_image % largeur_MCU) {
-            dimensions[0] = largeur_image/largeur_MCU + 1;
+        if (largeur_image % (largeur_MCU * largeur_bloc)) {
+            dimensions[0] = largeur_image/(largeur_MCU * largeur_bloc) + 1;
         } else {
-            dimensions[0] = largeur_image/largeur_MCU;
+            dimensions[0] = largeur_image/(largeur_MCU * largeur_bloc);
         }
-        if (hauteur_image % hauteur_MCU) {
-            dimensions[1] = hauteur_image/hauteur_MCU + 1;
+        if (hauteur_image % (hauteur_MCU * largeur_bloc)) {
+            dimensions[1] = hauteur_image/(hauteur_MCU * hauteur_bloc) + 1;
         } else {
-            dimensions[1] = hauteur_image/hauteur_MCU;
+            dimensions[1] = hauteur_image/(hauteur_MCU * hauteur_bloc);
         }
         return dimensions;
     }
 
 
     /* Converti l'entier lu dans un fichier en pixel RGB */
-    Pixel_RGB *converti_entier_pixel(uint32_t entier)
+    struct Pixel_RGB *converti_entier_pixel(uint32_t entier)
     {
       Pixel_RGB *pixel = malloc(sizeof(Pixel_RGB*));
       uint8_t quotient = 0;
@@ -93,16 +97,16 @@ struct MCU {
 
 
     /* Découpe l'image en MCUs */
-    MCU ***decoupage(FILE *fichier, uint8_t largeur_MCU, uint8_t hauteur_MCU)
+    MCU ***decoupage(FILE *fichier, uint8_t largeur_MCU, uint8_t hauteur_MCU, uint8_t largeur_bloc, uint8_t hauteur_bloc)
     {
         // On récupère l'en-tête (P5 ou P6)
         char en_tete[10];
         fgets(en_tete, 10, fichier);
 
         // On récupère les dimensions de l'image
-        char dimensions[10];
+        char dimensions[30];
         uint32_t largeur_image, hauteur_image;
-        fgets(dimensions, 10, fichier);
+        fgets(dimensions, 30, fichier);
         sscanf(dimensions, "%u %u", &largeur_image, &hauteur_image);
 
         // On saute une ligne
@@ -110,46 +114,58 @@ struct MCU {
         fgets(couleurs_max, 10, fichier);
 
         // On récupère les pixels dans une matrice
-        Pixel_RGB **pixels_image = malloc(hauteur_image * sizeof(Pixel_RGB *));
+        struct Pixel_RGB **pixels_image = malloc(hauteur_image * sizeof(struct Pixel_RGB *));
         for (uint32_t hauteur = 0; hauteur < hauteur_image; hauteur++){
-            Pixel_RGB *ligne_pixels_image = malloc(largeur_image * sizeof(Pixel_RGB*));
+            Pixel_RGB *ligne_pixels_image = malloc(largeur_image * sizeof(struct Pixel_RGB *));
             for (uint32_t largeur = 0; largeur < largeur_image; largeur++){
                 ligne_pixels_image[largeur] = *converti_entier_pixel(fgetc(fichier));
             }
             pixels_image[hauteur] = ligne_pixels_image;
         }
 
-        // On calcule les dimensions des MCUs
-        uint32_t *dimensions_MCUs = calcul_dimensions_MCUs(largeur_image, hauteur_image, largeur_MCU, hauteur_MCU);
+        // On calcule le nombre de MCUs en largeur et en hauteur
+        uint32_t *dimensions_MCUs = calcul_dimensions_MCUs(largeur_image, hauteur_image, largeur_MCU, hauteur_MCU, largeur_bloc, hauteur_bloc);
         uint32_t hauteur_MCUs, largeur_MCUs;
-        largeur_MCUs = dimensions_MCUs[0];
-        hauteur_MCUs = dimensions_MCUs[1];
+        nb_MCU_largeur = dimensions_MCUs[0];
+        nb_MCU_hauteur = dimensions_MCUs[1];
         free(dimensions_MCUs);
 
         // On découpe en MCUs
-        MCU ***MCUs = malloc(hauteur_MCUs * sizeof(MCU**));
-        for (uint32_t hauteur = 0; hauteur < hauteur_MCUs; hauteur++){
-            MCU **ligne_MCUs = malloc(largeur_MCUs * sizeof(MCU));
-            for (uint32_t largeur = 0; largeur < largeur_MCUs; largeur++){
-                MCU *MCU = malloc(sizeof(MCU));
+        MCU ***MCUs = malloc(nb_MCU_hauteur * sizeof(MCU**));
+        for (uint32_t hauteur = 0; hauteur < nb_MCU_hauteur; hauteur++){
+            struct MCU **ligne_MCUs = malloc(nb_MCU_largeur * sizeof(MCU)); // matrice de MCUs ( = l'image)
+
+            for (uint32_t largeur = 0; largeur < nb_MCU_largeur_MCUs; largeur++){
+                struct MCU *MCU = malloc(sizeof(MCU));
+                bloc_MCU->largeur = largeur_bloc;
+                bloc_MCU->hauteur = hauteur_bloc;
                 MCU->largeur = largeur_MCU;
                 MCU->hauteur = hauteur_MCU;
 
-                // On recopie les pixels
-                Pixel_RGB **pixels = malloc(largeur_MCU * sizeof(Pixel_RGB *));
-                for (uint8_t hauteur_pix = 0; hauteur_pix < hauteur_MCU; hauteur_pix++){
-                    Pixel_RGB *ligne_pixels = malloc(hauteur_MCU * sizeof(Pixel_RGB));
-                    for (uint8_t largeur_pix = 0; largeur_pix < largeur_MCU; largeur_pix++){
-                        ligne_pixels[largeur_pix] = pixels_image[hauteur * 8 + hauteur_pix][largeur * 8 + largeur_pix];
-                    }
-                    pixels[hauteur_pix] = ligne_pixels;
-                }
-                MCU->pixels = pixels;
+                // On parcourt chaque bloc
+                for (uint8_t haut_bloc = 0; haut_bloc < hauteur_MCU; haut_bloc++){
 
-                ligne_MCUs[largeur] = MCU;
-            }
-            MCUs[hauteur] = ligne_MCUs;
-        }
+                    for (uint8_t larg_bloc = 0; larg_bloc < largeur_MCU; larg_bloc++){
+                        struct **bloc bloc_MCU = malloc(sizeof(bloc)); // matrice de blocs (= une MCU)
+                        bloc_MCU->largeur = largeur_bloc;
+                        bloc_MCU->hauteur = hauteur_bloc;
+                        // On recopie les pixels
+                        struct Pixel_RGB **pixels = malloc(largeur_MCU * sizeof(Pixel_RGB *));  // matrice de pixels (= un bloc)
+
+                        for (uint8_t hauteur_pix = 0; hauteur_pix < hauteur_bloc; hauteur_pix++){
+                            struct Pixel_RGB *ligne_pixels = malloc(hauteur_MCU * sizeof(Pixel_RGB));
+
+                            for (uint8_t largeur_pix = 0; largeur_pix < largeur_bloc; largeur_pix++){
+                            ligne_pixels[largeur_pix] = pixels_image[hauteur * 8 + hauteur_pix][largeur * 8 + largeur_pix];
+                            }
+                            pixels[hauteur_pix] = ligne_pixels;
+                        }
+                        bloc_MCU->pixels = pixels;
+                        ligne_MCUs[largeur] = MCU;
+                        MCU->bloc = bloc_MCU;
+                    }
+                    MCUs[hauteur] = ligne_MCUs;
+                }
 
         free_pixel(pixels_image);
 
