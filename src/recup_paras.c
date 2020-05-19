@@ -189,6 +189,22 @@ char *paras_optionnels(uint8_t argc, char **argv) {
 }
 
 
+/* à mettre dans le main
+ * cas 1 : si c'est outfile 'o' */
+// char *sortie;
+// char *poubelle;
+// sscanf(argv[2], "%s=%s", poubelle, sortie);
+// sortie correspond au chemin + nom du nouveau fichier jpg
+
+
+/* à mettre dans le main
+ * cas 2 : si c'est sample 's' */
+// char *valeurs;
+// sscanf(argv[2], "%s=%s", poublle, valeurs);
+// sortie correspond à h1xv1...
+
+
+
 // int main(uint16_t argc, char **argv) {
 
 //     char *parametres = paras_optionnels(argc, argv);
