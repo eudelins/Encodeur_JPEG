@@ -7,15 +7,15 @@
 
 /* Ouvre le fichier filename avec le mode d'accès mode. Retourne le FILE *
  * correspondant. */
-static FILE *ouvrir_fichier(const char *filename, const char *mode) {
-    FILE *fichier = fopen(filename, mode);
-}
+// FILE *ouvrir_fichier(const char *filename, const char *mode) {
+//     FILE *fichier = fopen(filename, mode);
+// }
 
 
-/* Ferme le fichier passé en paramètre. */
-static void fermer_fichier(FILE *fichier) {
-     int ret = fclose(fichier);
-}
+// /* Ferme le fichier passé en paramètre. */
+// void fermer_fichier(FILE *fichier) {
+//      int ret = fclose(fichier);
+// }
 
 
 /* Prend un fichier ppm en argument et renvoie l'en-tête de ce fichier */
@@ -23,7 +23,7 @@ uint32_t *paras(FILE *fichier) {
 
     char ligne[10];
     uint32_t number;
-    char dimensions[10];
+    char dimensions[30];
     uint32_t largeur;
     uint32_t hauteur;
     char nb_vals[10];
@@ -39,7 +39,7 @@ uint32_t *paras(FILE *fichier) {
     en_tete[0] = number;
 
     /* On récupère la largeur et la hauteur du fichier */
-    fgets(dimensions, 10, fichier);
+    fgets(dimensions, 30, fichier);
     sscanf(dimensions, "%u %u", &largeur, &hauteur);
     en_tete[1] = largeur;
     en_tete[2] = hauteur;
@@ -189,75 +189,75 @@ char *paras_optionnels(uint8_t argc, char **argv) {
 }
 
 
-int main(uint16_t argc, char **argv) {
+// int main(uint16_t argc, char **argv) {
 
-    char *parametres = paras_optionnels(argc, argv);
-    // printf("%c\n", *parametres);
-    if (parametres[0] == 'r') {
-        char *chemin = chemin_fichier(argv[1]);
-        FILE *fichier = ouvrir_fichier(chemin, "r");
-        if (fichier == NULL) {
-            printf("Fichier non connu\n");
-        }
-        else {
-            uint32_t *param;
-            param = paras(fichier);
-            printf("%u, %u, %u, %u\n", param[0], param[1], param[2], param[3]);
-            free(param);
-            fermer_fichier(fichier);
-        }
-            free(chemin);
-    }
-    else if (parametres[0] == 's') {
-        char *chemin = chemin_fichier(argv[2]);
-        FILE *fichier = ouvrir_fichier(chemin, "r");
-        if (fichier == NULL) {
-            printf("Fichier non connu\n");
-        }
-        else {
-            uint32_t *param;
-            param = paras(fichier);
-            printf("%u, %u, %u, %u\n", param[0], param[1], param[2], param[3]);
-            free(param);
-            fermer_fichier(fichier);
-        }
-            free(chemin);
-    }
-    else if (parametres[0] == 'o') {
-        FILE *fichier = ouvrir_fichier(argv[2], "r");
-        if (fichier == NULL) {
-            printf("Fichier non connu/Chemin non connu\n");
-        }
-        else {
-            uint32_t *param;
-            param = paras(fichier);
-            printf("%u, %u, %u, %u\n", param[0], param[1], param[2], param[3]);
-            free(param);
-            fermer_fichier(fichier);
-        }
+//     char *parametres = paras_optionnels(argc, argv);
+//     // printf("%c\n", *parametres);
+//     if (parametres[0] == 'r') {
+//         char *chemin = chemin_fichier(argv[1]);
+//         FILE *fichier = ouvrir_fichier(chemin, "r");
+//         if (fichier == NULL) {
+//             printf("Fichier non connu\n");
+//         }
+//         else {
+//             uint32_t *param;
+//             param = paras(fichier);
+//             printf("%u, %u, %u, %u\n", param[0], param[1], param[2], param[3]);
+//             free(param);
+//             fermer_fichier(fichier);
+//         }
+//             free(chemin);
+//     }
+//     else if (parametres[0] == 's') {
+//         char *chemin = chemin_fichier(argv[2]);
+//         FILE *fichier = ouvrir_fichier(chemin, "r");
+//         if (fichier == NULL) {
+//             printf("Fichier non connu\n");
+//         }
+//         else {
+//             uint32_t *param;
+//             param = paras(fichier);
+//             printf("%u, %u, %u, %u\n", param[0], param[1], param[2], param[3]);
+//             free(param);
+//             fermer_fichier(fichier);
+//         }
+//             free(chemin);
+//     }
+//     else if (parametres[0] == 'o') {
+//         FILE *fichier = ouvrir_fichier(argv[2], "r");
+//         if (fichier == NULL) {
+//             printf("Fichier non connu/Chemin non connu\n");
+//         }
+//         else {
+//             uint32_t *param;
+//             param = paras(fichier);
+//             printf("%u, %u, %u, %u\n", param[0], param[1], param[2], param[3]);
+//             free(param);
+//             fermer_fichier(fichier);
+//         }
 
-    }
-    else if (parametres[0] == 'd') {
-        char *chemin = chemin_fichier(argv[3]);
-        FILE *fichier = ouvrir_fichier(chemin, "r");
-        if (fichier == NULL) {
-            printf("Fichier non connu/Chemin non connu\n");
-        }
-        else {
-            uint32_t *param;
-            param = paras(fichier);
-            printf("%u, %u, %u, %u\n", param[0], param[1], param[2], param[3]);
-            free(param);
-            fermer_fichier(fichier);
-        }
-            free(chemin);
-    }
-    else if (parametres[0] == 'e') {
-        printf("\nUtilisez ./ppm2jpeg [FICHIER] [--OPTION] \n"
-        "ou \n"
-        "./ppm2jpeg --help pour ouvrir l'aide \n \n");
-    }
-    free(parametres);
+//     }
+//     else if (parametres[0] == 'd') {
+//         char *chemin = chemin_fichier(argv[3]);
+//         FILE *fichier = ouvrir_fichier(chemin, "r");
+//         if (fichier == NULL) {
+//             printf("Fichier non connu/Chemin non connu\n");
+//         }
+//         else {
+//             uint32_t *param;
+//             param = paras(fichier);
+//             printf("%u, %u, %u, %u\n", param[0], param[1], param[2], param[3]);
+//             free(param);
+//             fermer_fichier(fichier);
+//         }
+//             free(chemin);
+//     }
+//     else if (parametres[0] == 'e') {
+//         printf("\nUtilisez ./ppm2jpeg [FICHIER] [--OPTION] \n"
+//         "ou \n"
+//         "./ppm2jpeg --help pour ouvrir l'aide \n \n");
+//     }
+//     free(parametres);
 
-    return 0;
-}
+//     return 0;
+// }
