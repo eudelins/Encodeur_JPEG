@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <math.h>
 
-#include "../include/decoupe.h"
+#include "../include/decoupe_tout.h"
 #include "../include/qtables.h"
 
 #define M_PI 3.14159265358979323846
@@ -32,7 +32,7 @@ struct MCU_freq{
 double C(uint8_t i)
 {
     if (i == 0) {
-        return 0.7071067812;
+        return 0.707106781186547;
     } else {
         return 1.0;
     }
@@ -104,8 +104,9 @@ void print_MCU_freq(struct MCU_freq *MCU_freq)
 /* Affiche les MCUs transformées */
 void print_MCUs_freq(struct MCU_freq ***MCUs_freq, uint32_t largeur_MCUs, uint32_t hauteur_MCUs)
 {
-    for (int32_t hauteur = hauteur_MCUs - 1; hauteur >= 0; hauteur--){
-        for (int32_t largeur = largeur_MCUs - 1; largeur >= 0; largeur--){
+    for (uint32_t hauteur = 0; hauteur < hauteur_MCUs; hauteur++){
+        for (uint32_t largeur =  0; largeur < largeur_MCUs; largeur++){
+            printf("MCU %d:\n", hauteur * largeur_MCUs + largeur);
             print_MCU_freq(MCUs_freq[hauteur][largeur]);
             printf("\n");
         }
@@ -231,6 +232,7 @@ void print_MCUs_zigzag(struct MCU_zigzag ***MCUs_zigzag, uint32_t largeur_MCUs, 
 {
     for (uint32_t hauteur = 0; hauteur < hauteur_MCUs; hauteur++){
         for (uint32_t largeur = 0; largeur < largeur_MCUs; largeur++){
+            printf("MCU %d:\n", hauteur * largeur_MCUs + largeur);
             print_MCU_zigzag(MCUs_zigzag[hauteur][largeur]);
             printf("\n");
         }

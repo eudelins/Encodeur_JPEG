@@ -52,31 +52,22 @@ uint32_t *calcul_dimensions_MCUs(uint32_t largeur_image, uint32_t hauteur_image,
 
 
 /* Libère la mémoire alloué pour les pixels d'une MCU */
-void free_pixel(uint8_t **pixels)
+void free_pixel(uint8_t **pixels, uint32_t hauteur_pix)
 {
-    for (int8_t hauteur_pix = 7; hauteur_pix >= 0; hauteur_pix--){
-        free(pixels[hauteur_pix]);
+    for (int32_t hauteur = hauteur_pix - 1; hauteur >= 0; hauteur--){
+        free(pixels[hauteur]);
     }
     free(pixels);
 }
 
 
 /* Découpe l'image en MCUs */
-struct MCU ***decoupage(FILE *fichier, uint8_t largeur_MCU, uint8_t hauteur_MCU)
+struct MCU ***decoupage(FILE *fichier, 
+                        uint32_t largeur_MCUs, 
+                        uint32_t hauteur_MCUs)
 {
-    // On récupère l'en-tête (P5 ou P6)
-    char en_tete[10];
-    fgets(en_tete, 10, fichier);
-
-    // On récupère les dimensions de l'image
-    char dimensions[10];
-    uint32_t largeur_image, hauteur_image;
-    fgets(dimensions, 10, fichier);
-    sscanf(dimensions, "%u %u", &largeur_image, &hauteur_image);
-    
-    // On saute une ligne
-    char couleurs_max[10];
-    fgets(couleurs_max, 10, fichier);
+    uint32_t hauteur_image = hauteur_MCUs * 8;
+    uint32_t largeur_image = largeur_MCUs * 8;
 
     // On récupère les pixels dans une matrice
     uint8_t **pixels_image = malloc(hauteur_image * sizeof(uint8_t *));
@@ -88,12 +79,6 @@ struct MCU ***decoupage(FILE *fichier, uint8_t largeur_MCU, uint8_t hauteur_MCU)
         pixels_image[hauteur] = ligne_pixels_image;   
     }
 
-    // On calcule les dimensions des MCUs
-    uint32_t *dimensions_MCUs = calcul_dimensions_MCUs(largeur_image, hauteur_image, largeur_MCU, hauteur_MCU);
-    uint32_t hauteur_MCUs, largeur_MCUs;
-    largeur_MCUs = dimensions_MCUs[0];
-    hauteur_MCUs = dimensions_MCUs[1];
-    free(dimensions_MCUs);
 
     // On découpe en MCUs
     struct MCU ***MCUs = malloc(hauteur_MCUs * sizeof(struct MCU**));
@@ -101,15 +86,15 @@ struct MCU ***decoupage(FILE *fichier, uint8_t largeur_MCU, uint8_t hauteur_MCU)
         struct MCU **ligne_MCUs = malloc(largeur_MCUs * sizeof(struct MCU));
         for (uint32_t largeur = 0; largeur < largeur_MCUs; largeur++){
             struct MCU *MCU = malloc(sizeof(struct MCU));
-            MCU->largeur = largeur_MCU;
-            MCU->hauteur = hauteur_MCU;
+            MCU->largeur = 8;
+            MCU->hauteur = 8;
 
             // On recopie les pixels
-            uint8_t **pixels = malloc(largeur_MCU * sizeof(uint8_t *));
-            for (uint8_t hauteur_pix = 0; hauteur_pix < hauteur_MCU; hauteur_pix++){
-                uint8_t *ligne_pixels = malloc(hauteur_MCU * sizeof(uint8_t)); 
-                for (uint8_t largeur_pix = 0; largeur_pix < largeur_MCU; largeur_pix++){
-                    ligne_pixels[largeur_pix] = pixels_image[hauteur * 8 + hauteur_pix][largeur * 8 + largeur_pix];
+            uint8_t **pixels = malloc(MCU->hauteur * sizeof(uint8_t *));
+            for (uint8_t hauteur_pix = 0; hauteur_pix < MCU->hauteur; hauteur_pix++){
+                uint8_t *ligne_pixels = malloc(MCU->largeur * sizeof(uint8_t)); 
+                for (uint8_t largeur_pix = 0; largeur_pix < MCU->largeur; largeur_pix++){
+                    ligne_pixels[largeur_pix] = pixels_image[hauteur * MCU->hauteur + hauteur_pix][largeur * MCU->largeur + largeur_pix];
                 }
                 pixels[hauteur_pix] = ligne_pixels;   
             }
@@ -120,7 +105,7 @@ struct MCU ***decoupage(FILE *fichier, uint8_t largeur_MCU, uint8_t hauteur_MCU)
         MCUs[hauteur] = ligne_MCUs;  
     }
 
-    free_pixel(pixels_image);
+    free_pixel(pixels_image, hauteur_image);
 
     return MCUs;
 }
@@ -134,7 +119,7 @@ void free_MCUs(struct MCU ***MCUs, uint32_t* dimensions_MCUs)
     hauteur_MCUs = dimensions_MCUs[1];
     for (int32_t hauteur = hauteur_MCUs - 1; hauteur >= 0; hauteur--){
         for (int32_t largeur = largeur_MCUs - 1; largeur >= 0; largeur--){
-            free_pixel(MCUs[hauteur][largeur]->pixels);
+            free_pixel(MCUs[hauteur][largeur]->pixels, 8);
             free(MCUs[hauteur][largeur]);
         }
         free(MCUs[hauteur]);
@@ -150,7 +135,7 @@ void print_MCU(struct MCU *MCU)
     uint8_t **pixels = MCU->pixels;
     for (uint8_t hauteur_pix = 0; hauteur_pix < hauteur_MCU; hauteur_pix++){
         for (uint8_t largeur_pix = 0; largeur_pix < largeur_MCU; largeur_pix++){
-            printf("%x\t", pixels[hauteur_pix][largeur_pix]);
+            printf("%hhx\t", pixels[hauteur_pix][largeur_pix]);
         }
         printf("\n");        
     }
@@ -165,6 +150,7 @@ void print_MCUs(struct MCU ***MCUs, uint32_t *dimensions_MCUs)
     hauteur_MCUs = dimensions_MCUs[1];
     for (uint32_t hauteur = 0; hauteur < hauteur_MCUs ; hauteur++){
         for (uint32_t largeur = 0; largeur < largeur_MCUs; largeur++){
+            printf("MCU %d:\n", hauteur * largeur_MCUs + largeur);
             print_MCU(MCUs[hauteur][largeur]);
             printf("\n\n");
         }
