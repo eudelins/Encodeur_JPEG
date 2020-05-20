@@ -61,6 +61,17 @@ void free_pixel(uint8_t **pixels)
 }
 
 
+/* Libère la mémoire alloué pour les pixels de l'image */
+void free_pixel_image(uint8_t **pixels,
+                      uint32_t hauteur_image)
+{
+    for (int32_t hauteur_pix = hauteur_image - 1; hauteur_pix >= 0; hauteur_pix--){
+        free(pixels[hauteur_pix]);
+    }
+    free(pixels);
+}
+
+
 /* Découpe l'image en MCUs */
 struct MCU ***decoupage(FILE *fichier,
                         uint32_t largeur_MCUs, 
@@ -85,7 +96,7 @@ struct MCU ***decoupage(FILE *fichier,
         pixels_image[hauteur] = ligne_pixels_image;
     }
     for (uint32_t hauteur = hauteur_image; hauteur < hauteur_image + duplique_ligne; hauteur++){
-      pixels_image[hauteur] = pixels_image[hauteur_image - 1];
+        pixels_image[hauteur] = pixels_image[hauteur_image - 1];
     }
 
     // On découpe en MCUs
@@ -113,7 +124,7 @@ struct MCU ***decoupage(FILE *fichier,
         MCUs[hauteur] = ligne_MCUs;
     }
 
-    free_pixel(pixels_image);
+    free_pixel_image(pixels_image, hauteur_image);
 
     return MCUs;
 }
@@ -187,7 +198,7 @@ void print_MCUs(struct MCU ***MCUs, uint32_t *dimensions_MCUs)
 //     uint32_t *dimensions_MCUs = calcul_dimensions_MCUs(largeur_image, hauteur_image, 8, 8);
 //     uint32_t largeur_MCUs = dimensions_MCUs[0], hauteur_MCUs = dimensions_MCUs[1];
 //     struct MCU ***MCUs = decoupage(fichier, largeur_MCUs, hauteur_MCUs, largeur_image, hauteur_image);
-//     print_MCUs(MCUs, dimensions_MCUs);
+//     // print_MCUs(MCUs, dimensions_MCUs);
 //     free_MCUs(MCUs, dimensions_MCUs);
 
 //     fermer_fichier(fichier);
@@ -196,7 +207,6 @@ void print_MCUs(struct MCU ***MCUs, uint32_t *dimensions_MCUs)
 
 
 
-    
 
     // // On calcule le nombre de lignes et colonnes à copier
     // uint8_t duplique_colonne = largeur_MCU - largeur_image % largeur_MCU;
@@ -208,5 +218,6 @@ void print_MCUs(struct MCU ***MCUs, uint32_t *dimensions_MCUs)
     // uint32_t hauteur_MCUs, largeur_MCUs;
     // largeur_MCUs = dimensions_MCUs[0];
     // hauteur_MCUs = dimensions_MCUs[1];
-    // free(dimensions_MCUs);
+    // free(dimensions_MCUs);    
+
 
