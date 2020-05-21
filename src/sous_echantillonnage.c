@@ -139,11 +139,10 @@ struct MCU ***sous_echantillonnage_MCU(uint8_t h1,
     struct pixel ***matrice_pixels = matrice_pixels_MCU(h1, v1, MCU_a_sous_echantillonner);
 
     // on parcourt le nb_largeur nécessaire qui vaut 8 * taux_largeur et nb_longueur nécessaire qui vaut 8 * taux_longueur dans matrice_pixels
-    for (largeur_MCU = 0; largeur_MCU < 8 * taux_largeur; largeur_MCU++) {          // revoir les noms de paramètres ?
-        for (hauteur_MCU = 0; hauteur_MCU < 8 * taux_longueur; hauteur_MCU++) {     // idem
-            for (hauteur_pix = 0; hauteur_pix < 8; hauteur_pix++) {
-                struct pixel *ligne_pixels = malloc(); // A REMPLIR
-                for (largeur_pix = 0; largeur_pix < 8; largeur_pix++) {
+    for (uint32_t largeur_MCU = 0; largeur_MCU < 8 * taux_largeur; largeur_MCU++) {          // revoir les noms de paramètres ?
+        for (uint32_t hauteur_MCU = 0; hauteur_MCU < 8 * taux_longueur; hauteur_MCU++) {     // idem
+            for (uint8_t hauteur_pix = 0; hauteur_pix < 8; hauteur_pix++) {
+                for (uint8_t largeur_pix = 0; largeur_pix < 8; largeur_pix++) {
                     if (largeur_pix % 2 == 0) {
                         struct pixel nouveau_pixel;
                         // on fait la moyenne des 2 pixels voisins
@@ -160,6 +159,8 @@ struct MCU ***sous_echantillonnage_MCU(uint8_t h1,
             }
         }
     }
+}
+
 
 int main()
 {
