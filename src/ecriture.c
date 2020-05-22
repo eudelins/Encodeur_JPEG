@@ -23,24 +23,16 @@ void print_binaire(uint32_t n, uint8_t nb_bits)
 }
 
 
-/* Calcule x puissance y */
-uint16_t puissance(uint8_t x, uint8_t y)
-{
-    uint16_t res = 1;
-    for (uint8_t i = 0; i < y; i++){
-        res = res * x;
-    }
-    return res;
-}
-
-
 /* Calcul la magnitude de pixel */
 uint8_t calcule_magnitude(int16_t pixel)
 {
     uint8_t magnitude = 0;
-    while (!( -puissance(2, magnitude) < pixel && 
-                pixel < puissance(2,magnitude) )){
+    int16_t borne_inf = -puissance(2, magnitude); 
+    int16_t borne_sup = puissance(2, magnitude); 
+    while (!(borne_inf < pixel && pixel < borne_sup )){
         magnitude += 1;
+        borne_inf = -puissance(2, magnitude); 
+        borne_sup = puissance(2, magnitude); 
     }
     return magnitude;
 }
@@ -235,9 +227,9 @@ void cree_image(struct MCU_zigzag ***MCUs_zigzag,
     // On indique les paramètres de l'image
     jpeg_set_ppm_filename(image, chemin);
     char *chemin_jpg = cree_chemin_jpg(chemin);
-    jpeg_set_jpeg_filename(image, chemin_jpg);  // Remplacer invader par un paramètre
-    jpeg_set_image_width(image, largeur_image); // Remplacer 8 par un paramètre  
-    jpeg_set_image_height(image, hauteur_image);  // Remplacer 8 par un paramètre
+    jpeg_set_jpeg_filename(image, chemin_jpg);
+    jpeg_set_image_width(image, largeur_image);   
+    jpeg_set_image_height(image, hauteur_image);
     jpeg_set_nb_components(image, 1);
     jpeg_set_sampling_factor(image, Y, H, 1);
     jpeg_set_sampling_factor(image, Y, V, 1);
@@ -274,8 +266,8 @@ void cree_image(struct MCU_zigzag ***MCUs_zigzag,
 
     free(DC_prec);
     free(chemin_jpg);
-    huffman_table_destroy(table_huff_DC_Y);
-    huffman_table_destroy(table_huff_AC_Y);
+    // huffman_table_destroy(table_huff_DC_Y);
+    // huffman_table_destroy(table_huff_AC_Y);
 
     jpeg_destroy(image);
 }
