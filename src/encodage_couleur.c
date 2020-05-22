@@ -108,8 +108,8 @@ struct MCU_Y *sous_echantillonage_horizontal(struct MCU_Y *MCU_Y,
   }
 
   struct MCU_Y *sous_MCU = malloc(sizeof(struct MCU_Y));
-  sous_MCU->hauteur = MCU_Y->hauteur;
-  sous_MCU->largeur = MCU_Y->largeur;
+  sous_MCU->hauteur = v1;
+  sous_MCU->largeur = h1;
   sous_MCU->blocs_Y = MCU_Y->blocs_Y;
   sous_MCU->blocs_Cb = *sous_blocs_Cb;
   sous_MCU->blocs_Cr = *sous_blocs_Cr;
@@ -215,11 +215,11 @@ void print_MCU_Y(struct MCU_Y *MCU_Y)
   printf("Blocs Cb \n");
   print_bloc(MCU_Y->blocs_Cb[0][0]);
   printf("\n");
-  print_bloc(MCU_Y->blocs_Cb[0][1]);
+  print_bloc(MCU_Y->blocs_Cb[1][0]);
   printf("Blocs Cr \n");
   print_bloc(MCU_Y->blocs_Cr[0][0]);
   printf("\n");
-  print_bloc(MCU_Y->blocs_Cr[0][1]);
+  print_bloc(MCU_Y->blocs_Cr[1][0]);
 }
 
 
