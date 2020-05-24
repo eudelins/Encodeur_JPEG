@@ -77,14 +77,14 @@ struct MCU_YCbCr *conversion_MCU(struct MCU_RGB *MCU)
     nouvelle_MCU->h3 = MCU->h3;
     nouvelle_MCU->v3 = MCU->v3;
 
-    struct Bloc_YCbCr **blocs_Y = malloc(v1 * sizeof(struct Bloc_YCbCr*));
-    struct Bloc_YCbCr **blocs_Cb = malloc(v1 * sizeof(struct Bloc_YCbCr*));
-    struct Bloc_YCbCr **blocs_Cr = malloc(v1 * sizeof(struct Bloc_YCbCr*));
+    struct Bloc_YCbCr **blocs_Y = malloc(MCU->v1 * sizeof(struct Bloc_YCbCr*));
+    struct Bloc_YCbCr **blocs_Cb = malloc(MCU->v1 * sizeof(struct Bloc_YCbCr*));
+    struct Bloc_YCbCr **blocs_Cr = malloc(MCU->v1 * sizeof(struct Bloc_YCbCr*));
 
     for (uint8_t hauteur = 0; hauteur < v1; hauteur++) {
-        struct Bloc_YCbCr *ligne_blocs_Y = malloc(h1 * sizeof(struct Bloc_YCbCr));
-        struct Bloc_YCbCr *ligne_blocs_Cb = malloc(h1 * sizeof(struct Bloc_YCbCr));
-        struct Bloc_YCbCr *ligne_blocs_Cr = malloc(h1 * sizeof(struct Bloc_YCbCr));
+        struct Bloc_YCbCr *ligne_blocs_Y = malloc(MCU->h1 * sizeof(struct Bloc_YCbCr));
+        struct Bloc_YCbCr *ligne_blocs_Cb = malloc(MCU->h1 * sizeof(struct Bloc_YCbCr));
+        struct Bloc_YCbCr *ligne_blocs_Cr = malloc(MCU->h1 * sizeof(struct Bloc_YCbCr));
 
         for (uint8_t largeur = 0; largeur < h1; largeur++) {
             int16_t **pixels_Y = malloc(COTE_BLOC * sizeof(int16_t*));
