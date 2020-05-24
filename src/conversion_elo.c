@@ -43,6 +43,12 @@ struct Bloc_YCbCr {
 struct MCU_YCbCr {
     uint8_t largeur;
     uint8_t hauteur;
+    uint8_t h1;
+    uint8_t v1;
+    uint8_t h2;
+    uint8_t v2;
+    uint8_t h3;
+    uint8_t v3;
     struct Bloc_YCbCr **blocs_Y;
     struct Bloc_YCbCr **blocs_Cb;
     struct Bloc_YCbCr **blocs_Cr;
