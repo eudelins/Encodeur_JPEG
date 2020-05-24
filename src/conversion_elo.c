@@ -81,12 +81,12 @@ struct MCU_YCbCr *conversion_MCU(struct MCU_RGB *MCU)
     struct Bloc_YCbCr **blocs_Cb = malloc(MCU->v1 * sizeof(struct Bloc_YCbCr*));
     struct Bloc_YCbCr **blocs_Cr = malloc(MCU->v1 * sizeof(struct Bloc_YCbCr*));
 
-    for (uint8_t hauteur = 0; hauteur < v1; hauteur++) {
+    for (uint8_t hauteur = 0; hauteur < MCU->v1; hauteur++) {
         struct Bloc_YCbCr *ligne_blocs_Y = malloc(MCU->h1 * sizeof(struct Bloc_YCbCr));
         struct Bloc_YCbCr *ligne_blocs_Cb = malloc(MCU->h1 * sizeof(struct Bloc_YCbCr));
         struct Bloc_YCbCr *ligne_blocs_Cr = malloc(MCU->h1 * sizeof(struct Bloc_YCbCr));
 
-        for (uint8_t largeur = 0; largeur < h1; largeur++) {
+        for (uint8_t largeur = 0; largeur < MCU->h1; largeur++) {
             int16_t **pixels_Y = malloc(COTE_BLOC * sizeof(int16_t*));
             int16_t **pixels_Cb = malloc(COTE_BLOC * sizeof(int16_t*));
             int16_t **pixels_Cr = malloc(COTE_BLOC * sizeof(int16_t*));
