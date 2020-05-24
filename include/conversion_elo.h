@@ -88,8 +88,6 @@ void free_bloc_YCbCR(struct Bloc_YCbCr **blocs,
 
 /* Libère la mémoire allouée par une matrice de MCUs YCbCr */
 void free_MCUs_YCbCr(struct MCU_YCbCr ***matrice_MCUs_converti,
-                     uint32_t *dimensions_MCUs,
-                     uint8_t largeur_MCU,
-                     uint8_t hauteur_MCU);
+                     uint32_t *dimensions_MCUs);
 
 #endif /* DECOUPE_TOUT_H */
