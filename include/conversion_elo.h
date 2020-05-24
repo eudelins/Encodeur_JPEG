@@ -29,8 +29,6 @@ struct Bloc_YCbCr {
 
 /* Structure d'une MCU_YCbCr */
 struct MCU_YCbCr {
-    uint8_t largeur;
-    uint8_t hauteur;
     uint8_t h1;
     uint8_t v1;
     uint8_t h2;
