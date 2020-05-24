@@ -49,7 +49,7 @@ uint32_t *calcul_dimensions_MCUs_RGB(uint32_t largeur_image,
 
 
 /* Libère la mémoire alloué pour les pixels de l'image */
-void free_pixel_image(struct Pixel_RGB **pixels,
+void free_pixel_image_RGB(struct Pixel_RGB **pixels,
                       uint32_t hauteur_image);
 
 
@@ -78,17 +78,17 @@ struct MCU_RGB ***decoupage_MCUs_en_blocs(struct MCU_RGB ***MCUs,
 
 
 /* Libère la mémoire allouée pour les pixels RGB d'une MCU (donc par la matrice de pixels) */
-void free_pixel(struct Pixel_RGB **pixels);
+void free_pixel_RGB(struct Pixel_RGB **pixels);
 
 
 /* Libère la mémoire allouée aux bloc */
-void free_blocs(struct Bloc_RGB **blocs,
+void free_blocs_RGB(struct Bloc_RGB **blocs,
                 uint8_t largeur_MCU,
                 uint8_t hauteur_MCU);
 
 
 /* Libère la mémoire allouée aux MCUs */
-void free_MCUs_dims(struct MCU_RGB ***MCUs,
+void free_MCUs_dims_RGB(struct MCU_RGB ***MCUs,
                     uint32_t* dimensions_MCUs,
                     uint8_t largeur_MCU,
                     uint8_t hauteur_MCU);
