@@ -57,7 +57,7 @@ void ppm2jpeg_niveau_de_gris(char *chemin)
     free_MCUs_freq(MCUs_freq, largeur_MCUs, hauteur_MCUs);
     free_MCUs(MCUs, dimensions_MCUs);
     free(param); 
-    free(chemin);
+    // free(chemin);
     fermer_fichier(fichier);   
 }
 
@@ -69,8 +69,8 @@ int main(uint8_t argc, char **argv)
     
     // Aucun paramètre optionnel
     if (parametres[0] == 'r') {
-        char *chemin = chemin_fichier(argv[1]);
-        ppm2jpeg_niveau_de_gris(chemin);
+        // char *chemin = chemin_fichier(argv[1]);
+        ppm2jpeg_niveau_de_gris(argv[1]);
     }
     
     // Option renommer le fichier
