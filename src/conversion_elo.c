@@ -66,23 +66,23 @@ struct MCU_YCbCr {
  * - matrice de blocs de matrices de pixels Cr */
 struct MCU_YCbCr *conversion_MCU(struct MCU_RGB *MCU)
 {
-    uint8_t largeur_MCU = MCU->h1;
-    uint8_t hauteur_MCU = MCU->v1;
+    uint8_t h1 = MCU->h1;
+    uint8_t v1 = MCU->v1;
 
     struct MCU_YCbCr *nouvelle_MCU = malloc(sizeof(struct MCU_YCbCr));
-    nouvelle_MCU->h1 = largeur_MCU;
-    nouvelle_MCU->v1 = hauteur_MCU;
+    nouvelle_MCU->h1 = h1;
+    nouvelle_MCU->v1 = v1;
 
-    struct Bloc_YCbCr **blocs_Y = malloc(hauteur_MCU * sizeof(struct Bloc_YCbCr*));
-    struct Bloc_YCbCr **blocs_Cb = malloc(hauteur_MCU * sizeof(struct Bloc_YCbCr*));
-    struct Bloc_YCbCr **blocs_Cr = malloc(hauteur_MCU * sizeof(struct Bloc_YCbCr*));
+    struct Bloc_YCbCr **blocs_Y = malloc(v1 * sizeof(struct Bloc_YCbCr*));
+    struct Bloc_YCbCr **blocs_Cb = malloc(v1 * sizeof(struct Bloc_YCbCr*));
+    struct Bloc_YCbCr **blocs_Cr = malloc(v1 * sizeof(struct Bloc_YCbCr*));
 
-    for (uint8_t hauteur = 0; hauteur < hauteur_MCU; hauteur++) {
-        struct Bloc_YCbCr *ligne_blocs_Y = malloc(largeur_MCU * sizeof(struct Bloc_YCbCr));
-        struct Bloc_YCbCr *ligne_blocs_Cb = malloc(largeur_MCU * sizeof(struct Bloc_YCbCr));
-        struct Bloc_YCbCr *ligne_blocs_Cr = malloc(largeur_MCU * sizeof(struct Bloc_YCbCr));
+    for (uint8_t hauteur = 0; hauteur < v1; hauteur++) {
+        struct Bloc_YCbCr *ligne_blocs_Y = malloc(h1 * sizeof(struct Bloc_YCbCr));
+        struct Bloc_YCbCr *ligne_blocs_Cb = malloc(h1 * sizeof(struct Bloc_YCbCr));
+        struct Bloc_YCbCr *ligne_blocs_Cr = malloc(h1 * sizeof(struct Bloc_YCbCr));
 
-        for (uint8_t largeur = 0; largeur < largeur_MCU; largeur++) {
+        for (uint8_t largeur = 0; largeur < h1; largeur++) {
             int16_t **pixels_Y = malloc(COTE_BLOC * sizeof(int16_t*));
             int16_t **pixels_Cb = malloc(COTE_BLOC * sizeof(int16_t*));
             int16_t **pixels_Cr = malloc(COTE_BLOC * sizeof(int16_t*));
@@ -149,10 +149,10 @@ void print_bloc_entiers(struct Bloc_YCbCr *bloc_a_afficher)
 /* Affiche une MCU_YCbCr */
 void print_MCU_YCbCr(struct MCU_YCbCr *MCU_YCbCr_a_afficher)
 {
-    uint8_t largeur_MCU = MCU_YCbCr_a_afficher->h1;
-    uint8_t hauteur_MCU = MCU_YCbCr_a_afficher->v1;
-    for (uint8_t hauteur = 0; hauteur < hauteur_MCU; hauteur++) {
-        for (uint8_t largeur = 0; largeur < largeur_MCU; largeur++) {
+    uint8_t h1 = MCU_YCbCr_a_afficher->h1;
+    uint8_t v1 = MCU_YCbCr_a_afficher->v1;
+    for (uint8_t hauteur = 0; hauteur < v1; hauteur++) {
+        for (uint8_t largeur = 0; largeur < h1; largeur++) {
             printf("Bloc Y n°%u\n", largeur + hauteur);
             print_bloc_entiers(&MCU_YCbCr_a_afficher->blocs_Y[hauteur][largeur]);
             printf("\n");
@@ -193,11 +193,11 @@ void free_pixels_YCbCr(int16_t **pixels)
 
 /* Libère la mémoire allouée par une matrice de blocs YCbCr */
 void free_bloc_YCbCR(struct Bloc_YCbCr **blocs,
-                     uint8_t largeur_MCU,
-                     uint8_t hauteur_MCU)
+                     uint8_t h1,
+                     uint8_t v1)
 {
-    for (uint8_t hauteur = 0; hauteur < hauteur_MCU; hauteur++) {
-        for (uint8_t largeur = 0; largeur < largeur_MCU; largeur++) {
+    for (uint8_t hauteur = 0; hauteur < v1; hauteur++) {
+        for (uint8_t largeur = 0; largeur < h1; largeur++) {
                 free_pixels_YCbCr(blocs[hauteur][largeur].pixels);
         }
         free(blocs[hauteur]);
@@ -211,16 +211,16 @@ void free_bloc_YCbCR(struct Bloc_YCbCr **blocs,
 void free_MCUs_YCbCr(struct MCU_YCbCr ***matrice_MCUs_converti,
                      uint32_t *dimensions_MCUs)
 {
-    uint8_t largeur_MCU = matrice_MCUs_converti->h1;
-    uint8_t hauteur_MCU = matrice_MCUs_converti->v1;
+    uint8_t h1 = matrice_MCUs_converti->h1;
+    uint8_t v1 = matrice_MCUs_converti->v1;
     uint32_t nb_MCUs_largeur = dimensions_MCUs[0];
     uint32_t nb_MCUs_hauteur = dimensions_MCUs[1];
 
     for (uint32_t hauteur = 0; hauteur < nb_MCUs_hauteur; hauteur++) {
         for (uint32_t largeur = 0; largeur < nb_MCUs_largeur; largeur++) {
-            free_bloc_YCbCR(matrice_MCUs_converti[hauteur][largeur]->blocs_Y, largeur_MCU, hauteur_MCU);
-            free_bloc_YCbCR(matrice_MCUs_converti[hauteur][largeur]->blocs_Cb, largeur_MCU, hauteur_MCU);
-            free_bloc_YCbCR(matrice_MCUs_converti[hauteur][largeur]->blocs_Cr, largeur_MCU, hauteur_MCU);
+            free_bloc_YCbCR(matrice_MCUs_converti[hauteur][largeur]->blocs_Y, h1, v1);
+            free_bloc_YCbCR(matrice_MCUs_converti[hauteur][largeur]->blocs_Cb, h1, v1);
+            free_bloc_YCbCR(matrice_MCUs_converti[hauteur][largeur]->blocs_Cr, h1, v1);
 
             free(matrice_MCUs_converti[hauteur][largeur]);
         }
@@ -232,40 +232,40 @@ void free_MCUs_YCbCr(struct MCU_YCbCr ***matrice_MCUs_converti,
 
 
 
-int main()
-{
-    FILE *fichier = ouvrir_fichier("images/invadered.ppm", "r");
-
-    // On récupère l'en-tête (P5 ou P6)
-    char en_tete[10];
-    fgets(en_tete, 10, fichier);
-
-    // On récupère les dimensions de l'image
-    char dimensions[30];
-    uint32_t largeur_image, hauteur_image;
-    fgets(dimensions, 30, fichier);
-    sscanf(dimensions, "%u %u", &largeur_image, &hauteur_image);
-
-    // On calcule les dimensions des MCUs
-    uint8_t h1 = 1;
-    uint8_t v1 = 1;
-    uint32_t *dimensions_MCUs = calcul_dimensions_MCUs(largeur_image, hauteur_image, h1, v1);
-    uint32_t nb_MCUs_hauteur, nb_MCUs_largeur;
-    nb_MCUs_largeur = dimensions_MCUs[0];
-    nb_MCUs_hauteur = dimensions_MCUs[1];
-
-    struct MCU_RGB ***MCUs = decoupage_MCUs(fichier, largeur_image, hauteur_image, nb_MCUs_largeur, nb_MCUs_hauteur, h1, v1);
-    MCUs = decoupage_MCUs_en_blocs(MCUs, nb_MCUs_largeur, nb_MCUs_hauteur, h1, v1);
-    struct MCU_YCbCr ***matrice_MCUs_converti = conversion_matrice_MCUs(MCUs, nb_MCUs_largeur, nb_MCUs_hauteur);
-
-    print_MCUs(MCUs, dimensions_MCUs, h1, v1);
-    print_matrice_MCU_YCbCr(matrice_MCUs_converti, nb_MCUs_largeur, nb_MCUs_hauteur);
-
-    free_MCUs_YCbCr(matrice_MCUs_converti, dimensions_MCUs);
-    free_MCUs_dims(MCUs, dimensions_MCUs, h1, v1);
-
-    fermer_fichier(fichier);
-    return 0;
+// int main()
+// {
+//     FILE *fichier = ouvrir_fichier("images/invadered.ppm", "r");
+//
+//     // On récupère l'en-tête (P5 ou P6)
+//     char en_tete[10];
+//     fgets(en_tete, 10, fichier);
+//
+//     // On récupère les dimensions de l'image
+//     char dimensions[30];
+//     uint32_t largeur_image, hauteur_image;
+//     fgets(dimensions, 30, fichier);
+//     sscanf(dimensions, "%u %u", &largeur_image, &hauteur_image);
+//
+//     // On calcule les dimensions des MCUs
+//     uint8_t h1 = 1;
+//     uint8_t v1 = 1;
+//     uint32_t *dimensions_MCUs = calcul_dimensions_MCUs(largeur_image, hauteur_image, h1, v1);
+//     uint32_t nb_MCUs_hauteur, nb_MCUs_largeur;
+//     nb_MCUs_largeur = dimensions_MCUs[0];
+//     nb_MCUs_hauteur = dimensions_MCUs[1];
+//
+//     struct MCU_RGB ***MCUs = decoupage_MCUs(fichier, largeur_image, hauteur_image, nb_MCUs_largeur, nb_MCUs_hauteur, h1, v1);
+//     MCUs = decoupage_MCUs_en_blocs(MCUs, nb_MCUs_largeur, nb_MCUs_hauteur, h1, v1);
+//     struct MCU_YCbCr ***matrice_MCUs_converti = conversion_matrice_MCUs(MCUs, nb_MCUs_largeur, nb_MCUs_hauteur);
+//
+//     print_MCUs(MCUs, dimensions_MCUs, h1, v1);
+//     print_matrice_MCU_YCbCr(matrice_MCUs_converti, nb_MCUs_largeur, nb_MCUs_hauteur);
+//
+//     free_MCUs_YCbCr(matrice_MCUs_converti, dimensions_MCUs);
+//     free_MCUs_dims(MCUs, dimensions_MCUs, h1, v1);
+//
+//     fermer_fichier(fichier);
+//     return 0;
 
 //    uint8_t MCU_RGB [0][0] = {  {0xb8a092, 0xb19b8d, 0xa79787, 0xa29785, 0xa19a88, 0xa19a88, 0x9e9586, 0x9e8d83},
 //                                {0xb29b8d, 0xb49e90, 0xaa9a8a, 0x988d7b, 0x8f8876, 0x968f7d, 0x9d9485, 0x9f9184},

@@ -82,8 +82,8 @@ void free_pixels_YCbCr(int16_t **pixels);
 
 /* Libère la mémoire allouée par une matrice de blocs YCbCr */
 void free_bloc_YCbCR(struct Bloc_YCbCr **blocs,
-                     uint8_t largeur_MCU,
-                     uint8_t hauteur_MCU);
+                     uint8_t h1,
+                     uint8_t v1);
 
 
 /* Libère la mémoire allouée par une matrice de MCUs YCbCr */
