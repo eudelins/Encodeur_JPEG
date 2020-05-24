@@ -49,7 +49,7 @@ struct MCU_RGB {
 
 
 /* Calcule le nombre de MCUs dans l'image */
-uint32_t *calcul_dimensions_MCUs(uint32_t largeur_image,
+uint32_t *calcul_dimensions_MCUs_RGB(uint32_t largeur_image,
                                  uint32_t hauteur_image,
                                  uint8_t largeur_MCU,
                                  uint8_t hauteur_MCU)
@@ -242,19 +242,19 @@ void free_MCUs_dims(struct MCU_RGB ***MCUs,
 }
 
 /* Affiche un pixel */
-void print_pixel(struct Pixel_RGB pixel)
+void print_pixel_RGB(struct Pixel_RGB pixel)
 {
   printf("%x %x %x \t", pixel.R, pixel.G, pixel.B);
 }
 
 
 /* Affiche un bloc */
-void print_bloc(struct Bloc_RGB bloc)
+void print_bloc_RGB(struct Bloc_RGB bloc)
 {
     struct Pixel_RGB **pixels = bloc.pixels;
     for (uint8_t hauteur_pix = 0; hauteur_pix < COTE_BLOC; hauteur_pix++){
         for (uint8_t largeur_pix = 0; largeur_pix < COTE_BLOC; largeur_pix++){
-            print_pixel(pixels[hauteur_pix][largeur_pix]);
+            print_pixel_RGB(pixels[hauteur_pix][largeur_pix]);
         }
         printf("\n");
     }
@@ -262,7 +262,7 @@ void print_bloc(struct Bloc_RGB bloc)
 
 
 /* Affiche une MCU */
-void print_MCU(struct MCU_RGB *MCU,
+void print_MCU_RGB(struct MCU_RGB *MCU,
                uint8_t largeur_MCU,
                uint8_t hauteur_MCU)
 {
@@ -270,7 +270,7 @@ void print_MCU(struct MCU_RGB *MCU,
     for (uint8_t hauteur_blocs = 0; hauteur_blocs < hauteur_MCU; hauteur_blocs++){
         for (uint8_t largeur_blocs = 0; largeur_blocs < largeur_MCU; largeur_blocs++){
             printf("Bloc_RGB %d:\n", hauteur_blocs * largeur_MCU + largeur_blocs);
-            print_bloc(blocs[hauteur_blocs][largeur_blocs]);
+            print_bloc_RGB(blocs[hauteur_blocs][largeur_blocs]);
         }
         printf("\n");
     }
@@ -278,7 +278,7 @@ void print_MCU(struct MCU_RGB *MCU,
 
 
 /* Affiche les MCUs */
-void print_MCUs(struct MCU_RGB ***MCUs,
+void print_MCUs_RGB(struct MCU_RGB ***MCUs,
                 uint32_t *dimensions_MCUs,
                 uint8_t largeur_MCU,
                 uint8_t hauteur_MCU)
@@ -289,7 +289,7 @@ void print_MCUs(struct MCU_RGB ***MCUs,
     for (uint32_t hauteur = 0; hauteur < nb_MCUs_hauteur ; hauteur++){
         for (uint32_t largeur = 0; largeur < nb_MCUs_largeur; largeur++){
             printf("MCU %d:\n", hauteur * nb_MCUs_largeur + largeur);
-            print_MCU(MCUs[hauteur][largeur], largeur_MCU, hauteur_MCU);
+            print_MCU_RGB(MCUs[hauteur][largeur], largeur_MCU, hauteur_MCU);
             printf("\n\n");
         }
     }
@@ -312,14 +312,14 @@ void print_MCUs(struct MCU_RGB ***MCUs,
 //    // On calcule les dimensions des MCUs
 //    uint8_t largeur_MCU = 1;
 //    uint8_t hauteur_MCU = 1;
-//    uint32_t *dimensions_MCUs = calcul_dimensions_MCUs(largeur_image, hauteur_image, largeur_MCU, hauteur_MCU);
+//    uint32_t *dimensions_MCUs = calcul_dimensions_MCUs_RGB(largeur_image, hauteur_image, largeur_MCU, hauteur_MCU);
 //    uint32_t nb_MCUs_hauteur, nb_MCUs_largeur;
 //    nb_MCUs_largeur = dimensions_MCUs[0];
 //    nb_MCUs_hauteur = dimensions_MCUs[1];
 //
 //    struct MCU_RGB ***MCUs = decoupage_MCUs(fichier, largeur_image, hauteur_image, nb_MCUs_largeur, nb_MCUs_hauteur, largeur_MCU, hauteur_MCU);
 //    MCUs = decoupage_MCUs_en_blocs(MCUs, nb_MCUs_largeur, nb_MCUs_hauteur, largeur_MCU, hauteur_MCU);
-//    print_MCUs(MCUs, dimensions_MCUs, largeur_MCU, hauteur_MCU);
+//    print_MCUs_RGB(MCUs, dimensions_MCUs, largeur_MCU, hauteur_MCU);
 //    free_MCUs_dims(MCUs, dimensions_MCUs, largeur_MCU, hauteur_MCU);
 //    fermer_fichier(fichier);
 //    return 0;
