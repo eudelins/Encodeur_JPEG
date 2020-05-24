@@ -85,10 +85,6 @@ struct MCU_RGB ***decoupage_MCUs(FILE *fichier,
     uint8_t duplique_colonne = (nb_MCUs_largeur * COTE_BLOC * h1) - largeur_image % (nb_MCUs_largeur * COTE_BLOC * h1);
     uint8_t duplique_ligne = (nb_MCUs_hauteur * COTE_BLOC * v1) - hauteur_image % (nb_MCUs_hauteur * COTE_BLOC * v1);
 
-    // On saute une ligne
-    char couleurs_max[10];
-    fgets(couleurs_max, 10, fichier);
-
     // On récupère les pixels du fichier dans une matrice
     // matrice de pixels
     struct Pixel_RGB **pixels_image = malloc((hauteur_image + duplique_ligne) * sizeof(struct Pixel_RGB *));
