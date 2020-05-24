@@ -295,16 +295,13 @@ void print_MCU_RGB(struct MCU_RGB *MCU)
 void print_MCUs_RGB(struct MCU_RGB ***MCUs,
                 uint32_t *dimensions_MCUs)
 {
-    uint8_t h1 = MCUs[0][0]->h1;
-    uint8_t v1 = MCUs[0][0]->v1;
-
     uint32_t nb_MCUs_largeur, nb_MCUs_hauteur;;
     nb_MCUs_largeur = dimensions_MCUs[0];
     nb_MCUs_hauteur = dimensions_MCUs[1];
     for (uint32_t hauteur = 0; hauteur < nb_MCUs_hauteur ; hauteur++){
         for (uint32_t largeur = 0; largeur < nb_MCUs_largeur; largeur++){
             printf("MCU %d:\n", hauteur * nb_MCUs_largeur + largeur);
-            print_MCU_RGB(MCUs[hauteur][largeur], h1, v1);
+            print_MCU_RGB(MCUs[hauteur][largeur]);
             printf("\n\n");
         }
     }
