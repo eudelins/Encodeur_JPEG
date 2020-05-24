@@ -280,4 +280,4 @@ void free_MCUs_YCbCr(struct MCU_YCbCr ***matrice_MCUs_converti,
 //                                {0xf8e4d9, 0xefddd1, 0xfdf1e3, 0xffffef, 0xf8f2e4, 0xb5afa1, 0x908a7c, 0x9a8e82},
 //                                {0xf5e1d8, 0xffeee4, 0xfbefe3, 0xf4ecdf, 0xfef8ea, 0xfffbed, 0xd6d0c2, 0x9f9387}  };
 //
-}
+//}
