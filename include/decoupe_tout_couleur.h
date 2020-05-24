@@ -89,9 +89,7 @@ void free_blocs_RGB(struct Bloc_RGB **blocs,
 
 /* Libère la mémoire allouée aux MCUs */
 void free_MCUs_dims_RGB(struct MCU_RGB ***MCUs,
-                    uint32_t* dimensions_MCUs,
-                    uint8_t largeur_MCU,
-                    uint8_t hauteur_MCU);
+                    uint32_t* dimensions_MCUs);
 
 
 /* Affiche un pixel */
