@@ -66,12 +66,16 @@ struct MCU_YCbCr {
  * - matrice de blocs de matrices de pixels Cr */
 struct MCU_YCbCr *conversion_MCU(struct MCU_RGB *MCU)
 {
-    uint8_t h1 = MCU->h1;
-    uint8_t v1 = MCU->v1;
 
     struct MCU_YCbCr *nouvelle_MCU = malloc(sizeof(struct MCU_YCbCr));
-    nouvelle_MCU->h1 = h1;
-    nouvelle_MCU->v1 = v1;
+    nouvelle_MCU->h1 = MCU->h1;
+    nouvelle_MCU->v1 = MCU->v1;
+
+    nouvelle_MCU->h2 = MCU->h2;
+    nouvelle_MCU->v2 = MCU->v2;
+
+    nouvelle_MCU->h3 = MCU->h3;
+    nouvelle_MCU->v3 = MCU->v3;
 
     struct Bloc_YCbCr **blocs_Y = malloc(v1 * sizeof(struct Bloc_YCbCr*));
     struct Bloc_YCbCr **blocs_Cb = malloc(v1 * sizeof(struct Bloc_YCbCr*));
@@ -231,53 +235,48 @@ void free_MCUs_YCbCr(struct MCU_YCbCr ***matrice_MCUs_converti,
 
 
 
-//int main()
-//{
-//    FILE *fichier = ouvrir_fichier("images/invadered.ppm", "r");
-//
-//    // On récupère l'en-tête (P5 ou P6)
-//    char en_tete[10];
-//    fgets(en_tete, 10, fichier);
-//
-//    // On récupère les dimensions de l'image
-//    char dimensions[30];
-//    uint32_t largeur_image, hauteur_image;
-//    fgets(dimensions, 30, fichier);
-//    sscanf(dimensions, "%u %u", &largeur_image, &hauteur_image);
-//
-//    // On calcule les dimensions des MCUs
-//    uint8_t h1 = 1;
-//    uint8_t v1 = 1;
-//    uint8_t h2 = 1;
-//    uint8_t v2 = 1;
-//    uint8_t h3 = 1;
-//    uint8_t v3 = 1;
-//
-//    uint32_t *dimensions_MCUs = calcul_dimensions_MCUs_RGB(largeur_image, hauteur_image, h1, v1);
-//    uint32_t nb_MCUs_hauteur, nb_MCUs_largeur;
-//    nb_MCUs_largeur = dimensions_MCUs[0];
-//    nb_MCUs_hauteur = dimensions_MCUs[1];
-//
-//    struct MCU_RGB ***MCUs = decoupage_MCUs(fichier, largeur_image, hauteur_image, nb_MCUs_largeur, nb_MCUs_hauteur, h1, v1, h2, v2, h3, v3);
-//    MCUs = decoupage_MCUs_en_blocs(MCUs, nb_MCUs_largeur, nb_MCUs_hauteur, h1, v1);
-//    struct MCU_YCbCr ***matrice_MCUs_converti = conversion_matrice_MCUs(MCUs, nb_MCUs_largeur, nb_MCUs_hauteur);
-//
-//    print_MCUs_RGB(MCUs, dimensions_MCUs);
-//    print_matrice_MCU_YCbCr(matrice_MCUs_converti, nb_MCUs_largeur, nb_MCUs_hauteur);
-//
-//    free_MCUs_YCbCr(matrice_MCUs_converti, dimensions_MCUs);
-//    free_MCUs_dims_RGB(MCUs, dimensions_MCUs);
-//
-//    fermer_fichier(fichier);
-//    return 0;
+int main()
+{
+    FILE *fichier = fopen("images/invadered.ppm", "r");
 
-//    uint8_t MCU_RGB [0][0] = {  {0xb8a092, 0xb19b8d, 0xa79787, 0xa29785, 0xa19a88, 0xa19a88, 0x9e9586, 0x9e8d83},
-//                                {0xb29b8d, 0xb49e90, 0xaa9a8a, 0x988d7b, 0x8f8876, 0x968f7d, 0x9d9485, 0x9f9184},
-//                                {0xb6a092, 0xa69384, 0xa39384, 0xab9f8f, 0xa69f8d, 0x97907e, 0x979080, 0xa99b8e},
-//                                {0xb7a194, 0xa99688, 0x9c8f7f, 0x99907f, 0x999282, 0x979080, 0x979080, 0x9e9083},
-//                                {0xdac4b7, 0xe8d5c7, 0xd3c5b8, 0xa09788, 0x8b8575, 0x9e9888, 0xa9a194, 0x9f9387},
-//                                {0xffebe0, 0xfff3e7, 0xfff9ec, 0xf2e9da, 0xc5bfaf, 0x9e9888, 0x969082, 0xa79b8f},
-//                                {0xf8e4d9, 0xefddd1, 0xfdf1e3, 0xffffef, 0xf8f2e4, 0xb5afa1, 0x908a7c, 0x9a8e82},
-//                                {0xf5e1d8, 0xffeee4, 0xfbefe3, 0xf4ecdf, 0xfef8ea, 0xfffbed, 0xd6d0c2, 0x9f9387}  };
-//
-//}
+    // On récupère l'en-tête (P5 ou P6)
+    char en_tete[10];
+    fgets(en_tete, 10, fichier);
+
+    // On récupère les dimensions de l'image
+    char dimensions[30];
+    uint32_t largeur_image, hauteur_image;
+    fgets(dimensions, 30, fichier);
+    sscanf(dimensions, "%u %u", &largeur_image, &hauteur_image);
+
+    // On saute une ligne
+    char couleurs_max[10];
+    fgets(couleurs_max, 10, fichier);
+
+    // On calcule les dimensions des MCUs
+    uint8_t h1 = 1;
+    uint8_t v1 = 1;
+    uint8_t h2 = 1;
+    uint8_t v2 = 1;
+    uint8_t h3 = 1;
+    uint8_t v3 = 1;
+
+    uint32_t *dimensions_MCUs = calcul_dimensions_MCUs_RGB(largeur_image, hauteur_image, h1, v1);
+    uint32_t nb_MCUs_hauteur, nb_MCUs_largeur;
+    nb_MCUs_largeur = dimensions_MCUs[0];
+    nb_MCUs_hauteur = dimensions_MCUs[1];
+
+    struct MCU_RGB ***MCUs = decoupage_MCUs(fichier, largeur_image, hauteur_image, nb_MCUs_largeur, nb_MCUs_hauteur, h1, v1, h2, v2, h3, v3);
+    MCUs = decoupage_MCUs_en_blocs(MCUs, nb_MCUs_largeur, nb_MCUs_hauteur, h1, v1);
+    struct MCU_YCbCr ***matrice_MCUs_converti = conversion_matrice_MCUs(MCUs, nb_MCUs_largeur, nb_MCUs_hauteur);
+
+    print_MCUs_RGB(MCUs, dimensions_MCUs);
+    print_matrice_MCU_YCbCr(matrice_MCUs_converti, nb_MCUs_largeur, nb_MCUs_hauteur);
+
+    free_MCUs_YCbCr(matrice_MCUs_converti, dimensions_MCUs);
+    free_MCUs_dims_RGB(MCUs, dimensions_MCUs);
+
+    fclose(fichier);
+    return 0;
+}
+
