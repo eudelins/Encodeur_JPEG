@@ -41,8 +41,6 @@ struct Bloc_YCbCr {
 
 /* Structure d'une MCU_YCbCr */
 struct MCU_YCbCr {
-    uint8_t largeur;
-    uint8_t hauteur;
     uint8_t h1;
     uint8_t v1;
     uint8_t h2;
@@ -68,12 +66,12 @@ struct MCU_YCbCr {
  * - matrice de blocs de matrices de pixels Cr */
 struct MCU_YCbCr *conversion_MCU(struct MCU_RGB *MCU)
 {
-    uint8_t largeur_MCU = MCU->largeur;
-    uint8_t hauteur_MCU = MCU->hauteur;
+    uint8_t largeur_MCU = MCU->h1;
+    uint8_t hauteur_MCU = MCU->v1;
 
     struct MCU_YCbCr *nouvelle_MCU = malloc(sizeof(struct MCU_YCbCr));
-    nouvelle_MCU->largeur = largeur_MCU;
-    nouvelle_MCU->hauteur = hauteur_MCU;
+    nouvelle_MCU->h1 = largeur_MCU;
+    nouvelle_MCU->v1 = hauteur_MCU;
 
     struct Bloc_YCbCr **blocs_Y = malloc(hauteur_MCU * sizeof(struct Bloc_YCbCr*));
     struct Bloc_YCbCr **blocs_Cb = malloc(hauteur_MCU * sizeof(struct Bloc_YCbCr*));
@@ -151,8 +149,8 @@ void print_bloc_entiers(struct Bloc_YCbCr *bloc_a_afficher)
 /* Affiche une MCU_YCbCr */
 void print_MCU_YCbCr(struct MCU_YCbCr *MCU_YCbCr_a_afficher)
 {
-    uint8_t largeur_MCU = MCU_YCbCr_a_afficher->largeur;
-    uint8_t hauteur_MCU = MCU_YCbCr_a_afficher->hauteur;
+    uint8_t largeur_MCU = MCU_YCbCr_a_afficher->h1;
+    uint8_t hauteur_MCU = MCU_YCbCr_a_afficher->v1;
     for (uint8_t hauteur = 0; hauteur < hauteur_MCU; hauteur++) {
         for (uint8_t largeur = 0; largeur < largeur_MCU; largeur++) {
             printf("Bloc Y n°%u\n", largeur + hauteur);
