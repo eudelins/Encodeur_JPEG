@@ -41,8 +41,6 @@ struct Bloc_YCbCr {
 
 /* Structure d'une MCU_YCbCr */
 struct MCU_YCbCr {
-    uint8_t largeur;
-    uint8_t hauteur;
     uint8_t h1;
     uint8_t v1;
     uint8_t h2;
@@ -68,12 +66,12 @@ struct MCU_YCbCr {
  * - matrice de blocs de matrices de pixels Cr */
 struct MCU_YCbCr *conversion_MCU(struct MCU_RGB *MCU)
 {
-    uint8_t largeur_MCU = MCU->largeur;
-    uint8_t hauteur_MCU = MCU->hauteur;
+    uint8_t largeur_MCU = MCU->h1;
+    uint8_t hauteur_MCU = MCU->v1;
 
     struct MCU_YCbCr *nouvelle_MCU = malloc(sizeof(struct MCU_YCbCr));
-    nouvelle_MCU->largeur = largeur_MCU;
-    nouvelle_MCU->hauteur = hauteur_MCU;
+    nouvelle_MCU->h1 = largeur_MCU;
+    nouvelle_MCU->v1 = hauteur_MCU;
 
     struct Bloc_YCbCr **blocs_Y = malloc(hauteur_MCU * sizeof(struct Bloc_YCbCr*));
     struct Bloc_YCbCr **blocs_Cb = malloc(hauteur_MCU * sizeof(struct Bloc_YCbCr*));
@@ -151,8 +149,8 @@ void print_bloc_entiers(struct Bloc_YCbCr *bloc_a_afficher)
 /* Affiche une MCU_YCbCr */
 void print_MCU_YCbCr(struct MCU_YCbCr *MCU_YCbCr_a_afficher)
 {
-    uint8_t largeur_MCU = MCU_YCbCr_a_afficher->largeur;
-    uint8_t hauteur_MCU = MCU_YCbCr_a_afficher->hauteur;
+    uint8_t largeur_MCU = MCU_YCbCr_a_afficher->h1;
+    uint8_t hauteur_MCU = MCU_YCbCr_a_afficher->v1;
     for (uint8_t hauteur = 0; hauteur < hauteur_MCU; hauteur++) {
         for (uint8_t largeur = 0; largeur < largeur_MCU; largeur++) {
             printf("Bloc Y n°%u\n", largeur + hauteur);
@@ -211,10 +209,10 @@ void free_bloc_YCbCR(struct Bloc_YCbCr **blocs,
 
 /* Libère la mémoire allouée par une matrice de MCUs YCbCr */
 void free_MCUs_YCbCr(struct MCU_YCbCr ***matrice_MCUs_converti,
-                     uint32_t *dimensions_MCUs,
-                     uint8_t largeur_MCU,
-                     uint8_t hauteur_MCU)
+                     uint32_t *dimensions_MCUs)
 {
+    uint8_t largeur_MCU = matrice_MCUs_converti->h1;
+    uint8_t hauteur_MCU = matrice_MCUs_converti->v1;
     uint32_t nb_MCUs_largeur = dimensions_MCUs[0];
     uint32_t nb_MCUs_hauteur = dimensions_MCUs[1];
 
@@ -249,22 +247,22 @@ int main()
     sscanf(dimensions, "%u %u", &largeur_image, &hauteur_image);
 
     // On calcule les dimensions des MCUs
-    uint8_t largeur_MCU = 1;
-    uint8_t hauteur_MCU = 1;
-    uint32_t *dimensions_MCUs = calcul_dimensions_MCUs(largeur_image, hauteur_image, largeur_MCU, hauteur_MCU);
+    uint8_t h1 = 1;
+    uint8_t v1 = 1;
+    uint32_t *dimensions_MCUs = calcul_dimensions_MCUs(largeur_image, hauteur_image, h1, v1);
     uint32_t nb_MCUs_hauteur, nb_MCUs_largeur;
     nb_MCUs_largeur = dimensions_MCUs[0];
     nb_MCUs_hauteur = dimensions_MCUs[1];
 
-    struct MCU_RGB ***MCUs = decoupage_MCUs(fichier, largeur_image, hauteur_image, nb_MCUs_largeur, nb_MCUs_hauteur, largeur_MCU, hauteur_MCU);
-    MCUs = decoupage_MCUs_en_blocs(MCUs, nb_MCUs_largeur, nb_MCUs_hauteur, largeur_MCU, hauteur_MCU);
+    struct MCU_RGB ***MCUs = decoupage_MCUs(fichier, largeur_image, hauteur_image, nb_MCUs_largeur, nb_MCUs_hauteur, h1, v1);
+    MCUs = decoupage_MCUs_en_blocs(MCUs, nb_MCUs_largeur, nb_MCUs_hauteur, h1, v1);
     struct MCU_YCbCr ***matrice_MCUs_converti = conversion_matrice_MCUs(MCUs, nb_MCUs_largeur, nb_MCUs_hauteur);
 
-    print_MCUs(MCUs, dimensions_MCUs, largeur_MCU, hauteur_MCU);
+    print_MCUs(MCUs, dimensions_MCUs, h1, v1);
     print_matrice_MCU_YCbCr(matrice_MCUs_converti, nb_MCUs_largeur, nb_MCUs_hauteur);
 
-    free_MCUs_YCbCr(matrice_MCUs_converti, dimensions_MCUs, largeur_MCU, hauteur_MCU);
-    free_MCUs_dims(MCUs, dimensions_MCUs, largeur_MCU, hauteur_MCU);
+    free_MCUs_YCbCr(matrice_MCUs_converti, dimensions_MCUs);
+    free_MCUs_dims(MCUs, dimensions_MCUs, h1, v1);
 
     fermer_fichier(fichier);
     return 0;
