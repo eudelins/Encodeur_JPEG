@@ -231,46 +231,45 @@ void free_MCUs_YCbCr(struct MCU_YCbCr ***matrice_MCUs_converti,
 
 
 
-
-int main()
-{
-    FILE *fichier = ouvrir_fichier("images/invadered.ppm", "r");
-
-    // On récupère l'en-tête (P5 ou P6)
-    char en_tete[10];
-    fgets(en_tete, 10, fichier);
-
-    // On récupère les dimensions de l'image
-    char dimensions[30];
-    uint32_t largeur_image, hauteur_image;
-    fgets(dimensions, 30, fichier);
-    sscanf(dimensions, "%u %u", &largeur_image, &hauteur_image);
-
-    // On calcule les dimensions des MCUs
-    uint8_t h1 = 1;
-    uint8_t v1 = 1;
-    uint8_t h2 = 1;
-    uint8_t v2 = 1;
-    uint8_t h3 = 1;
-    uint8_t v3 = 1;
-
-    uint32_t *dimensions_MCUs = calcul_dimensions_MCUs_RGB(largeur_image, hauteur_image, h1, v1);
-    uint32_t nb_MCUs_hauteur, nb_MCUs_largeur;
-    nb_MCUs_largeur = dimensions_MCUs[0];
-    nb_MCUs_hauteur = dimensions_MCUs[1];
-
-    struct MCU_RGB ***MCUs = decoupage_MCUs(fichier, largeur_image, hauteur_image, nb_MCUs_largeur, nb_MCUs_hauteur, h1, v1, h2, v2, h3, v3);
-    MCUs = decoupage_MCUs_en_blocs(MCUs, nb_MCUs_largeur, nb_MCUs_hauteur, h1, v1);
-    struct MCU_YCbCr ***matrice_MCUs_converti = conversion_matrice_MCUs(MCUs, nb_MCUs_largeur, nb_MCUs_hauteur);
-
-    print_MCUs_RGB(MCUs, dimensions_MCUs);
-    print_matrice_MCU_YCbCr(matrice_MCUs_converti, nb_MCUs_largeur, nb_MCUs_hauteur);
-
-    free_MCUs_YCbCr(matrice_MCUs_converti, dimensions_MCUs);
-    free_MCUs_dims_RGB(MCUs, dimensions_MCUs);
-
-    fermer_fichier(fichier);
-    return 0;
+//int main()
+//{
+//    FILE *fichier = ouvrir_fichier("images/invadered.ppm", "r");
+//
+//    // On récupère l'en-tête (P5 ou P6)
+//    char en_tete[10];
+//    fgets(en_tete, 10, fichier);
+//
+//    // On récupère les dimensions de l'image
+//    char dimensions[30];
+//    uint32_t largeur_image, hauteur_image;
+//    fgets(dimensions, 30, fichier);
+//    sscanf(dimensions, "%u %u", &largeur_image, &hauteur_image);
+//
+//    // On calcule les dimensions des MCUs
+//    uint8_t h1 = 1;
+//    uint8_t v1 = 1;
+//    uint8_t h2 = 1;
+//    uint8_t v2 = 1;
+//    uint8_t h3 = 1;
+//    uint8_t v3 = 1;
+//
+//    uint32_t *dimensions_MCUs = calcul_dimensions_MCUs_RGB(largeur_image, hauteur_image, h1, v1);
+//    uint32_t nb_MCUs_hauteur, nb_MCUs_largeur;
+//    nb_MCUs_largeur = dimensions_MCUs[0];
+//    nb_MCUs_hauteur = dimensions_MCUs[1];
+//
+//    struct MCU_RGB ***MCUs = decoupage_MCUs(fichier, largeur_image, hauteur_image, nb_MCUs_largeur, nb_MCUs_hauteur, h1, v1, h2, v2, h3, v3);
+//    MCUs = decoupage_MCUs_en_blocs(MCUs, nb_MCUs_largeur, nb_MCUs_hauteur, h1, v1);
+//    struct MCU_YCbCr ***matrice_MCUs_converti = conversion_matrice_MCUs(MCUs, nb_MCUs_largeur, nb_MCUs_hauteur);
+//
+//    print_MCUs_RGB(MCUs, dimensions_MCUs);
+//    print_matrice_MCU_YCbCr(matrice_MCUs_converti, nb_MCUs_largeur, nb_MCUs_hauteur);
+//
+//    free_MCUs_YCbCr(matrice_MCUs_converti, dimensions_MCUs);
+//    free_MCUs_dims_RGB(MCUs, dimensions_MCUs);
+//
+//    fermer_fichier(fichier);
+//    return 0;
 
 //    uint8_t MCU_RGB [0][0] = {  {0xb8a092, 0xb19b8d, 0xa79787, 0xa29785, 0xa19a88, 0xa19a88, 0x9e9586, 0x9e8d83},
 //                                {0xb29b8d, 0xb49e90, 0xaa9a8a, 0x988d7b, 0x8f8876, 0x968f7d, 0x9d9485, 0x9f9184},
