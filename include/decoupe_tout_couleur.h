@@ -42,7 +42,7 @@ struct MCU_RGB {
 
 
 /* Calcule le nombre de MCUs dans l'image */
-uint32_t *calcul_dimensions_MCUs(uint32_t largeur_image,
+uint32_t *calcul_dimensions_MCUs_RGB(uint32_t largeur_image,
                                  uint32_t hauteur_image,
                                  uint8_t largeur_MCU,
                                  uint8_t hauteur_MCU);
@@ -95,21 +95,21 @@ void free_MCUs_dims(struct MCU_RGB ***MCUs,
 
 
 /* Affiche un pixel */
-void print_pixel(struct Pixel_RGB pixel);
+void print_pixel_RGB(struct Pixel_RGB pixel);
 
 
 /* Affiche un bloc */
-void print_bloc(struct Bloc_RGB bloc);
+void print_bloc_RGB(struct Bloc_RGB bloc);
 
 
 /* Affiche une MCU */
-void print_MCU(struct MCU_RGB *MCU,
+void print_MCU_RGB(struct MCU_RGB *MCU,
                uint8_t largeur_MCU,
                uint8_t hauteur_MCU);
 
 
 /* Affiche les MCUs */
-void print_MCUs(struct MCU_RGB ***MCUs,
+void print_MCUs_RGB(struct MCU_RGB ***MCUs,
                 uint32_t *dimensions_MCUs,
                 uint8_t largeur_MCU,
                 uint8_t hauteur_MCU);
