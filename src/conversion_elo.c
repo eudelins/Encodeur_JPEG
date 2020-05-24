@@ -3,41 +3,41 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#define COTE_BLOC 8
+#include "../include/decoupe_tout_couleur.h"
 
 
 /* Fonction qui prend en entrée un pixel RGB et qui renvoie la valeur de la luminance Y */
-int8_t *conversion_Y(struct Pixel_RGB *pixelRGB)
+int8_t conversion_Y(struct Pixel_RGB pixelRGB)
 {
-  int8_t *valeur_Y = malloc(sizeof(int8_t));
-  float calcul_Y = 0.299 * pixelRGB->R + 0.587 * pixelRGB->G + 0.114 * pixelRGB->B;
-  valeur_Y[0] = (int8_t) calcul_Y;
+  int8_t valeur_Y;
+  float calcul_Y = 0.299 * pixelRGB.R + 0.587 * pixelRGB.G + 0.114 * pixelRGB.B;
+  valeur_Y = (int8_t) calcul_Y;
   return valeur_Y;
 }
 
 
 /* Fonction qui prend en entrée un pixel RGB et qui renvoie la valeur de la chrominance Cb */
-int8_t *conversion_Cb(struct Pixel_RGB *pixelRGB)
+int8_t conversion_Cb(struct Pixel_RGB pixelRGB)
 {
-    int8_t *valeur_Cb = malloc(sizeof(int8_t));
-    float calcul_Cb = 128 - 0.1687 * pixelRGB->R - 0.3313 * pixelRGB->G + 0.5 * pixelRGB->B;
-    valeur_Cb[0] = (int8_t) calcul_Cb;  // cas où R=0, G=0, B=255 -> Cb = 255.5
+    int8_t valeur_Cb;
+    float calcul_Cb = 128 - 0.1687 * pixelRGB.R - 0.3313 * pixelRGB.G + 0.5 * pixelRGB.B;
+    valeur_Cb = (int8_t) calcul_Cb;
     return valeur_Cb;
 }
 
 
 /* Fonction qui prend en entrée un pixel RGB et qui renvoie la valeur de la luminance Cr */
-int8_t *conversion_Cr(struct Pixel_RGB *pixelRGB)
+int8_t conversion_Cr(struct Pixel_RGB pixelRGB)
 {
-    int8_t *valeur_Cr = malloc(sizeof(int8_t));
-    float calcul_Cr = 128 + 0.5 * pixelRGB->R - 0.4187 * pixelRGB->G - 0.0813 * pixelRGB->B;  // cas où R=0, G=0, B=255 -> Cr = 255.5
-    valeur_Cr[0] = (int8_t) calcul_Cr;
+    int8_t valeur_Cr;
+    float calcul_Cr = 128 + 0.5 * pixelRGB.R - 0.4187 * pixelRGB.G - 0.0813 * pixelRGB.B;
+    valeur_Cr = (int8_t) calcul_Cr;
     return valeur_Cr;
 }
 
 
 /* Structure d'un bloc après conversion YCbCr */
-struct Bloc_converti {
+struct Bloc_YCbCr {
     int8_t **pixels;
 };
 
@@ -46,9 +46,9 @@ struct Bloc_converti {
 struct MCU_YCbCr {
     uint8_t largeur;
     uint8_t hauteur;
-    struct Bloc_converti **blocs_Y;
-    struct Bloc_converti **blocs_Cb;
-    struct Bloc_converti **blocs_Cr;
+    struct Bloc_YCbCr **blocs_Y;
+    struct Bloc_YCbCr **blocs_Cb;
+    struct Bloc_YCbCr **blocs_Cr;
 };
 
 
@@ -72,29 +72,29 @@ struct MCU_YCbCr *conversion_MCU(struct MCU *MCU)
     nouvelle_MCU->largeur = largeur_MCU;
     nouvelle_MCU->hauteur = hauteur_MCU;
 
-    struct Bloc_converti **blocs_Y = malloc(sizeof(struct Bloc_converti*));
-    struct Bloc_converti **blocs_Cb = malloc(sizeof(struct Bloc_converti*));
-    struct Bloc_converti **blocs_Cr = malloc(sizeof(struct Bloc_converti*));
+    struct Bloc_YCbCr **blocs_Y = malloc(hauteur_MCU * sizeof(struct Bloc_YCbCr*));
+    struct Bloc_YCbCr **blocs_Cb = malloc(hauteur_MCU * sizeof(struct Bloc_YCbCr*));
+    struct Bloc_YCbCr **blocs_Cr = malloc(hauteur_MCU * sizeof(struct Bloc_YCbCr*));
 
     for (uint8_t hauteur = 0; hauteur < hauteur_MCU; hauteur++) {
-        struct Bloc_converti *ligne_blocs_Y = malloc(COTE_BLOC * sizeof(struct Bloc_converti));
-        struct Bloc_converti *ligne_blocs_Cb = malloc(COTE_BLOC * sizeof(struct Bloc_converti));
-        struct Bloc_converti *ligne_blocs_Cr = malloc(COTE_BLOC * sizeof(struct Bloc_converti));
+        struct Bloc_YCbCr *ligne_blocs_Y = malloc(largeur_MCU * sizeof(struct Bloc_YCbCr));
+        struct Bloc_YCbCr *ligne_blocs_Cb = malloc(largeur_MCU * sizeof(struct Bloc_YCbCr));
+        struct Bloc_YCbCr *ligne_blocs_Cr = malloc(largeur_MCU * sizeof(struct Bloc_YCbCr));
 
         for (uint8_t largeur = 0; largeur < largeur_MCU; largeur++) {
-            int8_t **pixels_Y = malloc(COTE_BLOC * sizeof(uint8_t));
-            int8_t **pixels_Cb = malloc(COTE_BLOC * sizeof(uint8_t));
-            int8_t **pixels_Cr = malloc(COTE_BLOC * sizeof(uint8_t));
+            int8_t **pixels_Y = malloc(COTE_BLOC * sizeof(int8_t*));
+            int8_t **pixels_Cb = malloc(COTE_BLOC * sizeof(int8_t*));
+            int8_t **pixels_Cr = malloc(COTE_BLOC * sizeof(int8_t*));
 
             for (uint8_t hauteur_pix = 0; hauteur_pix < COTE_BLOC; hauteur_pix++) {
-                int8_t *ligne_pixels_Y = malloc(sizeof(uint8_t));
-                int8_t *ligne_pixels_Cb = malloc(sizeof(uint8_t));
-                int8_t *ligne_pixels_Cr = malloc(sizeof(uint8_t));
+                int8_t *ligne_pixels_Y = malloc(COTE_BLOC * sizeof(int8_t));
+                int8_t *ligne_pixels_Cb = malloc(COTE_BLOC * sizeof(int8_t));
+                int8_t *ligne_pixels_Cr = malloc(COTE_BLOC * sizeof(int8_t));
 
                 for (uint8_t largeur_pix = 0; largeur_pix < COTE_BLOC; largeur_pix++) {
-                    ligne_pixels_Y[largeur_pix] = *conversion_Y(&MCU->blocs[hauteur][largeur].pixels[hauteur_pix][largeur_pix]);
-                    ligne_pixels_Cb[largeur_pix] = *conversion_Cb(&MCU->blocs[hauteur][largeur].pixels[hauteur_pix][largeur_pix]);
-                    ligne_pixels_Cr[largeur_pix] = *conversion_Cr(&MCU->blocs[hauteur][largeur].pixels[hauteur_pix][largeur_pix]);
+                    ligne_pixels_Y[largeur_pix] = conversion_Y(MCU->blocs[hauteur][largeur].pixels[hauteur_pix][largeur_pix]);
+                    ligne_pixels_Cb[largeur_pix] = conversion_Cb(MCU->blocs[hauteur][largeur].pixels[hauteur_pix][largeur_pix]);
+                    ligne_pixels_Cr[largeur_pix] = conversion_Cr(MCU->blocs[hauteur][largeur].pixels[hauteur_pix][largeur_pix]);
                 }
                 pixels_Y[hauteur_pix] = ligne_pixels_Y;
                 pixels_Cb[hauteur_pix] = ligne_pixels_Cb;
@@ -134,7 +134,7 @@ struct MCU_YCbCr ***conversion_matrice_MCUs(struct MCU ***MCU_a_convertir,
 
 
 /* Affiche un bloc d'entiers */
-void print_bloc_entiers(struct Bloc_converti *bloc_a_afficher)
+void print_bloc_entiers(struct Bloc_YCbCr *bloc_a_afficher)
 {
     for (uint8_t hauteur = 0; hauteur < COTE_BLOC; hauteur++) {
         for (uint8_t largeur = 0; largeur < COTE_BLOC; largeur++) {
@@ -181,9 +181,59 @@ void print_matrice_MCU_YCbCr(struct MCU_YCbCr ***MCUs_YCbCr_a_afficher,
 }
 
 
+/* Libère la mémoire allouée par une matrice d'entiers */
+void free_pixels_YCbCr(int8_t **pixels)
+{
+    for (uint8_t hauteur_pix = 0; hauteur_pix < COTE_BLOC; hauteur_pix++) {
+        free(pixels[hauteur_pix]);
+    }
+    free(pixels);
+}
+
+/* Libère la mémoire allouée par une matrice de blocs YCbCr */
+void free_bloc_YCbCR(struct Bloc_YCbCr **blocs,
+                     uint8_t largeur_MCU,
+                     uint8_t hauteur_MCU)
+{
+    for (uint8_t hauteur = 0; hauteur < hauteur_MCU; hauteur++) {
+        for (uint8_t largeur = 0; largeur < largeur_MCU; largeur++) {
+                free_pixels_YCbCr(blocs[hauteur][largeur].pixels);
+        }
+        free(blocs[hauteur]);
+    }
+    free(blocs);
+}
+
+
+
+/* Libère la mémoire allouée par une matrice de MCUs YCbCr */
+void free_MCUs_YCbCr(struct MCU_YCbCr ***matrice_MCUs_converti,
+                     uint32_t *dimensions_MCUs,
+                     uint8_t largeur_MCU,
+                     uint8_t hauteur_MCU)
+{
+    uint32_t nb_MCUs_largeur = dimensions_MCUs[0];
+    uint32_t nb_MCUs_hauteur = dimensions_MCUs[1];
+
+    for (uint32_t hauteur = 0; hauteur < nb_MCUs_hauteur; hauteur++) {
+        for (uint32_t largeur = 0; largeur < nb_MCUs_largeur; largeur++) {
+            free_bloc_YCbCR(matrice_MCUs_converti[hauteur][largeur]->blocs_Y, largeur_MCU, hauteur_MCU);
+            free_bloc_YCbCR(matrice_MCUs_converti[hauteur][largeur]->blocs_Cb, largeur_MCU, hauteur_MCU);
+            free_bloc_YCbCR(matrice_MCUs_converti[hauteur][largeur]->blocs_Cr, largeur_MCU, hauteur_MCU);
+
+            free(matrice_MCUs_converti[hauteur][largeur]);
+        }
+        free(matrice_MCUs_converti[hauteur]);
+    }
+    free(matrice_MCUs_converti);
+}
+
+
+
+
 int main()
 {
-    FILE *fichier = ouvrir_fichier("../images/invader.pgm", "r");
+    FILE *fichier = ouvrir_fichier("images/invadered.ppm", "r");
 
     // On récupère l'en-tête (P5 ou P6)
     char en_tete[10];
@@ -205,14 +255,14 @@ int main()
 
     struct MCU ***MCUs = decoupage_MCUs(fichier, largeur_image, hauteur_image, nb_MCUs_largeur, nb_MCUs_hauteur, largeur_MCU, hauteur_MCU);
     MCUs = decoupage_MCUs_en_blocs(MCUs, nb_MCUs_largeur, nb_MCUs_hauteur, largeur_MCU, hauteur_MCU);
-
-
-    struct MCU ***MCU_a_convertir = MCUs;
-    struct MCU_YCbCr ***matrice_MCUs_converti = conversion_matrice_MCUs(MCU_a_convertir, nb_MCUs_largeur, nb_MCUs_hauteur);
+    struct MCU_YCbCr ***matrice_MCUs_converti = conversion_matrice_MCUs(MCUs, nb_MCUs_largeur, nb_MCUs_hauteur);
 
     print_MCUs(MCUs, dimensions_MCUs, largeur_MCU, hauteur_MCU);
     print_matrice_MCU_YCbCr(matrice_MCUs_converti, nb_MCUs_largeur, nb_MCUs_hauteur);
+
+    free_MCUs_YCbCr(matrice_MCUs_converti, dimensions_MCUs, largeur_MCU, hauteur_MCU);
     free_MCUs_dims(MCUs, dimensions_MCUs, largeur_MCU, hauteur_MCU);
+
     fermer_fichier(fichier);
     return 0;
 
