@@ -8,16 +8,6 @@
 #define COTE_BLOC 8
 
 
-/* Ouvre le fichier filename avec le mode d'accès mode. Retourne le FILE *
- * correspondant. */
-FILE *ouvrir_fichier(const char *filename,
-                     const char *mode);
-
-
-/* Ferme le fichier passé en paramètre. */
-void fermer_fichier(FILE *fichier);
-
-
 /*Défini un pixel en RGB*/
 struct Pixel_RGB {
   uint8_t R;
