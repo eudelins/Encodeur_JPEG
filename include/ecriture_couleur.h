@@ -50,7 +50,8 @@ void cree_image_couleur(struct MCU_zigzag_Y ***MCUs_zigzag,
                         uint32_t hauteur_MCUs,
                         uint32_t largeur_image, 
                         uint32_t hauteur_image,
-                        char *chemin);
+                        char *chemin,
+                        char *chemin_jpg);
 
 
 #endif /* ECRITURE_COULEUR_H */

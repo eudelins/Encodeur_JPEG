@@ -57,7 +57,8 @@ void cree_image(struct MCU_zigzag ***MCUs_zigzag,
                 uint32_t hauteur_MCUs,
                 uint32_t largeur_image, 
                 uint32_t hauteur_image,
-                char *chemin);
+                char *chemin,
+                char *chemin_jpg);
 
 
 
