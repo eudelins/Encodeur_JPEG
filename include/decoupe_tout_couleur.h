@@ -62,21 +62,16 @@ struct MCU_RGB ***decoupage_MCUs(FILE *fichier,
 
 
 /* Découpe une MCU en blocs pour une MCU de taille h1 x v1 */
-void decoupage_blocs(struct MCU_RGB *MCU,
-                     uint8_t h1,
-                     uint8_t v1);
-
+void decoupage_blocs(struct MCU_RGB *MCU);
 
 /* Découpe toutes les MCU en blocs de tailles h1 x v1 */
 struct MCU_RGB ***decoupage_MCUs_en_blocs(struct MCU_RGB ***MCUs,
                                       uint32_t nb_MCUs_largeur,
-                                      uint32_t nb_MCUs_hauteur,
-                                      uint8_t h1,
-                                      uint8_t v1);
+                                      uint32_t nb_MCUs_hauteur);
 
 
 /* Libère la mémoire allouée pour les pixels RGB d'une MCU (donc par la matrice de pixels) */
-void free_pixel_RGB(struct Pixel_RGB **pixels);
+void free_pixel_RGB(struct Pixel_RGB **pixels, uint8_t v1);
 
 
 /* Libère la mémoire allouée aux bloc */
