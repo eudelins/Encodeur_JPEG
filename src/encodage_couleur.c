@@ -204,187 +204,168 @@ void print_bloc(struct Bloc bloc)
 
 void print_MCU_Y(struct MCU_Y *MCU_Y)
 {
-  printf("Blocs Y \n");
-  print_bloc(MCU_Y->blocs_Y[0][0]);
-  printf("\n");
-  print_bloc(MCU_Y->blocs_Y[0][1]);
-  printf("\n");
-  print_bloc(MCU_Y->blocs_Y[1][0]);
-  printf("\n");
-  print_bloc(MCU_Y->blocs_Y[1][1]);
-  printf("Blocs Cb \n");
-  print_bloc(MCU_Y->blocs_Cb[0][0]);
-  printf("\n");
-  print_bloc(MCU_Y->blocs_Cb[1][0]);
-  printf("Blocs Cr \n");
-  print_bloc(MCU_Y->blocs_Cr[0][0]);
-  printf("\n");
-  print_bloc(MCU_Y->blocs_Cr[1][0]);
+    printf("Blocs Y \n");
+    print_bloc(MCU_Y->blocs_Y[0][0]);
+    printf("\n");
+    print_bloc(MCU_Y->blocs_Y[0][1]);
+    printf("\n");
+    print_bloc(MCU_Y->blocs_Y[1][0]);
+    printf("\n");
+    print_bloc(MCU_Y->blocs_Y[1][1]);
+    printf("Blocs Cb \n");
+    print_bloc(MCU_Y->blocs_Cb[0][0]);
+    printf("\n");
+    print_bloc(MCU_Y->blocs_Cb[1][0]);
+    printf("Blocs Cr \n");
+    print_bloc(MCU_Y->blocs_Cr[0][0]);
+    printf("\n");
+    print_bloc(MCU_Y->blocs_Cr[1][0]);
 }
 
 
 void main()
 {
-  struct MCU_Y *MCU_Y = malloc(sizeof(struct MCU_Y));
-  MCU_Y->hauteur = 1, MCU_Y->largeur = 2;
+    struct MCU_Y *MCU_Y = malloc(sizeof(struct MCU_Y));
+    MCU_Y->hauteur = 1, MCU_Y->largeur = 2;
 
-  uint8_t mat_Y_g [8][8] = {  {0xa6, 0xa0, 0x9a, 0x98, 0x9a, 0x9a, 0x96, 0x91},
-                              {0xa0, 0xa3, 0x9d, 0x8e, 0x88, 0x8f, 0x95, 0x94},
-                              {0xa5, 0x97, 0x96, 0xa1, 0x9f, 0x90, 0x90, 0x9e},
-                              {0xa6, 0x9a, 0x91, 0x91, 0x92, 0x90, 0x90, 0x93},
-                              {0xc9, 0xd9, 0xc8, 0x98, 0x85, 0x98, 0xa2, 0x95},
-                              {0xf0, 0xf5, 0xf9, 0xea, 0xbf, 0x98, 0x90, 0x9d},
-                              {0xe9, 0xe1, 0xf3, 0xfd, 0xf2, 0xaf, 0x8a, 0x90},
-                              {0xe6, 0xf2, 0xf1, 0xed, 0xf8, 0xfb, 0xd0, 0x95}};
+    uint8_t mat_Y_g [8][8] = {  {0xa6, 0xa0, 0x9a, 0x98, 0x9a, 0x9a, 0x96, 0x91},
+                                {0xa0, 0xa3, 0x9d, 0x8e, 0x88, 0x8f, 0x95, 0x94},
+                                {0xa5, 0x97, 0x96, 0xa1, 0x9f, 0x90, 0x90, 0x9e},
+                                {0xa6, 0x9a, 0x91, 0x91, 0x92, 0x90, 0x90, 0x93},
+                                {0xc9, 0xd9, 0xc8, 0x98, 0x85, 0x98, 0xa2, 0x95},
+                                {0xf0, 0xf5, 0xf9, 0xea, 0xbf, 0x98, 0x90, 0x9d},
+                                {0xe9, 0xe1, 0xf3, 0xfd, 0xf2, 0xaf, 0x8a, 0x90},
+                                {0xe6, 0xf2, 0xf1, 0xed, 0xf8, 0xfb, 0xd0, 0x95}};
 
-  uint8_t mat_Y_d [8][8] = { {0x9e, 0xa1, 0xa4, 0xa5, 0xa4, 0xa4, 0xa5, 0xa7},
-                                {0x9e, 0xa1, 0xa4, 0xa5, 0xa4, 0xa4, 0xa5, 0xa7},
-                                {0x9e, 0xa1, 0xa4, 0xa5, 0xa4, 0xa4, 0xa6, 0xa7},
-                                {0x9e, 0xa1, 0xa4, 0xa5, 0xa4, 0xa4, 0xa5, 0xa7},
-                                {0x9d, 0xa0, 0xa3, 0xa4, 0xa3, 0xa3, 0xa4, 0xa6},
-                                {0x9b, 0x9e, 0xa1, 0xa2, 0xa1, 0xa1, 0xa3, 0xa4},
-                                {0x99, 0x9c, 0x9f, 0xa0, 0x9f, 0x9f, 0xa1, 0xa2},
-                                {0x98, 0x9b, 0x9e, 0x9f, 0x9e, 0x9e, 0xa0, 0xa1}};
+    uint8_t mat_Y_d [8][8] = { {0x9e, 0xa1, 0xa4, 0xa5, 0xa4, 0xa4, 0xa5, 0xa7},
+                                  {0x9e, 0xa1, 0xa4, 0xa5, 0xa4, 0xa4, 0xa5, 0xa7},
+                                  {0x9e, 0xa1, 0xa4, 0xa5, 0xa4, 0xa4, 0xa6, 0xa7},
+                                  {0x9e, 0xa1, 0xa4, 0xa5, 0xa4, 0xa4, 0xa5, 0xa7},
+                                  {0x9d, 0xa0, 0xa3, 0xa4, 0xa3, 0xa3, 0xa4, 0xa6},
+                                  {0x9b, 0x9e, 0xa1, 0xa2, 0xa1, 0xa1, 0xa3, 0xa4},
+                                  {0x99, 0x9c, 0x9f, 0xa0, 0x9f, 0x9f, 0xa1, 0xa2},
+                                  {0x98, 0x9b, 0x9e, 0x9f, 0x9e, 0x9e, 0xa0, 0xa1}};
 
-  uint8_t mat_Cb_g [8][8] = { {0x75, 0x75, 0x75, 0x75, 0x76, 0x76, 0x77, 0x78},
-                                  {0x75, 0x75, 0x75, 0x75, 0x76, 0x76, 0x77, 0x77},
-                                  {0x75, 0x75, 0x76, 0x76, 0x76, 0x76, 0x77, 0x77},
-                                  {0x76, 0x76, 0x76, 0x76, 0x77, 0x77, 0x77, 0x77},
-                                  {0x76, 0x76, 0x77, 0x77, 0x77, 0x77, 0x78, 0x78},
-                                  {0x77, 0x78, 0x78, 0x77, 0x77, 0x77, 0x78, 0x78},
-                                  {0x77, 0x77, 0x77, 0x78, 0x78, 0x78, 0x78, 0x78},
-                                  {0x78, 0x78, 0x78, 0x78, 0x78, 0x78, 0x78, 0x78}};
+    uint8_t mat_Cb_g [8][8] = { {0x75, 0x75, 0x75, 0x75, 0x76, 0x76, 0x77, 0x78},
+                                    {0x75, 0x75, 0x75, 0x75, 0x76, 0x76, 0x77, 0x77},
+                                    {0x75, 0x75, 0x76, 0x76, 0x76, 0x76, 0x77, 0x77},
+                                    {0x76, 0x76, 0x76, 0x76, 0x77, 0x77, 0x77, 0x77},
+                                    {0x76, 0x76, 0x77, 0x77, 0x77, 0x77, 0x78, 0x78},
+                                    {0x77, 0x78, 0x78, 0x77, 0x77, 0x77, 0x78, 0x78},
+                                    {0x77, 0x77, 0x77, 0x78, 0x78, 0x78, 0x78, 0x78},
+                                    {0x78, 0x78, 0x78, 0x78, 0x78, 0x78, 0x78, 0x78}};
 
-  uint8_t mat_Cb_d [8][8] = { {0x78, 0x79, 0x7a, 0x7a, 0x7b, 0x7b, 0x7b, 0x7b},
-                                  {0x78, 0x79, 0x79, 0x7a, 0x7a, 0x7a, 0x7b, 0x7b},
-                                  {0x78, 0x78, 0x79, 0x79, 0x7a, 0x7a, 0x7a, 0x7a},
-                                  {0x78, 0x78, 0x79, 0x79, 0x7a, 0x7a, 0x7a, 0x7a},
-                                  {0x78, 0x78, 0x79, 0x79, 0x79, 0x79, 0x79, 0x79},
-                                  {0x78, 0x78, 0x78, 0x78, 0x79, 0x79, 0x79, 0x79},
-                                  {0x78, 0x78, 0x78, 0x78, 0x78, 0x78, 0x78, 0x78},
-                                  {0x78, 0x78, 0x78, 0x78, 0x78, 0x78, 0x78, 0x78}};
+    uint8_t mat_Cb_d [8][8] = { {0x78, 0x79, 0x7a, 0x7a, 0x7b, 0x7b, 0x7b, 0x7b},
+                                    {0x78, 0x79, 0x79, 0x7a, 0x7a, 0x7a, 0x7b, 0x7b},
+                                    {0x78, 0x78, 0x79, 0x79, 0x7a, 0x7a, 0x7a, 0x7a},
+                                    {0x78, 0x78, 0x79, 0x79, 0x7a, 0x7a, 0x7a, 0x7a},
+                                    {0x78, 0x78, 0x79, 0x79, 0x79, 0x79, 0x79, 0x79},
+                                    {0x78, 0x78, 0x78, 0x78, 0x79, 0x79, 0x79, 0x79},
+                                    {0x78, 0x78, 0x78, 0x78, 0x78, 0x78, 0x78, 0x78},
+                                    {0x78, 0x78, 0x78, 0x78, 0x78, 0x78, 0x78, 0x78}};
 
-  uint8_t mat_Cr_g [8][8] = { {0x8d, 0x8c, 0x89, 0x87, 0x85, 0x85, 0x86, 0x89},
-                                  {0x8d, 0x8c, 0x89, 0x87, 0x85, 0x85, 0x86, 0x88},
-                                  {0x8c, 0x8b, 0x89, 0x87, 0x85, 0x85, 0x85, 0x88},
-                                  {0x8c, 0x8b, 0x88, 0x86, 0x85, 0x85, 0x85, 0x88},
-                                  {0x8c, 0x8b, 0x88, 0x86, 0x84, 0x84, 0x85, 0x87},
-                                  {0x8b, 0x87, 0x84, 0x86, 0x84, 0x84, 0x84, 0x87},
-                                  {0x8b, 0x8a, 0x87, 0x81, 0x84, 0x84, 0x84, 0x87},
-                                  {0x8b, 0x89, 0x87, 0x85, 0x84, 0x83, 0x84, 0x87}};
+    uint8_t mat_Cr_g [8][8] = { {0x8d, 0x8c, 0x89, 0x87, 0x85, 0x85, 0x86, 0x89},
+                                    {0x8d, 0x8c, 0x89, 0x87, 0x85, 0x85, 0x86, 0x88},
+                                    {0x8c, 0x8b, 0x89, 0x87, 0x85, 0x85, 0x85, 0x88},
+                                    {0x8c, 0x8b, 0x88, 0x86, 0x85, 0x85, 0x85, 0x88},
+                                    {0x8c, 0x8b, 0x88, 0x86, 0x84, 0x84, 0x85, 0x87},
+                                    {0x8b, 0x87, 0x84, 0x86, 0x84, 0x84, 0x84, 0x87},
+                                    {0x8b, 0x8a, 0x87, 0x81, 0x84, 0x84, 0x84, 0x87},
+                                    {0x8b, 0x89, 0x87, 0x85, 0x84, 0x83, 0x84, 0x87}};
 
-  uint8_t mat_Cr_d [8][8] = { {0x8b, 0x8e, 0x8e, 0x8e, 0x8c, 0x8a, 0x87, 0x88},
-                                  {0x8b, 0x8d, 0x8e, 0x8e, 0x8c, 0x8a, 0x87, 0x87},
-                                  {0x8a, 0x8d, 0x8e, 0x8e, 0x8c, 0x8a, 0x87, 0x87},
-                                  {0x8a, 0x8d, 0x8d, 0x8d, 0x8c, 0x8a, 0x87, 0x86},
-                                  {0x8a, 0x8c, 0x8d, 0x8d, 0x8b, 0x89, 0x86, 0x85},
-                                  {0x89, 0x8c, 0x8d, 0x8d, 0x8b, 0x89, 0x86, 0x86},
-                                  {0x89, 0x8c, 0x8c, 0x8c, 0x8b, 0x89, 0x86, 0x86},
-                                  {0x89, 0x8c, 0x8c, 0x8c, 0x8b, 0x89, 0x86, 0x86}};
+    uint8_t mat_Cr_d [8][8] = { {0x8b, 0x8e, 0x8e, 0x8e, 0x8c, 0x8a, 0x87, 0x88},
+                                    {0x8b, 0x8d, 0x8e, 0x8e, 0x8c, 0x8a, 0x87, 0x87},
+                                    {0x8a, 0x8d, 0x8e, 0x8e, 0x8c, 0x8a, 0x87, 0x87},
+                                    {0x8a, 0x8d, 0x8d, 0x8d, 0x8c, 0x8a, 0x87, 0x86},
+                                    {0x8a, 0x8c, 0x8d, 0x8d, 0x8b, 0x89, 0x86, 0x85},
+                                    {0x89, 0x8c, 0x8d, 0x8d, 0x8b, 0x89, 0x86, 0x86},
+                                    {0x89, 0x8c, 0x8c, 0x8c, 0x8b, 0x89, 0x86, 0x86},
+                                    {0x89, 0x8c, 0x8c, 0x8c, 0x8b, 0x89, 0x86, 0x86}};
 
-  uint8_t **pixels_Y_g = malloc(8 * sizeof(uint8_t *));
-  uint8_t **pixels_Y_d = malloc(8 * sizeof(uint8_t *));
-  uint8_t **pixels_Cb_g = malloc(8 * sizeof(uint8_t *));
-  uint8_t **pixels_Cb_d = malloc(8 * sizeof(uint8_t *));
-  uint8_t **pixels_Cr_g = malloc(8 * sizeof(uint8_t *));
-  uint8_t **pixels_Cr_d = malloc(8 * sizeof(uint8_t *));
+    uint8_t **pixels_Y_g = malloc(8 * sizeof(uint8_t *));
+    uint8_t **pixels_Y_d = malloc(8 * sizeof(uint8_t *));
+    uint8_t **pixels_Cb_g = malloc(8 * sizeof(uint8_t *));
+    uint8_t **pixels_Cb_d = malloc(8 * sizeof(uint8_t *));
+    uint8_t **pixels_Cr_g = malloc(8 * sizeof(uint8_t *));
+    uint8_t **pixels_Cr_d = malloc(8 * sizeof(uint8_t *));
 
-  for (uint8_t i = 0; i < 8; i++){
-      uint8_t *ligne_pixels_Y_g = malloc(8 * sizeof(uint8_t));
-      uint8_t *ligne_pixels_Y_d = malloc(8 * sizeof(uint8_t));
-      uint8_t *ligne_pixels_Cb_g = malloc(8 * sizeof(uint8_t));
-      uint8_t *ligne_pixels_Cb_d = malloc(8 * sizeof(uint8_t));
-      uint8_t *ligne_pixels_Cr_g = malloc(8 * sizeof(uint8_t));
-      uint8_t *ligne_pixels_Cr_d = malloc(8 * sizeof(uint8_t));
-      for (uint8_t j = 0; j <8; j++){
-          ligne_pixels_Y_g[j] = mat_Y_g[i][j];
-          ligne_pixels_Y_d[j] = mat_Y_d[i][j];
-          ligne_pixels_Cb_g[j] = mat_Cb_g[i][j];
-          ligne_pixels_Cb_d[j] = mat_Cb_d[i][j];
-          ligne_pixels_Cr_g[j] = mat_Cr_g[i][j];
-          ligne_pixels_Cr_d[j] = mat_Cr_d[i][j];
-      }
-      pixels_Y_g[i] = ligne_pixels_Y_g;
-      pixels_Y_d[i] = ligne_pixels_Y_d;
-      pixels_Cb_g[i] = ligne_pixels_Cb_g;
-      pixels_Cb_d[i] = ligne_pixels_Cb_d;
-      pixels_Cr_g[i] = ligne_pixels_Cr_g;
-      pixels_Cr_d[i] = ligne_pixels_Cr_d;
-  }
+    for (uint8_t i = 0; i < 8; i++){
+        uint8_t *ligne_pixels_Y_g = malloc(8 * sizeof(uint8_t));
+        uint8_t *ligne_pixels_Y_d = malloc(8 * sizeof(uint8_t));
+        uint8_t *ligne_pixels_Cb_g = malloc(8 * sizeof(uint8_t));
+        uint8_t *ligne_pixels_Cb_d = malloc(8 * sizeof(uint8_t));
+        uint8_t *ligne_pixels_Cr_g = malloc(8 * sizeof(uint8_t));
+        uint8_t *ligne_pixels_Cr_d = malloc(8 * sizeof(uint8_t));
+        for (uint8_t j = 0; j <8; j++){
+            ligne_pixels_Y_g[j] = mat_Y_g[i][j];
+            ligne_pixels_Y_d[j] = mat_Y_d[i][j];
+            ligne_pixels_Cb_g[j] = mat_Cb_g[i][j];
+            ligne_pixels_Cb_d[j] = mat_Cb_d[i][j];
+            ligne_pixels_Cr_g[j] = mat_Cr_g[i][j];
+            ligne_pixels_Cr_d[j] = mat_Cr_d[i][j];
+        }
+        pixels_Y_g[i] = ligne_pixels_Y_g;
+        pixels_Y_d[i] = ligne_pixels_Y_d;
+        pixels_Cb_g[i] = ligne_pixels_Cb_g;
+        pixels_Cb_d[i] = ligne_pixels_Cb_d;
+        pixels_Cr_g[i] = ligne_pixels_Cr_g;
+        pixels_Cr_d[i] = ligne_pixels_Cr_d;
+    }
 
-  struct Bloc matrice_Y_g;
-  struct Bloc matrice_Y_d;
-  struct Bloc matrice_Cb_g;
-  struct Bloc matrice_Cb_d;
-  struct Bloc matrice_Cr_g;
-  struct Bloc matrice_Cr_d;
+    struct Bloc matrice_Y_g;
+    struct Bloc matrice_Y_d;
+    struct Bloc matrice_Cb_g;
+    struct Bloc matrice_Cb_d;
+    struct Bloc matrice_Cr_g;
+    struct Bloc matrice_Cr_d;
 
-  matrice_Y_g.pixels = pixels_Y_g;
-  matrice_Y_d.pixels = pixels_Y_d;
-  matrice_Cb_g.pixels = pixels_Cb_g;
-  matrice_Cb_d.pixels = pixels_Cb_d;
-  matrice_Cr_g.pixels = pixels_Cr_g;
-  matrice_Cr_d.pixels = pixels_Cr_d;
+    matrice_Y_g.pixels = pixels_Y_g;
+    matrice_Y_d.pixels = pixels_Y_d;
+    matrice_Cb_g.pixels = pixels_Cb_g;
+    matrice_Cb_d.pixels = pixels_Cb_d;
+    matrice_Cr_g.pixels = pixels_Cr_g;
+    matrice_Cr_d.pixels = pixels_Cr_d;
 
-  // struct Bloc **bloc_Y = malloc(sizeof(struct Bloc*));
-  // struct Bloc **bloc_Cb = malloc(sizeof(struct Bloc*));
-  // struct Bloc **bloc_Cr = malloc(sizeof(struct Bloc*));
-  //
-  // struct Bloc *ligne_bloc_Y = malloc(2 * sizeof(struct Bloc));
-  // struct Bloc *ligne_bloc_Cb = malloc(2 * sizeof(struct Bloc));
-  // struct Bloc *ligne_bloc_Cr = malloc(2 * sizeof(struct Bloc));
-  //
-  // ligne_bloc_Y[0] = matrice_Y_g;
-  // ligne_bloc_Y[1] = matrice_Y_d;
-  // ligne_bloc_Cb[0] = matrice_Cb_g;
-  // ligne_bloc_Cb[1] = matrice_Cb_d;
-  // ligne_bloc_Cr[0] = matrice_Cr_g;
-  // ligne_bloc_Cr[1] = matrice_Cr_d;
-  //
-  // bloc_Y[0] = ligne_bloc_Y;
-  // bloc_Cb[0] = ligne_bloc_Cb;
-  // bloc_Cr[0] = ligne_bloc_Cr;
+    struct Bloc **bloc_Y = malloc(2 * sizeof(struct Bloc*));
+    struct Bloc **bloc_Cb = malloc(2 * sizeof(struct Bloc*));
+    struct Bloc **bloc_Cr = malloc(2 * sizeof(struct Bloc*));
 
-  struct Bloc **bloc_Y = malloc(2 * sizeof(struct Bloc*));
-  struct Bloc **bloc_Cb = malloc(2 * sizeof(struct Bloc*));
-  struct Bloc **bloc_Cr = malloc(2 * sizeof(struct Bloc*));
+    struct Bloc *ligne_bloc_Y_1 = malloc(2 * sizeof(struct Bloc));
+    struct Bloc *ligne_bloc_Y_2 = malloc(2 * sizeof(struct Bloc));
+    struct Bloc *ligne_bloc_Cb_1 = malloc(2 * sizeof(struct Bloc));
+    struct Bloc *ligne_bloc_Cb_2 = malloc(2 * sizeof(struct Bloc));
+    struct Bloc *ligne_bloc_Cr_1 = malloc(2 * sizeof(struct Bloc));
+    struct Bloc *ligne_bloc_Cr_2 = malloc(2 * sizeof(struct Bloc));
 
-  struct Bloc *ligne_bloc_Y_1 = malloc(2 * sizeof(struct Bloc));
-  struct Bloc *ligne_bloc_Y_2 = malloc(2 * sizeof(struct Bloc));
-  struct Bloc *ligne_bloc_Cb_1 = malloc(2 * sizeof(struct Bloc));
-  struct Bloc *ligne_bloc_Cb_2 = malloc(2 * sizeof(struct Bloc));
-  struct Bloc *ligne_bloc_Cr_1 = malloc(2 * sizeof(struct Bloc));
-  struct Bloc *ligne_bloc_Cr_2 = malloc(2 * sizeof(struct Bloc));
+    ligne_bloc_Y_1[0] = matrice_Y_g;
+    ligne_bloc_Y_2[0] = matrice_Y_g;
+    ligne_bloc_Cb_1[0] = matrice_Cb_g;
+    ligne_bloc_Cb_2[0] = matrice_Cb_g;
+    ligne_bloc_Cr_1[0] = matrice_Cr_g;
+    ligne_bloc_Cr_2[0] = matrice_Cr_g;
 
-  ligne_bloc_Y_1[0] = matrice_Y_g;
-  ligne_bloc_Y_2[0] = matrice_Y_g;
-  ligne_bloc_Cb_1[0] = matrice_Cb_g;
-  ligne_bloc_Cb_2[0] = matrice_Cb_g;
-  ligne_bloc_Cr_1[0] = matrice_Cr_g;
-  ligne_bloc_Cr_2[0] = matrice_Cr_g;
+    ligne_bloc_Y_1[1] = matrice_Y_d;
+    ligne_bloc_Y_2[1] = matrice_Y_d;
+    ligne_bloc_Cb_1[1] = matrice_Cb_d;
+    ligne_bloc_Cb_2[1] = matrice_Cb_d;
+    ligne_bloc_Cr_1[1] = matrice_Cr_d;
+    ligne_bloc_Cr_2[1] = matrice_Cr_d;
 
-  ligne_bloc_Y_1[1] = matrice_Y_d;
-  ligne_bloc_Y_2[1] = matrice_Y_d;
-  ligne_bloc_Cb_1[1] = matrice_Cb_d;
-  ligne_bloc_Cb_2[1] = matrice_Cb_d;
-  ligne_bloc_Cr_1[1] = matrice_Cr_d;
-  ligne_bloc_Cr_2[1] = matrice_Cr_d;
+    bloc_Y[0] = ligne_bloc_Y_1;
+    bloc_Y[1] = ligne_bloc_Y_2;
+    bloc_Cb[0] = ligne_bloc_Cb_1;
+    bloc_Cb[1] = ligne_bloc_Cb_2;
+    bloc_Cr[0] = ligne_bloc_Cr_1;
+    bloc_Cr[1] = ligne_bloc_Cr_2;
 
-  bloc_Y[0] = ligne_bloc_Y_1;
-  bloc_Y[1] = ligne_bloc_Y_2;
-  bloc_Cb[0] = ligne_bloc_Cb_1;
-  bloc_Cb[1] = ligne_bloc_Cb_2;
-  bloc_Cr[0] = ligne_bloc_Cr_1;
-  bloc_Cr[1] = ligne_bloc_Cr_2;
+    MCU_Y->blocs_Y = bloc_Y;
+    MCU_Y->blocs_Cb = bloc_Cb;
+    MCU_Y->blocs_Cr = bloc_Cr;
 
-  MCU_Y->blocs_Y = bloc_Y;
-  MCU_Y->blocs_Cb = bloc_Cb;
-  MCU_Y->blocs_Cr = bloc_Cr;
+    // print_MCU_Y(MCU_Y);
 
-  // print_MCU_Y(MCU_Y);
+    struct MCU_Y *test = sous_echantillonage_horizontal(MCU_Y, 2, 2, 1, 2, 1, 2);
 
-  struct MCU_Y *test = sous_echantillonage_horizontal(MCU_Y, 2, 2, 1, 2, 1, 2);
-
-  print_MCU_Y(test);
+    print_MCU_Y(test);
 
 }
