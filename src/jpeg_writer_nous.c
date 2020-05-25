@@ -213,7 +213,7 @@ void ecrit_DQT(struct jpeg *jpg)
 
 
 /* Calcule x puissance y */
-uint32_t puissance(uint8_t x, uint8_t y)
+uint32_t puissance2(uint8_t x, uint8_t y)
 {
     uint16_t res = 1;
     for (uint8_t i = 0; i < y; i++){
