@@ -53,12 +53,12 @@ struct MCU_RGB ***decoupage_MCUs(FILE *fichier,
                              uint32_t hauteur_image,
                              uint32_t nb_MCUs_largeur,
                              uint32_t nb_MCUs_hauteur,
-                             uint32_t h1,
-                             uint32_t v1,
-                             uint32_t h2,
-                             uint32_t v2,
-                             uint32_t h3,
-                             uint32_t v3);
+                             uint8_t h1,
+                             uint8_t v1,
+                             uint8_t h2,
+                             uint8_t v2,
+                             uint8_t h3,
+                             uint8_t v3);
 
 
 /* Découpe une MCU en blocs pour une MCU de taille h1 x v1 */
