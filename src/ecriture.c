@@ -23,6 +23,17 @@ void print_binaire(uint32_t n, uint8_t nb_bits)
 }
 
 
+/* Calcule x puissance y */
+uint32_t puissance(uint8_t x, uint8_t y)
+{
+    uint16_t res = 1;
+    for (uint8_t i = 0; i < y; i++){
+        res = res * x;
+    }
+    return res;
+}
+
+
 /* Calcul la magnitude de pixel */
 uint8_t calcule_magnitude(int16_t pixel)
 {
@@ -207,7 +218,8 @@ void cree_image(struct MCU_zigzag ***MCUs_zigzag,
                 uint32_t hauteur_MCUs,
                 uint32_t largeur_image, 
                 uint32_t hauteur_image,
-                char *chemin)
+                char *chemin,
+                char *chemin_jpg)
 {
     // Création de la table de Huffman pour coder les magnitudes des DC
     uint8_t *nb_symb_per_lengths_DC = htables_nb_symb_per_lengths[DC][Y];
@@ -226,7 +238,7 @@ void cree_image(struct MCU_zigzag ***MCUs_zigzag,
 
     // On indique les paramètres de l'image
     jpeg_set_ppm_filename(image, chemin);
-    char *chemin_jpg = cree_chemin_jpg(chemin);
+    // char *chemin_jpg = cree_chemin_jpg(chemin);
     jpeg_set_jpeg_filename(image, chemin_jpg);
     jpeg_set_image_width(image, largeur_image);   
     jpeg_set_image_height(image, hauteur_image);
