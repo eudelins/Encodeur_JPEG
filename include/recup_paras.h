@@ -67,7 +67,7 @@ bool verif_conditions(uint32_t h1,
 
 
 /* Récupère les éléments de chaine à partir de indice_recup */
-char *recup_nom(char *chaine, uint8_t indice_recup)
+char *recup_nom(char *chaine, uint8_t indice_recup);
 
 
 #endif /* RECUP_PARAS_H */

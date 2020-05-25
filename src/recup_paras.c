@@ -5,17 +5,17 @@
 #include <stdbool.h>
 
 
-/* Ouvre le fichier filename avec le mode d'accès mode. Retourne le FILE *
- * correspondant. */
-FILE *ouvrir_fichier(const char *filename, const char *mode) {
-    FILE *fichier = fopen(filename, mode);
-}
+// /* Ouvre le fichier filename avec le mode d'accès mode. Retourne le FILE *
+//  * correspondant. */
+// FILE *ouvrir_fichier(const char *filename, const char *mode) {
+//     FILE *fichier = fopen(filename, mode);
+// }
 
 
-/* Ferme le fichier passé en paramètre. */
-void fermer_fichier(FILE *fichier) {
-     int ret = fclose(fichier);
-}
+// /* Ferme le fichier passé en paramètre. */
+// void fermer_fichier(FILE *fichier) {
+//      int ret = fclose(fichier);
+// }
 
 
 /* Prend un fichier ppm en argument et renvoie l'en-tête de ce fichier */
@@ -97,9 +97,8 @@ void affichage_help()
 /* Texte à afficher si on a une erreur d'argument */
 void affichage_erreur()
 {
-printf("\nUtilisez ./ppm2jpeg [--OPTION] [FICHIER]\n"
-        "ou \n"
-        "./ppm2jpeg --help pour ouvrir l'aide \n \n");
+    fprintf(stderr, "\nUtilisez ./ppm2jpeg [--OPTION] [FICHIER]\nou \n./ppm2jpeg --help pour ouvrir l'aide \n \n");
+}
 
 
 /* Récupère les paramètes optionnels
@@ -312,8 +311,9 @@ bool verif_conditions(uint32_t h1,
 /* Récupère les éléments de chaine à partir de indice_recup */
 char *recup_nom(char *chaine, uint8_t indice_recup)
 {
-    char *sortie;
-    for (uint8_t i = indice_recup, j = 0; i < strlen(chaine) + 1; i++, j++)
+    uint8_t taille = strlen(chaine);
+    char *sortie = malloc((taille - indice_recup + 1) * sizeof(char));
+    for (uint8_t i = indice_recup, j = 0; i < taille + 1; i++, j++)
     {
         sortie[j] = chaine[i];
     }

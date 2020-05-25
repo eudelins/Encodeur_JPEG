@@ -12,24 +12,24 @@
 /************************************************************/
 
 
-/* Défini un Bloc_YCbCr */
-struct Bloc_YCbCr {
-    int16_t **pixels;      // un Bloc_YCbCr = une matrice de pixels
-};
+// /* Défini un Bloc_YCbCr */
+// struct Bloc_YCbCr {
+//     int16_t **pixels;      // un Bloc_YCbCr = une matrice de pixels
+// };
 
 
-/* MCU après conversion en YCbCr */
-struct MCU_YCbCr{
-    uint8_t h1;
-    uint8_t v1;
-    uint8_t h2;
-    uint8_t v2;
-    uint8_t h3;
-    uint8_t v3;
-    struct Bloc_YCbCr **blocs_Y;
-    struct Bloc_YCbCr **blocs_Cb;
-    struct Bloc_YCbCr **blocs_Cr;
-};
+// /* MCU après conversion en YCbCr */
+// struct MCU_YCbCr{
+//     uint8_t h1;
+//     uint8_t v1;
+//     uint8_t h2;
+//     uint8_t v2;
+//     uint8_t h3;
+//     uint8_t v3;
+//     struct Bloc_YCbCr **blocs_Y;
+//     struct Bloc_YCbCr **blocs_Cb;
+//     struct Bloc_YCbCr **blocs_Cr;
+// };
 
 
 /* Défini un bloc après DCT */
@@ -77,11 +77,11 @@ void print_MCUs_freq_Y(struct MCU_freq_Y ***MCUs_freq, uint32_t nb_MCUs_largeur,
 
 
 /* Libère la mémoire alloué pour les pixels d'un bloc */
-void free_pixel(int16_t **pixels, uint32_t hauteur_pix);
+void free_pixel_Y(int16_t **pixels, uint32_t hauteur_pix);
 
 
 /* Libère la mémoire alloué pour les pixels d'un bloc fréquentielle */
-void free_pixel_freq(int16_t **pixels, uint32_t hauteur_pix);
+void free_pixel_freq_Y(int16_t **pixels, uint32_t hauteur_pix);
 
 
 /* Libère la mémoire allouée à une MCU fréquentielle */
@@ -165,7 +165,11 @@ void free_MCUs_zigzag_Y(struct MCU_zigzag_Y ***MCUs_zigzag, uint32_t nb_MCUs_lar
 /****************************************/
 
 /* Applique la quantification à un bloc */
-void quantification_bloc(struct Bloc_zigzag *Bloc_zigzag);
+void quantification_bloc_Y(struct Bloc_zigzag *Bloc_zigzag);
+
+
+/* Applique la quantification à un bloc */
+void quantification_bloc_CbCr(struct Bloc_zigzag *Bloc_zigzag);
 
 
 /* Applique la quantification à une MCU */
