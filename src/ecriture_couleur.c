@@ -135,8 +135,8 @@ void codage_MCU_couleur(struct MCU_zigzag_Y *MCU_zigzag,
                         struct bitstream *test_stream)
 {
     // Codage des blocs Y
-    for (uint8_t hauteur_Y = 0; hauteur_Y < MCU_zigzag->h1; hauteur_Y++) {
-        for (uint8_t largeur_Y = 0; largeur_Y < MCU_zigzag->v1; largeur_Y++){
+    for (uint8_t hauteur_Y = 0; hauteur_Y < MCU_zigzag->v1; hauteur_Y++) {
+        for (uint8_t largeur_Y = 0; largeur_Y < MCU_zigzag->h1; largeur_Y++){
             codage_DC_bloc(MCU_zigzag->blocs_Y_zigzag[hauteur_Y][largeur_Y],
                            table_huff_DC_Y,
                            DC_prec_Y,
@@ -148,8 +148,8 @@ void codage_MCU_couleur(struct MCU_zigzag_Y *MCU_zigzag,
     }
 
     // Quantification des blocs Cb
-    for (uint8_t hauteur_Cb = 0; hauteur_Cb < MCU_zigzag->h2; hauteur_Cb++) {
-        for (uint8_t largeur_Cb = 0; largeur_Cb < MCU_zigzag->v2; largeur_Cb++){
+    for (uint8_t hauteur_Cb = 0; hauteur_Cb < MCU_zigzag->v2; hauteur_Cb++) {
+        for (uint8_t largeur_Cb = 0; largeur_Cb < MCU_zigzag->h2; largeur_Cb++){
             codage_DC_bloc(MCU_zigzag->blocs_Cb_zigzag[hauteur_Cb][largeur_Cb],
                            table_huff_DC_Cb,
                            DC_prec_Cb,
@@ -161,8 +161,8 @@ void codage_MCU_couleur(struct MCU_zigzag_Y *MCU_zigzag,
     }
 
     // Quantification des blocs Cr
-    for (uint8_t hauteur_Cr = 0; hauteur_Cr < MCU_zigzag->h3; hauteur_Cr++) {
-        for (uint8_t largeur_Cr = 0; largeur_Cr < MCU_zigzag->v3; largeur_Cr++){
+    for (uint8_t hauteur_Cr = 0; hauteur_Cr < MCU_zigzag->v3; hauteur_Cr++) {
+        for (uint8_t largeur_Cr = 0; largeur_Cr < MCU_zigzag->h3; largeur_Cr++){
             codage_DC_bloc(MCU_zigzag->blocs_Cr_zigzag[hauteur_Cr][largeur_Cr],
                            table_huff_DC_Cr,
                            DC_prec_Cr,
@@ -230,12 +230,12 @@ void cree_image_couleur(struct MCU_zigzag_Y ***MCUs_zigzag,
     jpeg_set_image_width(image, largeur_image);   
     jpeg_set_image_height(image, hauteur_image);
     jpeg_set_nb_components(image, 1);
-    jpeg_set_sampling_factor(image, Y, H, 1);
-    jpeg_set_sampling_factor(image, Cb, H, 1);
-    jpeg_set_sampling_factor(image, Cr, H, 1);
-    jpeg_set_sampling_factor(image, Y, V, 1);
-    jpeg_set_sampling_factor(image, Cb, V, 1);
-    jpeg_set_sampling_factor(image, Cr, V, 1);
+    jpeg_set_sampling_factor(image, Y, H, MCUs_zigzag[0][0]->h1);
+    jpeg_set_sampling_factor(image, Cb, H, MCUs_zigzag[0][0]->h2);
+    jpeg_set_sampling_factor(image, Cr, H, MCUs_zigzag[0][0]->h3);
+    jpeg_set_sampling_factor(image, Y, V, MCUs_zigzag[0][0]->v1);
+    jpeg_set_sampling_factor(image, Cb, V, MCUs_zigzag[0][0]->v2);
+    jpeg_set_sampling_factor(image, Cr, V, MCUs_zigzag[0][0]->v3);
     jpeg_set_huffman_table(image, DC, Y, table_huff_DC_Y);
     jpeg_set_huffman_table(image, DC, Cb, table_huff_DC_Cb);
     jpeg_set_huffman_table(image, DC, Cr, table_huff_DC_Cr);
