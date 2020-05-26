@@ -2,7 +2,6 @@
 #define ENCODAGE_H
 
 #include <stdint.h>
-#include "decoupe_tout.h"
 
 
 /******************************/

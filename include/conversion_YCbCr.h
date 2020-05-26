@@ -1,5 +1,5 @@
-#ifndef CONVERSION_ELO_H
-#define CONVERSION_ELO_H
+#ifndef CONVERSION_YCbCr_H
+#define CONVERSION_YCbCr_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -90,4 +90,4 @@ void free_bloc_YCbCR(struct Bloc_YCbCr **blocs,
 void free_MCUs_YCbCr(struct MCU_YCbCr ***matrice_MCUs_converti,
                      uint32_t *dimensions_MCUs);
 
-#endif /* CONVERSION_ELO_H */
+#endif /* CONVERSION_YCbCr_H */

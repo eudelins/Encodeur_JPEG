@@ -1,5 +1,5 @@
-#ifndef DECOUPE_TOUT_COULEUR_H
-#define DECOUPE_TOUT_COULEUR_H
+#ifndef DECOUPE_COULEUR_H
+#define DECOUPE_COULEUR_H
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -101,4 +101,4 @@ void print_MCU_RGB(struct MCU_RGB *MCU);
 void print_MCUs_RGB(struct MCU_RGB ***MCUs,
                 uint32_t *dimensions_MCUs);
 
-#endif /* DECOUPE_TOUT_COULEUR_H */
+#endif /* DECOUPE_COULEUR_H */
