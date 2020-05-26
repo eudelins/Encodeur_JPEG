@@ -52,7 +52,7 @@ void free_bloc(struct Bloc_YCbCr bloc)
 }
 
 /* On affiche un tableau de blocs */
-void free_blocs(struct Bloc_YCbCr **blocs, uint8_t vi, uint8_t hi)
+void free_blocs(struct Bloc_YCbCr **blocs, uint8_t hi, uint8_t vi)
 {
   for (uint8_t hauteur = 0; hauteur < vi; hauteur++) {
     for (uint8_t largeur = 0; largeur < hi; largeur++) {
@@ -66,9 +66,9 @@ void free_blocs(struct Bloc_YCbCr **blocs, uint8_t vi, uint8_t hi)
 /* On affiche une MCU_YCbCr */
 void free_MCU(struct MCU_YCbCr *MCU_YCbCr)
 {
-  free_blocs(MCU_YCbCr->blocs_Y, MCU_YCbCr->v1, MCU_YCbCr->h1);
-  free_blocs(MCU_YCbCr->blocs_Cb, MCU_YCbCr->v2, MCU_YCbCr->h2);
-  free_blocs(MCU_YCbCr->blocs_Cr, MCU_YCbCr->v3, MCU_YCbCr->h3);
+  free_blocs(MCU_YCbCr->blocs_Y, MCU_YCbCr->h1, MCU_YCbCr->v1);
+  free_blocs(MCU_YCbCr->blocs_Cb, MCU_YCbCr->h2, MCU_YCbCr->v2);
+  free_blocs(MCU_YCbCr->blocs_Cr, MCU_YCbCr->h3, MCU_YCbCr->v3);
   free(MCU_YCbCr);
 }
 
@@ -108,7 +108,34 @@ int16_t moyenne_horizontale_Cb(struct MCU_YCbCr *MCU_YCbCr,
 {
   uint8_t div = MCU_YCbCr->h1/MCU_YCbCr->h2;
   int16_t somme = 0;
-  if (div > 1) {
+  if (div == 3) {
+    if (largeur_pix < 2) {
+      for (uint8_t pixel = 0; pixel < 3; pixel++) {
+        somme += MCU_YCbCr->blocs_Cb[hauteur][largeur_pix/3].pixels[hauteur_pix][largeur_pix * 3 + pixel];
+      }
+    }
+    else if (largeur_pix == 2) {
+      somme += MCU_YCbCr->blocs_Cb[hauteur][largeur_pix/3].pixels[hauteur_pix][6];
+      somme += MCU_YCbCr->blocs_Cb[hauteur][largeur_pix/3].pixels[hauteur_pix][7];
+      somme += MCU_YCbCr->blocs_Cb[hauteur][1].pixels[hauteur_pix][0];
+    }
+    else if (largeur_pix > 2 && largeur_pix < 5) {
+      for (uint8_t pixel = 0; pixel < 3; pixel++) {
+        somme += MCU_YCbCr->blocs_Cb[hauteur][largeur_pix/3].pixels[hauteur_pix][1 + (largeur_pix%3) * 3 + pixel];
+      }
+    }
+    else if (largeur_pix == 5) {
+      somme += MCU_YCbCr->blocs_Cb[hauteur][1].pixels[hauteur_pix][7];
+      somme += MCU_YCbCr->blocs_Cb[hauteur][2].pixels[hauteur_pix][0];
+      somme += MCU_YCbCr->blocs_Cb[hauteur][2].pixels[hauteur_pix][1];
+    }
+    else if (largeur_pix > 5) {
+      for (uint8_t pixel = 0; pixel < 3; pixel++) {
+        somme += MCU_YCbCr->blocs_Cb[hauteur][largeur_pix/3].pixels[hauteur_pix][2 + (largeur_pix%3) * 3 + pixel];
+      }
+    }
+  }
+  else if (div > 1) {
     for (uint8_t pixel = 0; pixel < div; pixel++) {
       int16_t pixel_a_ajouter = MCU_YCbCr->blocs_Cb[hauteur][largeur_pix * div / 8 + (largeur * div)].pixels[hauteur_pix][div * (largeur_pix % (8/div)) + pixel];
       somme += pixel_a_ajouter;
@@ -130,7 +157,34 @@ int16_t moyenne_horizontale_Cr(struct MCU_YCbCr *MCU_YCbCr,
 {
   uint8_t div = MCU_YCbCr->h1/MCU_YCbCr->h3;
   int16_t somme = 0;
-  if (div > 1) {
+  if (div == 3) {
+    if (largeur_pix < 2) {
+      for (uint8_t pixel = 0; pixel < 3; pixel++) {
+        somme += MCU_YCbCr->blocs_Cr[hauteur][largeur_pix/3].pixels[hauteur_pix][largeur_pix * 3 + pixel];
+      }
+    }
+    else if (largeur_pix == 2) {
+      somme += MCU_YCbCr->blocs_Cr[hauteur][largeur_pix/3].pixels[hauteur_pix][6];
+      somme += MCU_YCbCr->blocs_Cr[hauteur][largeur_pix/3].pixels[hauteur_pix][7];
+      somme += MCU_YCbCr->blocs_Cr[hauteur][1].pixels[hauteur_pix][0];
+    }
+    else if (largeur_pix > 2 && largeur_pix < 5) {
+      for (uint8_t pixel = 0; pixel < 3; pixel++) {
+        somme += MCU_YCbCr->blocs_Cr[hauteur][largeur_pix/3].pixels[hauteur_pix][1 + (largeur_pix%3) * 3 + pixel];
+      }
+    }
+    else if (largeur_pix == 5) {
+      somme += MCU_YCbCr->blocs_Cr[hauteur][1].pixels[hauteur_pix][7];
+      somme += MCU_YCbCr->blocs_Cr[hauteur][2].pixels[hauteur_pix][0];
+      somme += MCU_YCbCr->blocs_Cr[hauteur][2].pixels[hauteur_pix][1];
+    }
+    else if (largeur_pix > 5) {
+      for (uint8_t pixel = 0; pixel < 3; pixel++) {
+        somme += MCU_YCbCr->blocs_Cr[hauteur][largeur_pix/3].pixels[hauteur_pix][2 + (largeur_pix%3) * 3 + pixel];
+      }
+    }
+  }
+  else if (div > 1) {
     for (uint8_t pixel = 0; pixel < div; pixel++) {
       int16_t pixel_a_ajouter = MCU_YCbCr->blocs_Cr[hauteur][largeur_pix * div / 8 + (largeur * div)].pixels[hauteur_pix][div * (largeur_pix % (8/div)) + pixel];
       somme += pixel_a_ajouter;
@@ -152,7 +206,34 @@ int16_t moyenne_verticale_Cb(struct MCU_YCbCr *MCU_YCbCr,
 {
   uint8_t div = MCU_YCbCr->v1/MCU_YCbCr->v2;
   int16_t somme = 0;
-  if (div > 1) {
+  if (div == 3) {
+    if (hauteur_pix < 2) {
+      for (uint8_t pixel = 0; pixel < 3; pixel++) {
+        somme += MCU_YCbCr->blocs_Cb[hauteur_pix/3][largeur].pixels[hauteur_pix * 3 + pixel][largeur_pix];
+      }
+    }
+    else if (hauteur_pix == 2) {
+      somme += MCU_YCbCr->blocs_Cb[hauteur_pix/3][largeur].pixels[6][largeur_pix];
+      somme += MCU_YCbCr->blocs_Cb[hauteur_pix/3][largeur].pixels[7][largeur_pix];
+      somme += MCU_YCbCr->blocs_Cb[1][largeur].pixels[0][largeur_pix];
+    }
+    else if (hauteur_pix > 2 && hauteur_pix < 5) {
+      for (uint8_t pixel = 0; pixel < 3; pixel++) {
+        somme += MCU_YCbCr->blocs_Cb[hauteur_pix/3][largeur].pixels[1 + (hauteur_pix%3) * 3 + pixel][largeur_pix];
+      }
+    }
+    else if (hauteur_pix == 5) {
+      somme += MCU_YCbCr->blocs_Cb[1][largeur].pixels[7][largeur_pix];
+      somme += MCU_YCbCr->blocs_Cb[2][largeur].pixels[0][largeur_pix];
+      somme += MCU_YCbCr->blocs_Cb[2][largeur].pixels[1][largeur_pix];
+    }
+    else if (hauteur_pix > 5) {
+      for (uint8_t pixel = 0; pixel < 3; pixel++) {
+        somme += MCU_YCbCr->blocs_Cb[hauteur_pix/3][largeur].pixels[2 + (hauteur_pix%3) * 3 + pixel][largeur_pix];
+      }
+    }
+  }
+  else if (div > 1) {
     for (uint8_t pixel = 0; pixel < div; pixel++) {
       int16_t pixel_a_ajouter = MCU_YCbCr->blocs_Cb[hauteur_pix * div / 8 + (hauteur * div)][largeur].pixels[div * (hauteur_pix % (8/div)) + pixel][largeur_pix];
       somme += pixel_a_ajouter;
@@ -174,7 +255,34 @@ int16_t moyenne_verticale_Cr(struct MCU_YCbCr *MCU_YCbCr,
 {
   uint8_t div = MCU_YCbCr->v1/MCU_YCbCr->v3;
   int16_t somme = 0;
-  if (div > 1) {
+  if (div == 3) {
+    if (hauteur_pix < 2) {
+      for (uint8_t pixel = 0; pixel < 3; pixel++) {
+        somme += MCU_YCbCr->blocs_Cr[hauteur_pix/3][largeur].pixels[hauteur_pix * 3 + pixel][largeur_pix];
+      }
+    }
+    else if (hauteur_pix == 2) {
+      somme += MCU_YCbCr->blocs_Cr[hauteur_pix/3][largeur].pixels[6][largeur_pix];
+      somme += MCU_YCbCr->blocs_Cr[hauteur_pix/3][largeur].pixels[7][largeur_pix];
+      somme += MCU_YCbCr->blocs_Cr[1][largeur].pixels[0][largeur_pix];
+    }
+    else if (hauteur_pix > 2 && hauteur_pix < 5) {
+      for (uint8_t pixel = 0; pixel < 3; pixel++) {
+        somme += MCU_YCbCr->blocs_Cr[hauteur_pix/3][largeur].pixels[1 + (hauteur_pix%3) * 3 + pixel][largeur_pix];
+      }
+    }
+    else if (hauteur_pix == 5) {
+      somme += MCU_YCbCr->blocs_Cr[1][largeur].pixels[7][largeur_pix];
+      somme += MCU_YCbCr->blocs_Cr[2][largeur].pixels[0][largeur_pix];
+      somme += MCU_YCbCr->blocs_Cr[2][largeur].pixels[1][largeur_pix];
+    }
+    else if (hauteur_pix > 5) {
+      for (uint8_t pixel = 0; pixel < 3; pixel++) {
+        somme += MCU_YCbCr->blocs_Cr[hauteur_pix/3][largeur].pixels[2 + (hauteur_pix%3) * 3 + pixel][largeur_pix];
+      }
+    }
+  }
+  else if (div > 1) {
     for (uint8_t pixel = 0; pixel < div; pixel++) {
       int16_t pixel_a_ajouter = MCU_YCbCr->blocs_Cr[hauteur_pix * div / 8 + (hauteur * div)][largeur].pixels[div * (hauteur_pix % (8/div)) + pixel][largeur_pix];
       somme += pixel_a_ajouter;
@@ -378,6 +486,8 @@ struct MCU_YCbCr *sous_echantillonage(struct MCU_YCbCr *MCU_YCbCr)
     horizontal = sous_echantillonage_horizontal(MCU_YCbCr);
     if (MCU_YCbCr->v2 < MCU_YCbCr->v1 || MCU_YCbCr->v3 < MCU_YCbCr->v1) {
       vertical = sous_echantillonage_vertical(horizontal);
+      horizontal->v2 = horizontal->v1;
+      horizontal->v3 = horizontal->v1;
       free_MCU(horizontal);
       return vertical;
     }
@@ -461,54 +571,54 @@ void print_matrice_MCU_YCbCr_val(struct MCU_YCbCr ***MCUs_YCbCr_a_afficher,
 
 // int main()
 // {
-//    FILE *fichier = fopen("images/invaderedx4.ppm", "r");
-
+//    FILE *fichier = fopen("images/invaderedx16.ppm", "r");
+//
 //    // On récupère l'en-tête (P5 ou P6)
 //    char en_tete[10];
 //    fgets(en_tete, 10, fichier);
-
+//
 //    // On récupère les dimensions de l'image
 //    char dimensions[30];
 //    uint32_t largeur_image, hauteur_image;
 //    fgets(dimensions, 30, fichier);
 //    sscanf(dimensions, "%u %u", &largeur_image, &hauteur_image);
-
+//
 //    // On saute une ligne
 //    char couleurs_max[10];
 //    fgets(couleurs_max, 10, fichier);
-
+//
 //    // On calcule les dimensions des MCUs
-//    uint8_t h1 = 2;
-//    uint8_t v1 = 2;
-//    uint8_t h2 = 2;
+//    uint8_t h1 = 1;
+//    uint8_t v1 = 3;
+//    uint8_t h2 = 1;
 //    uint8_t v2 = 1;
 //    uint8_t h3 = 1;
-//    uint8_t v3 = 2;
-
+//    uint8_t v3 = 1;
+//
 //    uint32_t *dimensions_MCUs = calcul_dimensions_MCUs_RGB(largeur_image, hauteur_image, h1, v1);
 //    uint32_t nb_MCUs_hauteur, nb_MCUs_largeur;
 //    nb_MCUs_largeur = dimensions_MCUs[0];
 //    nb_MCUs_hauteur = dimensions_MCUs[1];
-
+//
 //    struct MCU_RGB ***MCUs = decoupage_MCUs(fichier, largeur_image, hauteur_image, nb_MCUs_largeur, nb_MCUs_hauteur, h1, v1, h2, v2, h3, v3);
-//    MCUs = decoupage_MCUs_en_blocs(MCUs, nb_MCUs_largeur, nb_MCUs_hauteur, h1, v1);
+//    MCUs = decoupage_MCUs_en_blocs(MCUs, nb_MCUs_largeur, nb_MCUs_hauteur);
 //    struct MCU_YCbCr ***matrice_MCUs_converti = conversion_matrice_MCUs(MCUs, nb_MCUs_largeur, nb_MCUs_hauteur);
-
+//
 //    struct MCU_YCbCr ***matrice_MCUs_sous_ech = sous_echantillone(matrice_MCUs_converti, nb_MCUs_largeur, nb_MCUs_hauteur);
-
-//    print_MCUs_RGB(MCUs, dimensions_MCUs);
-//    print_matrice_MCU_YCbCr(matrice_MCUs_converti, nb_MCUs_largeur, nb_MCUs_hauteur);
+//    //
+//    // print_MCUs_RGB(MCUs, dimensions_MCUs);
+//    // print_matrice_MCU_YCbCr(matrice_MCUs_converti, nb_MCUs_largeur, nb_MCUs_hauteur);
 //    print_matrice_MCU_YCbCr_val(matrice_MCUs_sous_ech, nb_MCUs_largeur, nb_MCUs_hauteur);
-
+//    //
 //    free_MCUs_YCbCr_val(matrice_MCUs_sous_ech, dimensions_MCUs);
-
+//
 //    free_MCUs_YCbCr(matrice_MCUs_converti, dimensions_MCUs);
 //    free_MCUs_dims_RGB(MCUs, dimensions_MCUs);
-
+//
 //    fclose(fichier);
 //    return 0;
 // }
-
+//
 
 
 // void main()
