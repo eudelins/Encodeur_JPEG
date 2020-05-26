@@ -6,13 +6,8 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#include "decoupe_tout.h"
-#include "encodage.h"
-#include "htables.h"
-#include "qtables.h"
-#include "huffman.h"
 #include "bitstream.h"
-#include "jpeg_writer.h"
+#include "huffman.h"
 
 
 /* Calcule x puissance y */

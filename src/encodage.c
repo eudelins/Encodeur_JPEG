@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <math.h>
 
-#include "../include/decoupe_tout.h"
+#include "../include/decoupe.h"
 #include "../include/qtables.h"
 
 #define M_PI 3.14159265358979323846

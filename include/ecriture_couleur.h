@@ -7,14 +7,9 @@
 #include <stdbool.h>
 #include <string.h>
 
-#include "../include/decoupe_tout_couleur.h"
-#include "../include/conversion_elo.h"
-#include "../include/simon_encodage.h"
-#include "../include/htables.h"
 #include "../include/huffman.h"
 #include "../include/bitstream.h"
-#include "../include/jpeg_writer.h"
-#include "../include/ecriture.h"
+#include "../include/encodage_couleur.h"
 
 
 /* Ecrit dans le bitstream les bits issus du codage DC d'un bloc */
