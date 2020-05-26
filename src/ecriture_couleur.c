@@ -4,10 +4,11 @@
 #include <stdbool.h>
 #include <string.h>
 
-#include "../include/decoupe_tout_couleur.h"
-#include "../include/conversion_elo.h"
-#include "../include/simon_encodage.h"
+#include "../include/decoupe_couleur.h"
+#include "../include/conversion_YCbCr.h"
+#include "../include/encodage_couleur.h"
 #include "../include/htables.h"
+#include "../include/qtables.h"
 #include "../include/huffman.h"
 #include "../include/bitstream.h"
 #include "../include/jpeg_writer.h"
@@ -344,3 +345,5 @@ void cree_image_couleur(struct MCU_zigzag_Y ***MCUs_zigzag,
 //     return 0;
 // }
 
+
+// test

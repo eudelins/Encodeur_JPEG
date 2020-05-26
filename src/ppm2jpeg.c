@@ -4,10 +4,10 @@
 #include <stdbool.h>
 #include <string.h>
 
-#include "../include/decoupe_tout.h"
-#include "../include/encodage_couleur.h"
-#include "../include/encodage.h"
 #include "../include/recup_paras.h"
+#include "../include/decoupe.h"
+#include "../include/encodage.h"
+#include "../include/sous_echantillonnage.h"
 #include "../include/ecriture.h"
 #include "../include/ecriture_couleur.h"
 
@@ -132,7 +132,7 @@ void ppm2jpeg_couleur_sous_echantillonage(FILE *fichier,
 }
 
 
-int main(uint8_t argc, char **argv)
+int main(int argc, char **argv)
 {
 
     char *parametres = paras_optionnels(argc, argv);
@@ -192,29 +192,80 @@ int main(uint8_t argc, char **argv)
         uint32_t *param = paras(fichier);
         uint32_t h1, v1, h2, v2, h3, v3;
         sscanf(argv[1], "--sample=%ux%u,%ux%u,%ux%u", &h1, &v1, &h2, &v2, &h3, &v3);
-        char *chemin_jpg = cree_chemin_jpg(argv[1]);
+        
+        bool conditions = verif_conditions(h1, v1, h2, v2, h3, v3);
+        if (conditions == false) {
+            fprintf(stderr, "\nVérifiez les valeurs entrées pour h1, v1, h2, v2, h3 et v3 : elles ne respectent pas les conditions requises\n\n");
+            return EXIT_FAILURE;
+        }
+
+        char *chemin_jpg = cree_chemin_jpg(argv[2]);
         if (param[0] == 5){
-            ppm2jpeg_niveau_de_gris(fichier, argv[1], chemin_jpg, param);
+            ppm2jpeg_niveau_de_gris(fichier, argv[2], chemin_jpg, param);
         } else {
-            ppm2jpeg_couleur_sous_echantillonage(fichier, argv[1], chemin_jpg, param, h1, v1, h2, v2, h3, v3);
+            ppm2jpeg_couleur_sous_echantillonage(fichier, argv[2], chemin_jpg, param, h1, v1, h2, v2, h3, v3);
         }
     }
     
-    // else if (parametres[0] == 'd') {
-    //     char *chemin = chemin_fichier(argv[3]);
-    //     FILE *fichier = ouvrir_fichier(chemin, "r");
-    //     if (fichier == NULL) {
-    //         printf("Fichier non connu/Chemin non connu\n");
-    //     }
-    //     else {
-    //         uint32_t *param;
-    //         param = paras(fichier);
-    //         printf("%u, %u, %u, %u\n", param[0], param[1], param[2], param[3]);
-    //         free(param);
-    //         fermer_fichier(fichier);
-    //     }
-    //         free(chemin);
-    // }
+    // Cas où outfile puis sample
+    else if (parametres[0] == 'b') {
+       FILE *fichier = ouvrir_fichier(argv[3], "r");
+        // Si on ne connait pas le fichier    
+        if (fichier == NULL) {
+            printf("Fichier \"%s\" non connu\n", argv[3]);
+            affichage_erreur();
+            return EXIT_FAILURE;
+        }
+
+        uint32_t *param = paras(fichier);
+        uint32_t h1, v1, h2, v2, h3, v3;
+        sscanf(argv[2], "--sample=%ux%u,%ux%u,%ux%u", &h1, &v1, &h2, &v2, &h3, &v3);
+        bool conditions = verif_conditions(h1, v1, h2, v2, h3, v3);
+        if (conditions == false) {
+            fprintf(stderr, "\nVérifiez les valeurs entrées pour h1, v1, h2, v2, h3 et v3 : elles ne respectent pas les conditions requises\n\n");
+            return EXIT_FAILURE;
+        }
+
+        char *chemin_jpg = recup_nom(argv[1], 10);
+        if (param[0] == 5){
+            ppm2jpeg_niveau_de_gris(fichier, argv[3], chemin_jpg, param);
+        } else {
+            ppm2jpeg_couleur_sous_echantillonage(fichier, argv[3], chemin_jpg, param, h1, v1, h2, v2, h3, v3);
+        }
+
+        free(param);
+        fermer_fichier(fichier);
+    }
+
+    // Cas où sample puis outfile
+    else if (parametres[0] == 'q') {
+        FILE *fichier = ouvrir_fichier(argv[3], "r");
+        // Si on ne connait pas le fichier    
+        if (fichier == NULL) {
+            printf("Fichier \"%s\" non connu\n", argv[3]);
+            affichage_erreur();
+            return EXIT_FAILURE;
+        }
+
+        uint32_t *param = paras(fichier);
+        uint32_t h1, v1, h2, v2, h3, v3;
+        sscanf(argv[1], "--sample=%ux%u,%ux%u,%ux%u", &h1, &v1, &h2, &v2, &h3, &v3);
+        bool conditions = verif_conditions(h1, v1, h2, v2, h3, v3);
+        if (conditions == false) {
+            fprintf(stderr, "\nVérifiez les valeurs entrées pour h1, v1, h2, v2, h3 et v3 : elles ne respectent pas les conditions requises\n\n");
+            return EXIT_FAILURE;
+        }
+
+        char *chemin_jpg = recup_nom(argv[2], 10);
+        if (param[0] == 5){
+            ppm2jpeg_niveau_de_gris(fichier, argv[3], chemin_jpg, param);
+        } else {
+            ppm2jpeg_couleur_sous_echantillonage(fichier, argv[3], chemin_jpg, param, h1, v1, h2, v2, h3, v3);
+        }
+
+        free(param);
+        fermer_fichier(fichier);
+    }
     
     else if (parametres[0] == 'e') {
       affichage_erreur();

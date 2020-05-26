@@ -4,7 +4,7 @@
 #include <stdbool.h>
 #include <string.h>
 
-#include "../include/decoupe_tout.h"
+#include "../include/decoupe.h"
 #include "../include/encodage.h"
 #include "../include/htables.h"
 #include "../include/qtables.h"
@@ -358,3 +358,5 @@ void cree_image(struct MCU_zigzag ***MCUs_zigzag,
 //     bitstream_flush(test_stream);
 //     return test_stream;
 // }
+
+// test

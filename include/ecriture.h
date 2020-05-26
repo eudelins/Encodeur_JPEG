@@ -8,6 +8,8 @@
 
 #include "bitstream.h"
 #include "huffman.h"
+#include "htables.h"
+#include "encodage.h"
 
 
 /* Calcule x puissance y */
