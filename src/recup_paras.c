@@ -5,6 +5,11 @@
 #include <stdbool.h>
 
 
+/*********************************************************************************/
+/* Module de récupération de l'en-tête d'un fichier et des paramètres optionnels */
+/*********************************************************************************/
+
+
 /* Prend un fichier ppm en argument et renvoie l'en-tête de ce fichier */
 uint32_t *paras(FILE *fichier) {
 
