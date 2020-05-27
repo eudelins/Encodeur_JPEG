@@ -8,40 +8,10 @@
 #include "../include/htables.h"
 #include "../include/huffman.h"
 
+
 /********************/
 /* Types de données */
 /********************/
-
-
-// /* Type énuméré représentant les composantes de couleur YCbCr. */
-// enum color_component
-// {
-//     Y,
-//     Cb,
-//     Cr,
-//     NB_COLOR_COMPONENTS
-// };
-
-// /*
-//     Type énuméré représentant les types de composantes fréquentielles (DC ou AC).
-// */
-// enum sample_type
-// {
-//     DC,
-//     AC,
-//     NB_SAMPLE_TYPES
-// };
-
-// /*
-//     Type énuméré représentant la direction des facteurs d'échantillonnage (H
-//     pour horizontal, V pour vertical).
-// */
-// enum direction
-// {
-//     H,
-//     V,
-//     NB_DIRECTIONS
-// };
 
 
 /* Type opaque représentant un arbre de Huffman. */
@@ -84,16 +54,6 @@ uint8_t **malloc_sampling(void)
 }
 
 
-/* Libère la mémoire allouée au sampling_factor */
-void free_sampling(uint8_t **sampling_factor)
-{
-    for (uint8_t i = 0; i < 3; i++){
-        free(sampling_factor[i]);
-    }
-    free(sampling_factor);
-}
-
-
 /* Alloue la mémoire nécessaire aux tables de huffman */
 struct huff_table ***malloc_huff_tables(void)
 {
@@ -103,6 +63,16 @@ struct huff_table ***malloc_huff_tables(void)
         tables[acdc] = tables_acdc;
     }
     return tables;
+}
+
+
+/* Libère la mémoire allouée au sampling_factor */
+void free_sampling(uint8_t **sampling_factor)
+{
+    for (uint8_t i = 0; i < 3; i++){
+        free(sampling_factor[i]);
+    }
+    free(sampling_factor);
 }
 
 
@@ -121,9 +91,6 @@ void free_huff_tables(struct jpeg *jpg)
 }
 
 
-
-// A COMPLETER
-
 /* Alloue et retourne une nouvelle structure jpeg */
 extern struct jpeg *jpeg_create(void)
 {
@@ -134,8 +101,6 @@ extern struct jpeg *jpeg_create(void)
     return new_jpeg; 
 }
 
-
-// A COMPLETER
 
 /* Détruit une structure jpeg */
 extern void jpeg_destroy(struct jpeg *jpg)
@@ -153,8 +118,9 @@ extern void jpeg_destroy(struct jpeg *jpg)
 /* Ecrit le footer JPEG (marqueur EOI) dans le fichier de sortie. */
 extern void jpeg_write_footer(struct jpeg *jpg)
 {
-    // End of Image
+    // On force l'écriture des bits en attente dans le buffer
     bitstream_flush(jpg->donnees);
+    // End of Image
     bitstream_write_bits(jpg->donnees, 0xffd9, 16, true);  
 }
 
@@ -180,12 +146,21 @@ void ecrit_APPx(struct bitstream *donnees)
 void ecrit_com(struct bitstream *donnees)
 {
     bitstream_write_bits(donnees, 0xfffe, 16, true);  // En-tête section
-    bitstream_write_bits(donnees, 0x0007, 16, true);  // Longueur section
-    bitstream_write_bits(donnees, 'T', 8, true);
+    bitstream_write_bits(donnees, 0x0010, 16, true);  // Longueur section
+    bitstream_write_bits(donnees, 'E', 8, true);
+    bitstream_write_bits(donnees, 'Z', 8, true);
+    bitstream_write_bits(donnees, ' ', 8, true);
+    bitstream_write_bits(donnees, 'l', 8, true);
     bitstream_write_bits(donnees, 'e', 8, true);
-    bitstream_write_bits(donnees, 's', 8, true);
+    bitstream_write_bits(donnees, ' ', 8, true);
+    bitstream_write_bits(donnees, 'p', 8, true);
+    bitstream_write_bits(donnees, 'r', 8, true);
+    bitstream_write_bits(donnees, 'o', 8, true);
+    bitstream_write_bits(donnees, 'j', 8, true);
+    bitstream_write_bits(donnees, 'e', 8, true);
     bitstream_write_bits(donnees, 't', 8, true);
-    bitstream_write_bits(donnees, '\0', 8, true);
+    bitstream_write_bits(donnees, ' ', 8, true);
+    bitstream_write_bits(donnees, 'C', 8, true);
 }
 
 
@@ -209,17 +184,6 @@ void ecrit_DQT(struct jpeg *jpg)
             bitstream_write_bits(jpg->donnees, jpg->quantification_table[Cb][i], 8, true);
         }
     } 
-}
-
-
-/* Calcule x puissance y */
-uint32_t puissance2(uint8_t x, uint8_t y)
-{
-    uint16_t res = 1;
-    for (uint8_t i = 0; i < y; i++){
-        res = res * x;
-    }
-    return res;
 }
 
 
@@ -539,8 +503,6 @@ extern uint8_t *jpeg_get_quantization_table(struct jpeg *jpg,
 {
     return jpg->quantification_table[cc];
 }
-
-
 
 
 // int main(void)
