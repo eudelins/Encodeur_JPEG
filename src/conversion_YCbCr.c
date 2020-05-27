@@ -121,6 +121,7 @@ struct MCU_YCbCr ***conversion_matrice_MCUs(struct MCU_RGB ***MCU_a_convertir,
     struct MCU_YCbCr ***matrice_MCUs_converti = malloc(nb_MCUs_hauteur * sizeof(struct MCU_YCbCr**));
     for (uint32_t hauteur = 0; hauteur < nb_MCUs_hauteur; hauteur++) {
         struct MCU_YCbCr **ligne_MCUs_converti = malloc(nb_MCUs_largeur * sizeof(struct MCU_YCbCr*));
+
         for (uint32_t largeur = 0; largeur < nb_MCUs_largeur; largeur++) {
             ligne_MCUs_converti[largeur] = conversion_MCU(MCU_a_convertir[hauteur][largeur]);
         }
@@ -134,6 +135,7 @@ struct MCU_YCbCr ***conversion_matrice_MCUs(struct MCU_RGB ***MCU_a_convertir,
 void print_bloc_entiers(struct Bloc_YCbCr *bloc_a_afficher)
 {
     for (uint8_t hauteur = 0; hauteur < COTE_BLOC; hauteur++) {
+        
         for (uint8_t largeur = 0; largeur < COTE_BLOC; largeur++) {
             printf("%x ", bloc_a_afficher->pixels[hauteur][largeur]);
         }
@@ -148,6 +150,7 @@ void print_MCU_YCbCr(struct MCU_YCbCr *MCU_YCbCr_a_afficher)
     uint8_t h1 = MCU_YCbCr_a_afficher->h1;
     uint8_t v1 = MCU_YCbCr_a_afficher->v1;
     for (uint8_t hauteur = 0; hauteur < v1; hauteur++) {
+        
         for (uint8_t largeur = 0; largeur < h1; largeur++) {
             printf("Bloc Y n°%u\n", largeur + hauteur);
             print_bloc_entiers(&MCU_YCbCr_a_afficher->blocs_Y[hauteur][largeur]);
@@ -169,6 +172,7 @@ void print_matrice_MCU_YCbCr(struct MCU_YCbCr ***MCUs_YCbCr_a_afficher,
                              uint32_t nb_MCUs_hauteur)
 {
     for (uint32_t hauteur = 0; hauteur < nb_MCUs_hauteur; hauteur++) {
+        
         for (uint32_t largeur = 0; largeur < nb_MCUs_largeur; largeur++) {
             printf("MCU n°%u\n\n", largeur + hauteur);
             print_MCU_YCbCr(MCUs_YCbCr_a_afficher[hauteur][largeur]);
@@ -194,6 +198,7 @@ void free_bloc_YCbCR(struct Bloc_YCbCr **blocs,
                      uint8_t v)
 {
     for (uint8_t hauteur = 0; hauteur < v; hauteur++) {
+        
         for (uint8_t largeur = 0; largeur < h; largeur++) {
                 free_pixels_YCbCr(blocs[hauteur][largeur].pixels);
         }
@@ -211,6 +216,7 @@ void free_MCUs_YCbCr(struct MCU_YCbCr ***matrice_MCUs_converti,
     uint32_t nb_MCUs_hauteur = dimensions_MCUs[1];
 
     for (uint32_t hauteur = 0; hauteur < nb_MCUs_hauteur; hauteur++) {
+        
         for (uint32_t largeur = 0; largeur < nb_MCUs_largeur; largeur++) {
             uint8_t h1 = matrice_MCUs_converti[hauteur][largeur]->h1;
             uint8_t v1 = matrice_MCUs_converti[hauteur][largeur]->v1;
