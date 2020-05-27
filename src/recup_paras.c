@@ -5,19 +5,6 @@
 #include <stdbool.h>
 
 
-// /* Ouvre le fichier filename avec le mode d'accès mode. Retourne le FILE *
-//  * correspondant. */
-// FILE *ouvrir_fichier(const char *filename, const char *mode) {
-//     FILE *fichier = fopen(filename, mode);
-// }
-
-
-// /* Ferme le fichier passé en paramètre. */
-// void fermer_fichier(FILE *fichier) {
-//      int ret = fclose(fichier);
-// }
-
-
 /* Prend un fichier ppm en argument et renvoie l'en-tête de ce fichier */
 uint32_t *paras(FILE *fichier) {
 
@@ -44,14 +31,12 @@ uint32_t *paras(FILE *fichier) {
     en_tete[1] = largeur;
     en_tete[2] = hauteur;
 
-    /* On récupère le nombre de valeurs d'une composante
-     * Pour faire face à un problème qui survient dans certains fichiers,
-     * on se sert de la fonction strpbrk qui renvoie un pointeur vers la première
-     * occurence d'une certaine chaîne de caractères
-     * Ici, ce qui peut nous embêter c'est un saut de ligne "en trop" c'est-à-dire
-     * en tout début de ligne
-     * On regarde donc si ce pointeur est le même que notre pointeur vers
-     * le premier caractère. Si c'est le cas, on reécupère la ligne d'après */
+    // On récupère le nombre de valeurs d'une composante
+    // Pour faire face à un problème qui survient dans certains fichiers
+    // (un saut de ligne "en trop" en tout début de ligne),
+    // on se sert de la fonction strpbrk (qui renvoie un pointeur vers la première occurence de la chaîne de caractère)
+    // On regarde donc si ce pointeur est le même que notre pointeur vers le premier caractère.
+    // Si c'est le cas, on récupère la ligne d'après
     fgets(nb_vals, 10, fichier);
     chaine_trouvee = strpbrk(nb_vals, "\n");
     if (chaine_trouvee == nb_vals) {
@@ -65,7 +50,7 @@ uint32_t *paras(FILE *fichier) {
    }
 
 
-/* Récupère le nom de l'image à encoder en ligne de commande et renvoie le chemin d'accès en chaine de caractères */
+/* Récupère le nom de l'image à encoder en ligne de commande et renvoie le chemin d'accès en chaine de caractères depuis /src */
 char *chemin_fichier(char *nom_fichier) {
     if (nom_fichier == NULL) {
         char *chemin = malloc(14 * sizeof(char));
@@ -81,7 +66,7 @@ char *chemin_fichier(char *nom_fichier) {
 }
 
 
-/* Texte à afficher si on a un --help en argument */
+/* Texte à afficher si on a un --help en paramètres */
 void affichage_help()
 {
     printf("\nUtilisation : ./ppm2jpeg [IMAGE] [--OPTION] \n"
@@ -94,29 +79,28 @@ void affichage_help()
 }
 
 
-/* Texte à afficher si on a une erreur d'argument */
+/* Texte à afficher si on a une erreur de paramètres */
 void affichage_erreur()
 {
     fprintf(stderr, "\nUtilisez ./ppm2jpeg [--OPTION] [FICHIER]\nou \n./ppm2jpeg --help pour ouvrir l'aide \n \n");
 }
 
 
-/* Récupère les paramètes optionnels
- * Renvoie "h" si help, "o" si outfile, "s" si sample, "e" si erreur, "b" si outfile puis sample, "q" si sample puis outfile */
+/* Récupère les paramètres optionnels
+ * Renvoie "r" si rien, "h" si help, "o" si outfile, "s" si sample, "e" si erreur, "b" si outfile puis sample, "q" si sample puis outfile */
 char *paras_optionnels(uint8_t argc, char **argv) {
 
     char *paras = malloc(sizeof(char));
 
-    // on vérifie qu'on a bien des paras optionnels
+    // on vérifie qu'on a bien des paramètres optionnels
     if (argc <= 1) {
         // "r" => rien
         paras[0] = 'r';
         return paras;
     }
 
-    // si on a que 2 arguemnts : 2 choix possibles :
-    // on peut avoir --help
-    // on peut avoir le nom du fichier à encoder
+    // si on a que 2 arguments c'est qu'on a :
+    // soit --help, soit le nom du fichier (qui peut être juste ou faux -> traité plus tard)
     else if (argc == 2) {
         char *chaine_help = "--help";
         if (strcmp(argv[1], chaine_help) == 0) {
@@ -130,7 +114,7 @@ char *paras_optionnels(uint8_t argc, char **argv) {
         }
     }
 
-    // on regarde quels paras on a
+    // on regarde quels paramètres on a
     bool outfile = false;
     uint8_t indice_outfile;
     bool sample = false;
@@ -153,26 +137,27 @@ char *paras_optionnels(uint8_t argc, char **argv) {
             indice_outfile = i;
             longueur += 1;
         }
+        // si on a un argument non connu ou le nom du fichier 
         else {
             longueur += 1;
         }
     }
 
     if ((longueur >= 4) || (longueur == 1)) {
-        // "e" => erreur
+        // "e" => erreur (ici trop ou pas assez de paramètres)
         paras[0] = 'e';
-        return paras;
     }
     else if (longueur == 2) {
         if (outfile == true) {
            // "o" => outfile
            paras[0] = 'o';
-           return paras;
         }
-        if (sample == true) {
+        else if(sample == true) {
             // "s" => sample
             paras[0] = 's';
-            return paras;
+        }
+        else {
+            // "e" => erreur (ici mauvais argument)
         }
     }
     else if (longueur == 3) {
@@ -186,26 +171,23 @@ char *paras_optionnels(uint8_t argc, char **argv) {
                 // "q" => deux sample => on a outfile ET sample avec sample en premier
                 paras[0] = 'q';
             }
-            return paras;
         }
         else {
-            // "e" => erreur (ici 2 fois le même argument)
+            // "e" => erreur (ici 2 fois le même argument ou 2 arguments faux
             paras[0] = 'e';
-            return paras;
         }
     }
+    return paras;
 }
 
 
-
-/* Vérifie que la valeur de chaque facteur h ou v être comprise entre 1 et 4 : renvoie true si ok, false sinon
- * Fonction à utiliser avant somme_produits_valeurs et diviser_valeurs car on vérifie ici que les valeur h et v sont bien des uint8_t */
-bool encadrement_valeurs(uint32_t h1,
-                         uint32_t v1,
-                         uint32_t h2,
-                         uint32_t v2,
-                         uint32_t h3,
-                         uint32_t v3)
+/* Vérifie que la valeur de chaque facteur hi ou vi est comprise entre 1 et 4 : renvoie true si ok, false sinon */
+bool encadrement_valeurs(uint8_t h1,
+                         uint8_t v1,
+                         uint8_t h2,
+                         uint8_t v2,
+                         uint8_t h3,
+                         uint8_t v3)
 {
     bool encadrement = true;
 
@@ -232,7 +214,7 @@ bool encadrement_valeurs(uint32_t h1,
 }
 
 
-/* Vérifie que la somme des produits hi x vi est inférieure à 10 : renvoie true si ok, false sinon */
+/* Vérifie que la somme des produits hi x vi est inférieure ou égale à 10 : renvoie true si ok, false sinon */
 bool somme_produits_valeurs(uint8_t h1,
                             uint8_t v1,
                             uint8_t h2,
@@ -271,13 +253,13 @@ bool diviser_valeurs(uint8_t h1,
 }
 
 
-/* Vérifie que toutes les conditions sur h et v sont vérifiées : renvoie true si ok, false sinon */
-bool verif_conditions(uint32_t h1,
-                      uint32_t v1,
-                      uint32_t h2,
-                      uint32_t v2,
-                      uint32_t h3,
-                      uint32_t v3)
+/* Vérifie que toutes les conditions sur hi et vi sont vérifiées : renvoie true si ok, false sinon */
+bool verif_conditions(uint8_t h1,
+                      uint8_t v1,
+                      uint8_t h2,
+                      uint8_t v2,
+                      uint8_t h3,
+                      uint8_t v3)
 {
     bool conditions = true;
 
@@ -308,7 +290,7 @@ bool verif_conditions(uint32_t h1,
 }
 
 
-/* Récupère les éléments de chaine à partir de indice_recup */
+/* Récupère les éléments de chaine à partir de indice_recup et les renvoie dans sortie */
 char *recup_nom(char *chaine, uint8_t indice_recup)
 {
     uint8_t taille = strlen(chaine);
@@ -320,7 +302,7 @@ char *recup_nom(char *chaine, uint8_t indice_recup)
     return sortie;
 }
 
-
+//main qui a permis de tester les fonctions
 //int main(uint16_t argc, char **argv) {
 //
 //    char *parametres = paras_optionnels(argc, argv);
