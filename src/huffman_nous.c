@@ -7,7 +7,7 @@
 #include "../include/htables.h"
 
 
-/* Type opaque représentant un arbre de Huffman. */
+/* Type représentant un arbre de Huffman. */
 struct huff_table{
     uint8_t *nb_symb_per_lengths;
     uint8_t *symbols;
@@ -17,6 +17,7 @@ struct huff_table{
 };
 
 
+/* Calcule le chemin du ième élément de la table de Huffman */
 void complete_ieme_chemin(struct huff_table *ht, uint8_t indice)
 {
     // On cherche le nb de bits codant value
@@ -34,6 +35,7 @@ void complete_ieme_chemin(struct huff_table *ht, uint8_t indice)
         return;
     }
 
+    // On calcule la différence de taille des chemins entre le chemin courant et le chemin précédent
     uint8_t diff_taille_prec = ht->longueurs_chemins[indice] - ht->longueurs_chemins[indice - 1];
 
     if (diff_taille_prec == 0){
@@ -50,6 +52,7 @@ void complete_ieme_chemin(struct huff_table *ht, uint8_t indice)
     }
     chemin += 1;  // On remplace le 0 par un 1
 
+    // On complète la fin du chemin par des 0
     for (uint8_t i = 0; i < diff_taille_prec + nb_remonte; i++){
         chemin = chemin << 1;
     }
