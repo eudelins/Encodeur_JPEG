@@ -12,31 +12,30 @@
 uint32_t *paras(FILE *fichier);
 
 
-/* Récupère le nom de l'image à encoder en ligne de commande et renvoie le chemin d'accès en chaine de caractères */
+/* Récupère le nom de l'image à encoder en ligne de commande et renvoie le chemin d'accès en chaine de caractères depuis /src */
 char *chemin_fichier(char *nom_fichier);
 
 
-/* Texte à afficher si on a un --help en argument */
+/* Texte à afficher si on a un --help en paramètres */
 void affichage_help();
 
 
-/* Texte à afficher si on a une erreur d'argument */
+/* Texte à afficher si on a une erreur de paramètres */
 void affichage_erreur();
 
 
-/* Récupère les paramètes optionnels
- * Renvoie "h" si help, "o" si outfile, "s" si sample, "e" si erreur*/
+/* Récupère les paramètres optionnels
+ * Renvoie "r" si rien, "h" si help, "o" si outfile, "s" si sample, "e" si erreur, "b" si outfile puis sample, "q" si sample puis outfile */
 char *paras_optionnels(uint8_t argc, char **argv);
 
 
-/* Vérifie que la valeur de chaque facteur h ou v être comprise entre 1 et 4 : renvoie true si ok, false sinon
- * Fonction à utiliser avant somme_produits_valeurs et diviser_valeurs car on vérifie ici que les valeur h et v sont bien des uint8_t */
-bool encadrement_valeurs(uint32_t h1,
-                         uint32_t v1,
-                         uint32_t h2,
-                         uint32_t v2,
-                         uint32_t h3,
-                         uint32_t v3);
+/* Vérifie que la valeur de chaque facteur hi ou vi est comprise entre 1 et 4 : renvoie true si ok, false sinon */
+bool encadrement_valeurs(uint8_t h1,
+                         uint8_t v1,
+                         uint8_t h2,
+                         uint8_t v2,
+                         uint8_t h3,
+                         uint8_t v3);
 
 
 /* Vérifie que la somme des produits hi x vi est inférieure à 10 : renvoie true si ok, false sinon */
@@ -57,16 +56,16 @@ bool diviser_valeurs(uint8_t h1,
                      uint8_t v3);
 
 
-/* Vérifie que toutes les conditions sur h et v sont vérifiées : renvoie true si ok, false sinon */
-bool verif_conditions(uint32_t h1,
-                      uint32_t v1,
-                      uint32_t h2,
-                      uint32_t v2,
-                      uint32_t h3,
-                      uint32_t v3);
+/* Vérifie que toutes les conditions sur hi et vi sont vérifiées : renvoie true si ok, false sinon */
+bool verif_conditions(uint8_t h1,
+                      uint8_t v1,
+                      uint8_t h2,
+                      uint8_t v2,
+                      uint8_t h3,
+                      uint8_t v3);
 
 
-/* Récupère les éléments de chaine à partir de indice_recup */
+/* Récupère les éléments de chaine à partir de indice_recup et les renvoie dans sortie */
 char *recup_nom(char *chaine, uint8_t indice_recup);
 
 
