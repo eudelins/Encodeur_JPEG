@@ -13,6 +13,11 @@
 #include "../include/jpeg_writer.h"
 
 
+/***********************************************************************/
+/* Module d'écriture du fichier jpeg pour les images en niveau de gris */
+/***********************************************************************/
+
+
 /* Calcule x puissance y */
 uint32_t puissance(uint8_t x, uint8_t y)
 {
