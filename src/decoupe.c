@@ -3,33 +3,21 @@
 #include <stdint.h>
 
 
-/******************************************/
-/* Module de découpage de l'image en MCUs */
-/******************************************/
+/***************************************************************************/
+/* Module de découpage de l'image en MCUs pour les images en noir et blanc */
+/***************************************************************************/
 
 
-/* Ouvre le fichier filename avec le mode d'accès mode. Retourne le FILE *
- * correspondant. */
-FILE *ouvrir_fichier(const char *filename, const char *mode) {
-     FILE *fichier = fopen(filename, mode);
-     return fichier;
-}
 
-
-/* Ferme le fichier passé en paramètre. */
-void fermer_fichier(FILE *fichier) {
-    fclose(fichier);
-}
-
-
-/* Défini une MCU */
+/* 
+    Défini une MCU, la largeur et la hauteur d'une MCU sont toujours 
+    égales à 8 en niveau de gris.
+*/
 struct MCU {
     uint8_t largeur;
     uint8_t hauteur;
     uint8_t **pixels;
 };
-
-// Pour l'instant, pixel = uint8_t, mais après, définir une struct RGB et YCbCr
 
 
 /* Calcule le nombre de MCUs dans l'image */
@@ -72,7 +60,7 @@ void free_pixel_image(uint8_t **pixels,
 }
 
 
-/* Découpe l'image en MCUs */
+/* Découpe l'image en une matrice de MCU */
 struct MCU ***decoupage(FILE *fichier,
                         uint32_t largeur_MCUs, 
                         uint32_t hauteur_MCUs,
@@ -83,7 +71,7 @@ struct MCU ***decoupage(FILE *fichier,
     uint8_t duplique_colonne = 8 - largeur_image % 8;
     uint8_t duplique_ligne = 8 - hauteur_image % 8;
 
-    // On récupère les pixels dans une matrice
+    // On récupère les pixels de l'image dans une matrice
     uint8_t **pixels_image = malloc((hauteur_image + duplique_ligne) * sizeof(uint8_t *));
     for (uint32_t hauteur = 0; hauteur < hauteur_image; hauteur++){
         uint8_t *ligne_pixels_image = malloc((largeur_image + duplique_colonne) * sizeof(uint8_t*));
@@ -130,7 +118,7 @@ struct MCU ***decoupage(FILE *fichier,
 }
 
 
-/* Libère la mémoire allouée aux MCUs */
+/* Libère la mémoire allouée à la matrice de MCU */
 void free_MCUs(struct MCU ***MCUs, uint32_t* dimensions_MCUs)
 {
     uint32_t hauteur_MCUs, largeur_MCUs;
@@ -161,7 +149,7 @@ void print_MCU(struct MCU *MCU)
 }
 
 
-/* Affiche les MCUs */
+/* Affiche la matrice de MCU */
 void print_MCUs(struct MCU ***MCUs, uint32_t *dimensions_MCUs)
 {
     uint32_t hauteur_MCUs, largeur_MCUs;
@@ -174,6 +162,20 @@ void print_MCUs(struct MCU ***MCUs, uint32_t *dimensions_MCUs)
             printf("\n\n");
         }
     }
+}
+
+
+/* Ouvre le fichier filename avec le mode d'accès mode. Retourne le FILE *
+ * correspondant. */
+FILE *ouvrir_fichier(const char *filename, const char *mode) {
+     FILE *fichier = fopen(filename, mode);
+     return fichier;
+}
+
+
+/* Ferme le fichier passé en paramètre. */
+void fermer_fichier(FILE *fichier) {
+    fclose(fichier);
 }
 
 
@@ -204,20 +206,3 @@ void print_MCUs(struct MCU ***MCUs, uint32_t *dimensions_MCUs)
 //     fermer_fichier(fichier);
 //     return 0;
 // }
-
-
-
-
-    // // On calcule le nombre de lignes et colonnes à copier
-    // uint8_t duplique_colonne = largeur_MCU - largeur_image % largeur_MCU;
-    // uint8_t duplique_ligne = hauteur_MCU - hauteur_image % hauteur_MCU;
-
-
-    // // On calcule les dimensions des MCUs
-    // uint32_t *dimensions_MCUs = calcul_dimensions_MCUs(largeur_image, hauteur_image, largeur_MCU, hauteur_MCU);
-    // uint32_t hauteur_MCUs, largeur_MCUs;
-    // largeur_MCUs = dimensions_MCUs[0];
-    // hauteur_MCUs = dimensions_MCUs[1];
-    // free(dimensions_MCUs);    
-
-
