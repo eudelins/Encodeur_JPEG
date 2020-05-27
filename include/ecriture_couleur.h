@@ -12,6 +12,11 @@
 #include "../include/encodage_couleur.h"
 
 
+/****************************************************************/
+/* Module d'écriture du fichier jpeg pour les images en couleur */
+/****************************************************************/
+
+
 /* Ecrit dans le bitstream les bits issus du codage DC d'un bloc */
 void codage_DC_bloc(struct Bloc_zigzag Bloc,
                    struct huff_table *table_huff_DC,
@@ -40,6 +45,7 @@ void codage_MCU_couleur(struct MCU_zigzag_Y *MCU_zigzag,
                         struct bitstream *test_stream);
 
 
+/* Crée l'image jpeg en couleur */
 void cree_image_couleur(struct MCU_zigzag_Y ***MCUs_zigzag, 
                         uint32_t largeur_MCUs, 
                         uint32_t hauteur_MCUs,

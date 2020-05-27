@@ -14,6 +14,11 @@
 #include "../include/jpeg_writer.h"
 #include "../include/ecriture.h"
 
+
+/****************************************************************/
+/* Module d'écriture du fichier jpeg pour les images en couleur */
+/****************************************************************/
+
    
 /* Ecrit dans le bitstream les bits issus du codage DC d'un bloc */
 void codage_DC_bloc(struct Bloc_zigzag Bloc,
@@ -30,11 +35,6 @@ void codage_DC_bloc(struct Bloc_zigzag Bloc,
     magnitude = calcule_magnitude(pixels[0] - *DC_prec);
     index = calcule_index(pixels[0] - *DC_prec, magnitude);
     codage_huff = huffman_table_get_path(table_huff_DC, magnitude, nb_bits);
-
-    // printf("DC:\n\tvalue: %d\t", pixels[0] - *DC_prec);
-    // printf("magnitude: %d\t", magnitude);
-    // printf("index: %d à écrire sur %d bits\n", index, magnitude);
-    // printf("\tHuffman: %d à écrire sur %d bits\n\n", codage_huff, *nb_bits);
 
     // On écrit dans le bistream
     bitstream_write_bits(test_stream, codage_huff, *nb_bits, false);
@@ -56,7 +56,6 @@ void codage_AC_bloc(struct Bloc_zigzag Bloc,
     uint8_t *nb_bits = malloc(sizeof(uint8_t));
     int16_t *pixels = Bloc.pixels;
 
-    // printf("AC:\n");
     uint8_t compteur_0 = 0;
     uint8_t compteur_16_0 = 0;
     for(uint8_t indice = 1; indice < 64; indice++){
@@ -72,9 +71,6 @@ void codage_AC_bloc(struct Bloc_zigzag Bloc,
             for (uint8_t i = 0; i < compteur_16_0; i++){
                 RLE_code = 0xF0;
                 codage_huff = huffman_table_get_path(table_huff_AC, RLE_code, nb_bits);
-                // printf("\tcode RLE: %d\t", RLE_code);
-                // printf("\tHuffman: %d à écrire sur %d bits\n", codage_huff, *nb_bits);
-                // printf("\n");
                 bitstream_write_bits(test_stream, codage_huff, *nb_bits, false);
             }
             compteur_16_0 = 0;
@@ -91,13 +87,6 @@ void codage_AC_bloc(struct Bloc_zigzag Bloc,
             RLE_code = compteur_0 + magnitude;
             codage_huff = huffman_table_get_path(table_huff_AC, RLE_code, nb_bits);
 
-            // printf("\tvalue: %d\t", pixels[indice]);
-            // printf("magnitude: %d\t", magnitude);
-            // printf("index: %d à écrire sur %d bits\n", index, magnitude);
-            // printf("\tcode RLE: %d\t", RLE_code);
-            // printf("\tHuffman: %d à écrire sur %d bits\n", codage_huff, *nb_bits);
-            // printf("\n");
-
             // On écrit dans le bitstream
             bitstream_write_bits(test_stream, codage_huff, *nb_bits, false);
             bitstream_write_bits(test_stream, index, magnitude, false);
@@ -111,10 +100,6 @@ void codage_AC_bloc(struct Bloc_zigzag Bloc,
     if (pixels[63] == 0){
         RLE_code = 0x00;
         codage_huff = huffman_table_get_path(table_huff_AC, RLE_code, nb_bits);
-        // printf("\tvalue: endofblock");
-        // printf("\tcode RLE: %d\t", RLE_code);
-        // printf("Huffman: %d à écrire sur %d bits\n", codage_huff, *nb_bits);
-        // printf("\n");
         bitstream_write_bits(test_stream, codage_huff, *nb_bits, false);
     }
  
@@ -176,7 +161,7 @@ void codage_MCU_couleur(struct MCU_zigzag_Y *MCU_zigzag,
 }
 
 
-
+/* Crée l'image jpeg en couleur */
 void cree_image_couleur(struct MCU_zigzag_Y ***MCUs_zigzag, 
                         uint32_t largeur_MCUs, 
                         uint32_t hauteur_MCUs,
@@ -202,7 +187,7 @@ void cree_image_couleur(struct MCU_zigzag_Y ***MCUs_zigzag,
     symbols_DC = htables_symbols[DC][Cb];
     nb_symbols_DC = htables_nb_symbols[DC][Cb];
     struct huff_table *table_huff_DC_Cb = huffman_table_build(nb_symb_per_lengths_DC, symbols_DC, nb_symbols_DC);
-    
+
     // Création de la table de Huffman pour coder les AC des blocs Cb
     nb_symb_per_lengths_AC = htables_nb_symb_per_lengths[AC][Cb];
     symbols_AC = htables_symbols[AC][Cb];
@@ -226,7 +211,6 @@ void cree_image_couleur(struct MCU_zigzag_Y ***MCUs_zigzag,
 
     // On indique les paramètres de l'image
     jpeg_set_ppm_filename(image, chemin);
-    // char *chemin_jpg = cree_chemin_jpg(chemin);
     jpeg_set_jpeg_filename(image, chemin_jpg);
     jpeg_set_image_width(image, largeur_image);   
     jpeg_set_image_height(image, hauteur_image);
@@ -250,7 +234,7 @@ void cree_image_couleur(struct MCU_zigzag_Y ***MCUs_zigzag,
     // Ecrit l'en-tête
     jpeg_write_header(image);
 
-    // Ecrit le contenu
+    // On récupère le bitstream pour écrire le contenu de l'image
     struct bitstream *test_stream = jpeg_get_bitstream(image);
     
     int16_t *DC_prec_Y = malloc(sizeof(int16_t));
@@ -261,10 +245,6 @@ void cree_image_couleur(struct MCU_zigzag_Y ***MCUs_zigzag,
     for (uint32_t hauteur = 0; hauteur < hauteur_MCUs; hauteur++){
         for (uint32_t largeur = 0; largeur < largeur_MCUs; largeur++){
             // On écrit dans le bitstream
-            // printf("MCU %d encodée:\n", hauteur * largeur_MCUs + largeur);
-            // print_MCU_zigzag(MCUs_zigzag[hauteur][largeur]);
-            // printf("\n");
-    
             codage_MCU_couleur(MCUs_zigzag[hauteur][largeur], 
                                table_huff_DC_Y,
                                table_huff_DC_Cb,
@@ -286,7 +266,6 @@ void cree_image_couleur(struct MCU_zigzag_Y ***MCUs_zigzag,
     free(DC_prec_Cb);
     free(DC_prec_Cr);
     free(chemin_jpg);
-
     jpeg_destroy(image);
 }
 
@@ -344,6 +323,3 @@ void cree_image_couleur(struct MCU_zigzag_Y ***MCUs_zigzag,
 //     fermer_fichier(fichier);
 //     return 0;
 // }
-
-
-// test
