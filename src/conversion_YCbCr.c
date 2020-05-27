@@ -6,7 +6,12 @@
 #include "../include/decoupe_couleur.h"
 
 
-/* Fonction qui prend en entrée un pixel RGB et qui renvoie la valeur de la luminance Y */
+/***************************************************/
+/* Module de conversion des MCUs RGB en MCUs YCbCr */
+/***************************************************/
+
+
+/* Renvoie la valeur de la luminance Y pour un pixel RGB */
 int16_t conversion_Y(struct Pixel_RGB pixelRGB)
 {
   float calcul_Y = 0.299 * pixelRGB.R + 0.587 * pixelRGB.G + 0.114 * pixelRGB.B;
@@ -15,7 +20,7 @@ int16_t conversion_Y(struct Pixel_RGB pixelRGB)
 }
 
 
-/* Fonction qui prend en entrée un pixel RGB et qui renvoie la valeur de la chrominance Cb */
+/* Renvoie la valeur de la chrominance Cb pour un pixel RGB */
 int16_t conversion_Cb(struct Pixel_RGB pixelRGB)
 {
     float calcul_Cb = 128 - 0.1687 * pixelRGB.R - 0.3313 * pixelRGB.G + 0.5 * pixelRGB.B;
@@ -24,7 +29,7 @@ int16_t conversion_Cb(struct Pixel_RGB pixelRGB)
 }
 
 
-/* Fonction qui prend en entrée un pixel RGB et qui renvoie la valeur de la luminance Cr */
+/* Renvoie la valeur de la chrominance Cr pour un pixel RGB */
 int16_t conversion_Cr(struct Pixel_RGB pixelRGB)
 {
     float calcul_Cr = 128 + 0.5 * pixelRGB.R - 0.4187 * pixelRGB.G - 0.0813 * pixelRGB.B;
@@ -33,13 +38,13 @@ int16_t conversion_Cr(struct Pixel_RGB pixelRGB)
 }
 
 
-/* Structure d'un bloc après conversion YCbCr */
+/* Structure d'un bloc après conversion en YCbCr */
 struct Bloc_YCbCr {
     int16_t **pixels;
 };
 
 
-/* Structure d'une MCU_YCbCr */
+/* Structure d'une MCU après conversion en YCbCr */
 struct MCU_YCbCr {
     uint8_t h1;
     uint8_t v1;
@@ -53,20 +58,9 @@ struct MCU_YCbCr {
 };
 
 
-/* Fonction qui prend en entrée une MCU qui a pour arguments :
- * - largeur de la MCU
- * - hauteur de la MCU
- * - matrice de pixels RGB
- * - matrice de blocs de matrices de pixels RGB
- * Elle retourne une MCU qui a pour arguments :
- * - largeur de la MCU
- * - hauteur de la MCU
- * - matrice de blocs de matrices de pixels Y
- * - matrice de blocs de matrices de pixels Cb
- * - matrice de blocs de matrices de pixels Cr */
+/* Fonction qui prend en entrée une MCU_RGB et qui renvoie la MCU convertie en YCbCr (soit de structure MCU_YCbCr) */
 struct MCU_YCbCr *conversion_MCU(struct MCU_RGB *MCU)
 {
-
     struct MCU_YCbCr *nouvelle_MCU = malloc(sizeof(struct MCU_YCbCr));
     nouvelle_MCU->h1 = MCU->h1;
     nouvelle_MCU->v1 = MCU->v1;
@@ -119,7 +113,7 @@ struct MCU_YCbCr *conversion_MCU(struct MCU_RGB *MCU)
 }
 
 
-/* Fonction qui fait la conversion d'une matrice de MCU_RGB et une matrice de MCU_YCbCr */
+/* Fonction qui fait la conversion d'une matrice de MCU_RGB en une matrice de MCU_YCbCr */
 struct MCU_YCbCr ***conversion_matrice_MCUs(struct MCU_RGB ***MCU_a_convertir,
                                             uint32_t nb_MCUs_largeur,
                                             uint32_t nb_MCUs_hauteur)
@@ -136,12 +130,12 @@ struct MCU_YCbCr ***conversion_matrice_MCUs(struct MCU_RGB ***MCU_a_convertir,
 }
 
 
-/* Affiche un bloc d'entiers */
+/* Affiche un Bloc_YCbCr (qui est un bloc d'entiers) */
 void print_bloc_entiers(struct Bloc_YCbCr *bloc_a_afficher)
 {
     for (uint8_t hauteur = 0; hauteur < COTE_BLOC; hauteur++) {
         for (uint8_t largeur = 0; largeur < COTE_BLOC; largeur++) {
-            printf("%i ", bloc_a_afficher->pixels[hauteur][largeur]);
+            printf("%x ", bloc_a_afficher->pixels[hauteur][largeur]);
         }
         printf("\n");
     }
@@ -169,7 +163,7 @@ void print_MCU_YCbCr(struct MCU_YCbCr *MCU_YCbCr_a_afficher)
 }
 
 
-/* Affiche la matrice de MCU_YCbCr */
+/* Affiche toutes les MCU_YCbCr (soit la matrice de MCUs_YCbCr) */
 void print_matrice_MCU_YCbCr(struct MCU_YCbCr ***MCUs_YCbCr_a_afficher,
                              uint32_t nb_MCUs_largeur,
                              uint32_t nb_MCUs_hauteur)
@@ -184,7 +178,7 @@ void print_matrice_MCU_YCbCr(struct MCU_YCbCr ***MCUs_YCbCr_a_afficher,
 }
 
 
-/* Libère la mémoire allouée par une matrice d'entiers */
+/* Libère la mémoire allouée par une matrice de pixels (qui sont des entiers) */
 void free_pixels_YCbCr(int16_t **pixels)
 {
     for (uint8_t hauteur_pix = 0; hauteur_pix < COTE_BLOC; hauteur_pix++) {
@@ -192,6 +186,7 @@ void free_pixels_YCbCr(int16_t **pixels)
     }
     free(pixels);
 }
+
 
 /* Libère la mémoire allouée par une matrice de blocs YCbCr */
 void free_bloc_YCbCR(struct Bloc_YCbCr **blocs,
@@ -206,7 +201,6 @@ void free_bloc_YCbCR(struct Bloc_YCbCr **blocs,
     }
     free(blocs);
 }
-
 
 
 /* Libère la mémoire allouée par une matrice de MCUs YCbCr */
@@ -233,7 +227,7 @@ void free_MCUs_YCbCr(struct MCU_YCbCr ***matrice_MCUs_converti,
 }
 
 
-//
+// main qui a permis de tester les fonctions
 //int main()
 //{
 //    FILE *fichier = fopen("images/invadered.ppm", "r");
