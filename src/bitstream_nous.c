@@ -6,7 +6,7 @@
 
 
 /*
-    Type opaque représentant le flux d'octets à écrire dans le fichier JPEG de
+    Type représentant le flux d'octets à écrire dans le fichier JPEG de
     sortie (appelé bitstream dans le sujet).
 */
 struct bitstream{
@@ -52,13 +52,15 @@ extern void bitstream_write_bits(struct bitstream *stream,
             fwrite(&zero, 1, 1, stream->fichier_sortie);
         }
         
-        // On indique le nb de bits qu'il nous reste à écrire
+        // On enlève les bits de poids fort de value pour garder ceux qu'il reste à écrire
         value -= (value >> (nb_bits + stream->compteur_bits - 8)) << (nb_bits + stream->compteur_bits - 8);
+        // On indique le nombre de bits de value qu'il reste à écrire
         nb_bits -= (8 - stream->compteur_bits);
         stream->compteur_bits = 0;
         stream->buffer = 0;
     }
     
+    // On actualise le buffer et le nombre de bits dans le buffer
     stream->buffer = stream->buffer << nb_bits;
     stream->buffer += value;
     stream->compteur_bits += nb_bits;
@@ -89,7 +91,6 @@ extern void bitstream_destroy(struct bitstream *stream)
     fclose(stream->fichier_sortie);
     free(stream);
 }
-
 
 
 // int main(void)
