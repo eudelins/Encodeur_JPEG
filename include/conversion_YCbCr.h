@@ -9,25 +9,30 @@
 #include "../include/decoupe_couleur.h"
 
 
-/* Fonction qui prend en entrée un pixel RGB et qui renvoie la valeur de la luminance Y */
+//***************************************************/
+/* Module de conversion des MCUs RGB en MCUs YCbCr */
+/***************************************************/
+
+
+/* Renvoie la valeur de la luminance Y pour un pixel RGB */
 int16_t conversion_Y(struct Pixel_RGB pixelRGB);
 
 
-/* Fonction qui prend en entrée un pixel RGB et qui renvoie la valeur de la chrominance Cb */
+/* Renvoie la valeur de la chrominance Cb pour un pixel RGB */
 int16_t conversion_Cb(struct Pixel_RGB pixelRGB);
 
 
-/* Fonction qui prend en entrée un pixel RGB et qui renvoie la valeur de la luminance Cr */
+/* Renvoie la valeur de la chrominance Cr pour un pixel RGB */
 int16_t conversion_Cr(struct Pixel_RGB pixelRGB);
 
 
-/* Structure d'un bloc après conversion YCbCr */
+/* Structure d'un bloc après conversion en YCbCr */
 struct Bloc_YCbCr {
     int16_t **pixels;
 };
 
 
-/* Structure d'une MCU_YCbCr */
+/* Structure d'une MCU après conversion en YCbCr */
 struct MCU_YCbCr {
     uint8_t h1;
     uint8_t v1;
@@ -41,28 +46,17 @@ struct MCU_YCbCr {
 };
 
 
-/* Fonction qui prend en entrée une MCU qui a pour arguments :
- * - largeur de la MCU
- * - hauteur de la MCU
- * - matrice de pixels RGB
- * - matrice de blocs de matrices de pixels RGB
- * Elle retourne une MCU qui a pour arguments :
- * - largeur de la MCU
- * - hauteur de la MCU
- * - matrice de blocs de matrices de pixels Y
- * - matrice de blocs de matrices de pixels Cb
- * - matrice de blocs de matrices de pixels Cr */
+/* Fonction qui prend en entrée une MCU_RGB et qui renvoie la MCU convertie en YCbCr (soit de structure MCU_YCbCr) */
 struct MCU_YCbCr *conversion_MCU(struct MCU_RGB *MCU);
 
 
-/* Fonction qui fait la conversion d'une matrice de MCU_RGB et une matrice de MCU_YCbCr */
+/* Fonction qui fait la conversion d'une matrice de MCU_RGB en une matrice de MCU_YCbCr */
 struct MCU_YCbCr ***conversion_matrice_MCUs(struct MCU_RGB ***MCU_a_convertir,
                                             uint32_t nb_MCUs_largeur,
                                             uint32_t nb_MCUs_hauteur);
 
 
-
-/* Affiche un bloc d'entiers */
+/* Affiche un Bloc_YCbCr (qui est un bloc d'entiers) */
 void print_bloc_entiers(struct Bloc_YCbCr *bloc_a_afficher);
 
 
@@ -70,13 +64,13 @@ void print_bloc_entiers(struct Bloc_YCbCr *bloc_a_afficher);
 void print_MCU_YCbCr(struct MCU_YCbCr *MCU_YCbCr_a_afficher);
 
 
-/* Affiche la matrice de MCU_YCbCr */
+/* Affiche toutes les MCU_YCbCr (soit la matrice de MCUs_YCbCr) */
 void print_matrice_MCU_YCbCr(struct MCU_YCbCr ***MCUs_YCbCr_a_afficher,
                              uint32_t nb_MCUs_largeur,
                              uint32_t nb_MCUs_hauteur);
 
 
-/* Libère la mémoire allouée par une matrice d'entiers */
+/* Libère la mémoire allouée par une matrice de pixels (qui sont des entiers) */
 void free_pixels_YCbCr(int16_t **pixels);
 
 
@@ -91,3 +85,4 @@ void free_MCUs_YCbCr(struct MCU_YCbCr ***matrice_MCUs_converti,
                      uint32_t *dimensions_MCUs);
 
 #endif /* CONVERSION_YCbCr_H */
+
