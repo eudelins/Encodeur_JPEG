@@ -13,16 +13,6 @@
 #include "../include/jpeg_writer.h"
 
 
-/* Affiche n en binaire si n est codé sur nb_bits bits */
-void print_binaire(uint32_t n, uint8_t nb_bits)
-{
-    for (int8_t i = nb_bits; i >= 0; i--){
-        printf("%d", (n >> i ) & 1);
-    }
-    printf("\n");
-}
-
-
 /* Calcule x puissance y */
 uint32_t puissance(uint8_t x, uint8_t y)
 {
@@ -34,16 +24,16 @@ uint32_t puissance(uint8_t x, uint8_t y)
 }
 
 
-/* Calcul la magnitude de pixel */
+/* Calcul la magnitude d'un pixel */
 uint8_t calcule_magnitude(int16_t pixel)
 {
     uint8_t magnitude = 0;
-    int16_t borne_inf = -puissance(2, magnitude); 
-    int16_t borne_sup = puissance(2, magnitude); 
+    int16_t borne_inf = -puissance(2, magnitude);
+    int16_t borne_sup = puissance(2, magnitude);
     while (!(borne_inf < pixel && pixel < borne_sup )){
         magnitude += 1;
-        borne_inf = -puissance(2, magnitude); 
-        borne_sup = puissance(2, magnitude); 
+        borne_inf = -puissance(2, magnitude);
+        borne_sup = puissance(2, magnitude);
     }
     return magnitude;
 }
@@ -91,11 +81,6 @@ void codage_DC_MCU(struct MCU_zigzag *MCU_zigzag,
     index = calcule_index(pixels[0] - *DC_prec, magnitude);
     codage_huff = huffman_table_get_path(table_huff_DC_Y, magnitude, nb_bits);
 
-    // printf("DC:\n\tvalue: %d\t", pixels[0] - *DC_prec);
-    // printf("magnitude: %d\t", magnitude);
-    // printf("index: %d à écrire sur %d bits\n", index, magnitude);
-    // printf("\tHuffman: %d à écrire sur %d bits\n\n", codage_huff, *nb_bits);
-
     // On écrit dans le bistream
     bitstream_write_bits(test_stream, codage_huff, *nb_bits, false);
     bitstream_write_bits(test_stream, index, magnitude, false);
@@ -132,17 +117,14 @@ void codage_AC_MCU(struct MCU_zigzag *MCU_zigzag,
             for (uint8_t i = 0; i < compteur_16_0; i++){
                 RLE_code = 0xF0;
                 codage_huff = huffman_table_get_path(table_huff_AC_Y, RLE_code, nb_bits);
-                // printf("\tcode RLE: %d\t", RLE_code);
-                // printf("\tHuffman: %d à écrire sur %d bits\n", codage_huff, *nb_bits);
-                // printf("\n");
                 bitstream_write_bits(test_stream, codage_huff, *nb_bits, false);
             }
             compteur_16_0 = 0;
 
-            // On décale le nombre de 0 de 4 bits vers la gauche (bits de poids forts)
+            // On décale le nombre de 0 de 4 bits vers la gauche (bits de poids fort)
             compteur_0 = compteur_0 << 4;
 
-            // On calcule la magnitude du pixel
+            // On calcule la magnitude du pixel (bits de poids faible)
             magnitude = calcule_magnitude(pixels[indice]);
 
             // On calcule l'index
@@ -151,18 +133,11 @@ void codage_AC_MCU(struct MCU_zigzag *MCU_zigzag,
             RLE_code = compteur_0 + magnitude;
             codage_huff = huffman_table_get_path(table_huff_AC_Y, RLE_code, nb_bits);
 
-            // printf("\tvalue: %d\t", pixels[indice]);
-            // printf("magnitude: %d\t", magnitude);
-            // printf("index: %d à écrire sur %d bits\n", index, magnitude);
-            // printf("\tcode RLE: %d\t", RLE_code);
-            // printf("\tHuffman: %d à écrire sur %d bits\n", codage_huff, *nb_bits);
-            // printf("\n");
-
             // On écrit dans le bitstream
             bitstream_write_bits(test_stream, codage_huff, *nb_bits, false);
             bitstream_write_bits(test_stream, index, magnitude, false);
 
-            // On remet le compteur à 0
+            // On remet le compteur de 0 à 0
             compteur_0 = 0;
         }
     }
@@ -171,10 +146,6 @@ void codage_AC_MCU(struct MCU_zigzag *MCU_zigzag,
     if (pixels[63] == 0){
         RLE_code = 0x00;
         codage_huff = huffman_table_get_path(table_huff_AC_Y, RLE_code, nb_bits);
-        // printf("\tvalue: endofblock");
-        // printf("\tcode RLE: %d\t", RLE_code);
-        // printf("Huffman: %d à écrire sur %d bits\n", codage_huff, *nb_bits);
-        // printf("\n");
         bitstream_write_bits(test_stream, codage_huff, *nb_bits, false);
     }
  
@@ -196,7 +167,8 @@ void codage_AC_DC_MCU(struct MCU_zigzag *MCU_zigzag,
     codage_AC_MCU(MCU_zigzag, table_huff_AC_Y, test_stream);
 }
 
-/* Renvoie le chemin jpg à partir du chemin pgm */
+
+/* Renvoie le chemin jpg à partir du chemin pgm ou ppm */
 char *cree_chemin_jpg(char *chemin)
 {
     size_t taille = strlen(chemin);
@@ -213,6 +185,7 @@ char *cree_chemin_jpg(char *chemin)
 }
 
 
+/* Crée l'image jpeg en niveau de gris */
 void cree_image(struct MCU_zigzag ***MCUs_zigzag, 
                 uint32_t largeur_MCUs, 
                 uint32_t hauteur_MCUs,
@@ -238,7 +211,6 @@ void cree_image(struct MCU_zigzag ***MCUs_zigzag,
 
     // On indique les paramètres de l'image
     jpeg_set_ppm_filename(image, chemin);
-    // char *chemin_jpg = cree_chemin_jpg(chemin);
     jpeg_set_jpeg_filename(image, chemin_jpg);
     jpeg_set_image_width(image, largeur_image);   
     jpeg_set_image_height(image, hauteur_image);
@@ -252,19 +224,15 @@ void cree_image(struct MCU_zigzag ***MCUs_zigzag,
     // Ecrit l'en-tête
     jpeg_write_header(image);
 
-    // Ecrit le contenu
+    // On récupère le bitstream pour écrire le contenu de l'image
     struct bitstream *test_stream = jpeg_get_bitstream(image);
     
     int16_t *DC_prec = malloc(sizeof(int16_t));
     *DC_prec = 0;
     
+    // On écrit le contenu dans le bitstream
     for (uint32_t hauteur = 0; hauteur < hauteur_MCUs; hauteur++){
         for (uint32_t largeur = 0; largeur < largeur_MCUs; largeur++){
-            // On écrit dans le bitstream
-            // printf("MCU %d encodée:\n", hauteur * largeur_MCUs + largeur);
-            // print_MCU_zigzag(MCUs_zigzag[hauteur][largeur]);
-            // printf("\n");
-    
             codage_AC_DC_MCU(MCUs_zigzag[hauteur][largeur], 
                              table_huff_DC_Y, 
                              table_huff_AC_Y, 
@@ -278,12 +246,8 @@ void cree_image(struct MCU_zigzag ***MCUs_zigzag,
 
     free(DC_prec);
     free(chemin_jpg);
-    // huffman_table_destroy(table_huff_DC_Y);
-    // huffman_table_destroy(table_huff_AC_Y);
-
     jpeg_destroy(image);
 }
-
 
 
 // int main(void)
@@ -331,32 +295,3 @@ void cree_image(struct MCU_zigzag ***MCUs_zigzag,
 //     fermer_fichier(fichier);
 //     return 0;
 // }
-
-
-
-
-/* Affiche le codage AC/DC des MCUs */
-// struct bitstream *codage_AC_DC(struct MCU_zigzag ***MCUs_zigzag, uint32_t largeur_MCUs, uint32_t hauteur_MCUs)
-// {    
-    
-//     // On crée une variable contenant la valeur du DC précédent
-//     int16_t *DC_prec = malloc(sizeof(int16_t));
-//     *DC_prec = 0;
-    
-//     for (uint32_t hauteur = 0; hauteur < hauteur_MCUs; hauteur++){
-//         for (uint32_t largeur = 0; largeur < largeur_MCUs; largeur++){
-//             // On écrit dans le bitstream
-//             codage_AC_DC_MCU(MCUs_zigzag[hauteur][largeur], 
-//                              table_huff_DC_Y, 
-//                              table_huff_AC_Y, 
-//                              DC_prec, 
-//                              test_stream);
-//         }
-//     }
-//     free(DC_prec);
-
-//     bitstream_flush(test_stream);
-//     return test_stream;
-// }
-
-// test

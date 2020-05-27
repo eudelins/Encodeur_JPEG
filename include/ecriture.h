@@ -16,7 +16,7 @@
 uint16_t puissance(uint8_t x, uint8_t y);
 
 
-/* Calcul la magnitude de pixel */
+/* Calcul la magnitude d'un pixel */
 uint8_t calcule_magnitude(int16_t pixel);
 
 
@@ -49,6 +49,7 @@ void codage_AC_DC_MCU(struct MCU_zigzag *MCU_zigzag,
 char *cree_chemin_jpg(char *chemin);
 
 
+/* Crée l'image jpeg en niveau de gris */
 void cree_image(struct MCU_zigzag ***MCUs_zigzag, 
                 uint32_t largeur_MCUs, 
                 uint32_t hauteur_MCUs,
