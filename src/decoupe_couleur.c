@@ -68,7 +68,7 @@ void free_pixel_image_RGB(struct Pixel_RGB **pixels,
     free(pixels);
 }
 
-/* Découpe l'image en MCUs de taille nb_MCUs_largeur x nb_MCUs_hauteur */
+/* Découpe l'image en nb_MCUs_largeur x nb_MCUs_hauteur MCUs */
 struct MCU_RGB ***decoupage_MCUs(FILE *fichier,
                                  uint32_t largeur_image,
                                  uint32_t hauteur_image,
@@ -105,8 +105,7 @@ struct MCU_RGB ***decoupage_MCUs(FILE *fichier,
       pixels_image[hauteur] = pixels_image[hauteur_image - 1];
     }
 
-    // D'abord : on découpe en MCUs
-    // pointeur vers une matrice de MCU
+    // On découpe tout d'abord en MCUs
     struct MCU_RGB ***MCUs = malloc(nb_MCUs_hauteur * sizeof(struct MCU_RGB**));
     for (uint32_t hauteur = 0; hauteur < nb_MCUs_hauteur; hauteur++){
         // matrice de MCU
@@ -173,7 +172,7 @@ void decoupage_blocs(struct MCU_RGB *MCU)
 }
 
 
-/* Découpe toutes les MCU en blocs (de tailles MCU->h1 x MCU->v1 */
+/* Découpe toutes les MCU en blocs (de tailles MCU->h1 x MCU->v1) */
 struct MCU_RGB ***decoupage_MCUs_en_blocs(struct MCU_RGB ***MCUs,
                                           uint32_t nb_MCUs_largeur,
                                           uint32_t nb_MCUs_hauteur)
@@ -274,7 +273,7 @@ void print_MCU_RGB(struct MCU_RGB *MCU)
 
 /* Affiche les MCUs */
 void print_MCUs_RGB(struct MCU_RGB ***MCUs,
-                uint32_t *dimensions_MCUs)
+                    uint32_t *dimensions_MCUs)
 {
     uint32_t nb_MCUs_largeur, nb_MCUs_hauteur;;
     nb_MCUs_largeur = dimensions_MCUs[0];
