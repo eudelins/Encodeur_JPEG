@@ -27,7 +27,7 @@ void ppm2jpeg_niveau_de_gris(FILE *fichier, char *chemin, char *chemin_jpg, uint
 
     // Réorganisation zigzag
     struct MCU_zigzag ***MCUs_zigzag = zigzag(MCUs_freq, largeur_MCUs, hauteur_MCUs);
-    
+
     // Quantification
     quantification(MCUs_zigzag, largeur_MCUs, hauteur_MCUs);
 
@@ -37,8 +37,8 @@ void ppm2jpeg_niveau_de_gris(FILE *fichier, char *chemin, char *chemin_jpg, uint
     free_MCUs_zigzag(MCUs_zigzag, largeur_MCUs, hauteur_MCUs);
     free_MCUs_freq(MCUs_freq, largeur_MCUs, hauteur_MCUs);
     free_MCUs(MCUs, dimensions_MCUs);
-    free(param); 
-    fermer_fichier(fichier);   
+    free(param);
+    fermer_fichier(fichier);
 }
 
 
@@ -59,13 +59,13 @@ void ppm2jpeg_couleur(FILE *fichier,
 
     // Conversion YCbCr
     struct MCU_YCbCr ***MCUs_YCbCr = conversion_matrice_MCUs(MCUs, largeur_MCUs, hauteur_MCUs);
-    
+
     // DCT
     struct MCU_freq_Y ***MCUs_freq = transf_cos_Y(MCUs_YCbCr, largeur_MCUs, hauteur_MCUs);
 
     // Réorganisation zigzag
     struct MCU_zigzag_Y ***MCUs_zigzag = zigzag_Y(MCUs_freq, largeur_MCUs, hauteur_MCUs);
-    
+
     // Quantification
     quantification_couleur(MCUs_zigzag, largeur_MCUs, hauteur_MCUs);
 
@@ -83,7 +83,7 @@ void ppm2jpeg_couleur(FILE *fichier,
 
 
 /* Convertit le fichier pgm en jpg dans le cas classique */
-void ppm2jpeg_couleur_sous_echantillonage(FILE *fichier,
+void ppm2jpeg_couleur_sous_echantillonnage(FILE *fichier,
                       char *chemin,
                       char *chemin_jpg,
                       uint32_t *param,
@@ -107,7 +107,7 @@ void ppm2jpeg_couleur_sous_echantillonage(FILE *fichier,
     struct MCU_YCbCr ***MCUs_YCbCr = conversion_matrice_MCUs(MCUs, largeur_MCUs, hauteur_MCUs);
 
     // Sous-échantillonage
-    struct MCU_YCbCr ***MCUs_YCbCr_sous_echantillone = sous_echantillone(MCUs_YCbCr, largeur_MCUs, hauteur_MCUs);
+    struct MCU_YCbCr ***MCUs_YCbCr_sous_echantillone = sous_echantillonne(MCUs_YCbCr, largeur_MCUs, hauteur_MCUs);
 
     // DCT
     struct MCU_freq_Y ***MCUs_freq = transf_cos_Y(MCUs_YCbCr_sous_echantillone, largeur_MCUs, hauteur_MCUs);
@@ -136,12 +136,12 @@ int main(int argc, char **argv)
 {
 
     char *parametres = paras_optionnels(argc, argv);
-    
+
     // Aucun paramètre optionnel
     if (parametres[0] == 'r') {
         // char *chemin = chemin_fichier(argv[1]);
         FILE *fichier = ouvrir_fichier(argv[1], "r");
-        // Si on ne connait pas le fichier    
+        // Si on ne connait pas le fichier
         if (fichier == NULL) {
             printf("Fichier \"%s\" non connu\n", argv[1]);
             affichage_erreur();
@@ -156,17 +156,17 @@ int main(int argc, char **argv)
             ppm2jpeg_couleur(fichier, argv[1], chemin_jpg, param);
         }
     }
-    
+
     // Option renommer le fichier
     else if (parametres[0] == 'o') {
         FILE *fichier = ouvrir_fichier(argv[2], "r");
-        // Si on ne connait pas le fichier    
+        // Si on ne connait pas le fichier
         if (fichier == NULL) {
             printf("Fichier \"%s\" non connu\n", argv[2]);
             affichage_erreur();
             return EXIT_FAILURE;
         }
-        
+
         char *chemin_jpg = recup_nom(argv[1], 10);
         uint32_t *param = paras(fichier);
         if (param[0] == 5){
@@ -182,7 +182,7 @@ int main(int argc, char **argv)
 
     else if (parametres[0] == 's') {
         FILE *fichier = ouvrir_fichier(argv[2], "r");
-        // Si on ne connait pas le fichier    
+        // Si on ne connait pas le fichier
         if (fichier == NULL) {
             printf("Fichier \"%s\" non connu\n", argv[2]);
             affichage_erreur();
@@ -192,7 +192,7 @@ int main(int argc, char **argv)
         uint32_t *param = paras(fichier);
         uint32_t h1, v1, h2, v2, h3, v3;
         sscanf(argv[1], "--sample=%ux%u,%ux%u,%ux%u", &h1, &v1, &h2, &v2, &h3, &v3);
-        
+
         bool conditions = verif_conditions(h1, v1, h2, v2, h3, v3);
         if (conditions == false) {
             fprintf(stderr, "\nVérifiez les valeurs entrées pour h1, v1, h2, v2, h3 et v3 : elles ne respectent pas les conditions requises\n\n");
@@ -203,14 +203,14 @@ int main(int argc, char **argv)
         if (param[0] == 5){
             ppm2jpeg_niveau_de_gris(fichier, argv[2], chemin_jpg, param);
         } else {
-            ppm2jpeg_couleur_sous_echantillonage(fichier, argv[2], chemin_jpg, param, h1, v1, h2, v2, h3, v3);
+            ppm2jpeg_couleur_sous_echantillonnage(fichier, argv[2], chemin_jpg, param, h1, v1, h2, v2, h3, v3);
         }
     }
-    
+
     // Cas où outfile puis sample
     else if (parametres[0] == 'b') {
        FILE *fichier = ouvrir_fichier(argv[3], "r");
-        // Si on ne connait pas le fichier    
+        // Si on ne connait pas le fichier
         if (fichier == NULL) {
             printf("Fichier \"%s\" non connu\n", argv[3]);
             affichage_erreur();
@@ -230,14 +230,14 @@ int main(int argc, char **argv)
         if (param[0] == 5){
             ppm2jpeg_niveau_de_gris(fichier, argv[3], chemin_jpg, param);
         } else {
-            ppm2jpeg_couleur_sous_echantillonage(fichier, argv[3], chemin_jpg, param, h1, v1, h2, v2, h3, v3);
+            ppm2jpeg_couleur_sous_echantillonnage(fichier, argv[3], chemin_jpg, param, h1, v1, h2, v2, h3, v3);
         }
     }
 
     // Cas où sample puis outfile
     else if (parametres[0] == 'q') {
         FILE *fichier = ouvrir_fichier(argv[3], "r");
-        // Si on ne connait pas le fichier    
+        // Si on ne connait pas le fichier
         if (fichier == NULL) {
             printf("Fichier \"%s\" non connu\n", argv[3]);
             affichage_erreur();
@@ -257,15 +257,15 @@ int main(int argc, char **argv)
         if (param[0] == 5){
             ppm2jpeg_niveau_de_gris(fichier, argv[3], chemin_jpg, param);
         } else {
-            ppm2jpeg_couleur_sous_echantillonage(fichier, argv[3], chemin_jpg, param, h1, v1, h2, v2, h3, v3);
+            ppm2jpeg_couleur_sous_echantillonnage(fichier, argv[3], chemin_jpg, param, h1, v1, h2, v2, h3, v3);
         }
     }
-    
+
     else if (parametres[0] == 'e') {
         affichage_erreur();
     }
 
     free(parametres);
-    
+
     return EXIT_SUCCESS;
 }

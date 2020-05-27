@@ -1,5 +1,5 @@
-#ifndef SOUS_ECHANTILLONAGE_H
-#define SOUS_ECHANTILLONAGE_H
+#ifndef SOUS_ECHANTILLONNAGE_H
+#define SOUS_ECHANTILLONNAGE_H
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -28,16 +28,11 @@ void free_MCUs_YCbCr_val(struct MCU_YCbCr ***matrice_MCUs_sous_ech,
 
 
 /*******************************************/
-/* Partie consacrée au sous-echantillonage */
+/* Partie consacrée au sous-échantillonnage */
 /*******************************************/
 
 
-/* Différentes fonctions permettant de faire la moyenne
-  d'un certain nombre de pixels de manière horizontale
-  ou verticale, sur la chrominance Cb ou Cr*/
-
-
-/* Moyenne horizontale sur Cb */
+/* Fait la moyenne sur un certain nombre de pixels Cb alignés horizontalement */
 int16_t moyenne_horizontale_Cb(struct MCU_YCbCr *MCU_YCbCr,
                                     uint8_t hauteur_pix,
                                     uint8_t largeur_pix,
@@ -45,7 +40,7 @@ int16_t moyenne_horizontale_Cb(struct MCU_YCbCr *MCU_YCbCr,
                                     uint8_t largeur);
 
 
-/* Moyenne horizontale sur Cr */
+/* Fait la moyenne sur un certain nombre de pixels Cr alignés horizontalement */
 int16_t moyenne_horizontale_Cr(struct MCU_YCbCr *MCU_YCbCr,
                                     uint8_t hauteur_pix,
                                     uint8_t largeur_pix,
@@ -53,7 +48,7 @@ int16_t moyenne_horizontale_Cr(struct MCU_YCbCr *MCU_YCbCr,
                                     uint8_t largeur);
 
 
-/* Moyenne verticale sur Cb */
+/* Fait la moyenne sur un certain nombre de pixels Cb alignés verticalement */
 int16_t moyenne_verticale_Cb(struct MCU_YCbCr *MCU_YCbCr,
                                     uint8_t hauteur_pix,
                                     uint8_t largeur_pix,
@@ -61,7 +56,7 @@ int16_t moyenne_verticale_Cb(struct MCU_YCbCr *MCU_YCbCr,
                                     uint8_t largeur);
 
 
-/* Moyenne verticale sur Cr */
+/* Fait la moyenne sur un certain nombre de pixels Cr alignés verticalement */
 int16_t moyenne_verticale_Cr(struct MCU_YCbCr *MCU_YCbCr,
                                     uint8_t hauteur_pix,
                                     uint8_t largeur_pix,
@@ -69,25 +64,31 @@ int16_t moyenne_verticale_Cr(struct MCU_YCbCr *MCU_YCbCr,
                                     uint8_t largeur);
 
 
-/* Fonction permettant de sous_echantilloner horizontalement une MCU_YCbCr */
-struct MCU_YCbCr *sous_echantillonage_horizontal(struct MCU_YCbCr *MCU_YCbCr);
+/* Sous-échantillonne horizontalement une MCU_YCbCr */
+struct MCU_YCbCr *sous_echantillonnage_horizontal(struct MCU_YCbCr *MCU_YCbCr);
 
 
-/* Fonction permettant de sous_echantilloner verticalement une MCU_YCbCr */
-struct MCU_YCbCr *sous_echantillonage_vertical(struct MCU_YCbCr *MCU_YCbCr);
+/* Sous-échantillonne verticalement une MCU_YCbCr */
+struct MCU_YCbCr *sous_echantillonnage_vertical(struct MCU_YCbCr *MCU_YCbCr);
 
 
-struct MCU_YCbCr *sous_echantillonage(struct MCU_YCbCr *MCU_YCbCr);
+/* Sous-échantillonne une MCU en supposant que tous les
+paramètres vérifient les conditions sur les hi et vi */
+struct MCU_YCbCr *sous_echantillonnage(struct MCU_YCbCr *MCU_YCbCr);
 
 
-struct MCU_YCbCr ***sous_echantillone(struct MCU_YCbCr ***MCU_a_sous_ech,
+/* Sous-échantillonne une matrice de MCU_YCbCr, on suppose ici aussi
+ que tous les paramètres vérifient les conditions sur les hi et vi */
+struct MCU_YCbCr ***sous_echantillonne(struct MCU_YCbCr ***MCU_a_sous_ech,
                                       uint32_t nb_MCUs_largeur,
                                       uint32_t nb_MCUs_hauteur);
 
 
+/* Affiche un bloc */
 void print_bloc(struct Bloc_YCbCr bloc);
 
 
+/* Affiche une MCU_YCbCr */
 void print_MCU_YCbCr_val(struct MCU_YCbCr *MCU_YCbCr);
 
 

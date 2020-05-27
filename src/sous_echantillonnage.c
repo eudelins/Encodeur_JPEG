@@ -7,7 +7,7 @@
 #include "../include/conversion_YCbCr.h"
 
 
-/* On affiche un bloc de pixels */
+/* Libère la mémoire allouée à un bloc de pixels */
 void free_bloc(struct Bloc_YCbCr bloc)
 {
   for (uint8_t hauteur = 0; hauteur < 8; hauteur ++) {
@@ -16,7 +16,7 @@ void free_bloc(struct Bloc_YCbCr bloc)
   free(bloc.pixels);
 }
 
-/* On affiche un tableau de blocs */
+/* Libère la mémoire allouée à une matrice de blocs en connaissant ses dimensions */
 void free_blocs(struct Bloc_YCbCr **blocs, uint8_t hi, uint8_t vi)
 {
   for (uint8_t hauteur = 0; hauteur < vi; hauteur++) {
@@ -28,7 +28,7 @@ void free_blocs(struct Bloc_YCbCr **blocs, uint8_t hi, uint8_t vi)
   free(blocs);
 }
 
-/* On affiche une MCU_YCbCr */
+/* Libère la mémoire allouée à une MCU_YCbCr */
 void free_MCU(struct MCU_YCbCr *MCU_YCbCr)
 {
   free_blocs(MCU_YCbCr->blocs_Y, MCU_YCbCr->h1, MCU_YCbCr->v1);
@@ -38,7 +38,7 @@ void free_MCU(struct MCU_YCbCr *MCU_YCbCr)
 }
 
 
-/* Libère la mémoire allouée par une matrice de MCUs YCbCr */
+/* Libère la mémoire allouée à une matrice de MCUs YCbCr en connaissant ses dimensions */
 void free_MCUs_YCbCr_val(struct MCU_YCbCr ***matrice_MCUs_sous_ech,
                      uint32_t *dimensions_MCUs)
 {
@@ -55,24 +55,23 @@ void free_MCUs_YCbCr_val(struct MCU_YCbCr ***matrice_MCUs_sous_ech,
 }
 
 /*******************************************/
-/* Partie consacrée au sous-echantillonage */
+/* Partie consacrée au sous-échantillonnage */
 /*******************************************/
 
 
-/* Différentes fonctions permettant de faire la moyenne
-  d'un certain nombre de pixels de manière horizontale
-  ou verticale, sur la chrominance Cb ou Cr*/
-
-
-/* Moyenne horizontale sur Cb */
+/* Fait la moyenne sur un certain nombre de pixels Cb alignés horizontalement */
 int16_t moyenne_horizontale_Cb(struct MCU_YCbCr *MCU_YCbCr,
-                                    uint8_t hauteur_pix,
-                                    uint8_t largeur_pix,
-                                    uint8_t hauteur,
-                                    uint8_t largeur)
+                                      uint8_t hauteur_pix,
+                                      uint8_t largeur_pix,
+                                      uint8_t hauteur,
+                                      uint8_t largeur)
 {
+/* En fonction du rapport h1/h2, fait une moyenne horizontale sur 1, 2, 3 ou 4 pixels Cb */
   uint8_t div = MCU_YCbCr->h1/MCU_YCbCr->h2;
   int16_t somme = 0;
+
+  /* Cas ou le rapport vaut 3 : cas spécial car les pixels dont on fait
+  la moyenne sont sur des blocs différents*/
   if (div == 3) {
     if (largeur_pix < 2) {
       for (uint8_t pixel = 0; pixel < 3; pixel++) {
@@ -100,12 +99,16 @@ int16_t moyenne_horizontale_Cb(struct MCU_YCbCr *MCU_YCbCr,
       }
     }
   }
+
+  /* Cas ou le rapport vaut 2 ou 4 */
   else if (div > 1) {
     for (uint8_t pixel = 0; pixel < div; pixel++) {
       int16_t pixel_a_ajouter = MCU_YCbCr->blocs_Cb[hauteur][largeur_pix * div / 8 + (largeur * div)].pixels[hauteur_pix][div * (largeur_pix % (8/div)) + pixel];
       somme += pixel_a_ajouter;
       }
     }
+
+  /* Cas ou le rapport vaut 1, on recopie simplement le pixel */
   else {
     somme = MCU_YCbCr->blocs_Cb[hauteur][largeur].pixels[hauteur_pix][largeur_pix];
   }
@@ -113,13 +116,15 @@ int16_t moyenne_horizontale_Cb(struct MCU_YCbCr *MCU_YCbCr,
   return somme;
 }
 
-/* Moyenne horizontale sur Cr */
+
+/* Fait la moyenne sur un certain nombre de pixels Cr alignés horizontalement */
 int16_t moyenne_horizontale_Cr(struct MCU_YCbCr *MCU_YCbCr,
-                                    uint8_t hauteur_pix,
-                                    uint8_t largeur_pix,
-                                    uint8_t hauteur,
-                                    uint8_t largeur)
+                                      uint8_t hauteur_pix,
+                                      uint8_t largeur_pix,
+                                      uint8_t hauteur,
+                                      uint8_t largeur)
 {
+  /* Fonction identique à moyenne_horizontale_Cb en remplaçant Cb par Cr et h2 par h3 */
   uint8_t div = MCU_YCbCr->h1/MCU_YCbCr->h3;
   int16_t somme = 0;
   if (div == 3) {
@@ -162,13 +167,16 @@ int16_t moyenne_horizontale_Cr(struct MCU_YCbCr *MCU_YCbCr,
   return somme;
 }
 
-/* Moyenne verticale sur Cb */
+
+/* Fait la moyenne sur un certain nombre de pixels Cb alignés verticalement */
 int16_t moyenne_verticale_Cb(struct MCU_YCbCr *MCU_YCbCr,
                                     uint8_t hauteur_pix,
                                     uint8_t largeur_pix,
                                     uint8_t hauteur,
                                     uint8_t largeur)
 {
+  /* Fonction identique à moyenne_horizontale_Cb, la différence venant du fait
+  qu'on travail ici sur la hauteur des blocs et de pixels plutôt que sur la largeur */
   uint8_t div = MCU_YCbCr->v1/MCU_YCbCr->v2;
   int16_t somme = 0;
   if (div == 3) {
@@ -211,13 +219,15 @@ int16_t moyenne_verticale_Cb(struct MCU_YCbCr *MCU_YCbCr,
   return somme;
 }
 
-/* Moyenne verticale sur Cr */
+
+/* Fait la moyenne sur un certain nombre de pixels Cr alignés verticalement */
 int16_t moyenne_verticale_Cr(struct MCU_YCbCr *MCU_YCbCr,
                                     uint8_t hauteur_pix,
                                     uint8_t largeur_pix,
                                     uint8_t hauteur,
                                     uint8_t largeur)
 {
+  /* Fonction identique à moyenne_verticale_Cb en remplaçant Cb par Cr et v2 par v3 */
   uint8_t div = MCU_YCbCr->v1/MCU_YCbCr->v3;
   int16_t somme = 0;
   if (div == 3) {
@@ -261,23 +271,19 @@ int16_t moyenne_verticale_Cr(struct MCU_YCbCr *MCU_YCbCr,
 }
 
 
-/* Fonction permettant de sous_echantilloner horizontalement une MCU_YCbCr */
-struct MCU_YCbCr *sous_echantillonage_horizontal(struct MCU_YCbCr *MCU_YCbCr)
+/* Sous-échantillonne horizontalement une MCU_YCbCr */
+struct MCU_YCbCr *sous_echantillonnage_horizontal(struct MCU_YCbCr *MCU_YCbCr)
 {
 
-  /* On recopie les Y*/
+  /* Recopie les pixels Y */
   struct Bloc_YCbCr **blocs_Y = malloc(MCU_YCbCr->v1 * sizeof(struct Bloc_YCbCr*));
   for (uint8_t hauteur = 0; hauteur < MCU_YCbCr->v1; hauteur++) {
     struct Bloc_YCbCr *ligne_Y = malloc(MCU_YCbCr->h1 * sizeof(struct Bloc_YCbCr));
     for (uint8_t largeur = 0; largeur < MCU_YCbCr->h1; largeur++) {
-
-      /* On fait la moyenne des pixels */
       int16_t **pixels_Y = malloc(8 * sizeof(int16_t*));
       for (uint8_t hauteur_pix = 0; hauteur_pix < 8; hauteur_pix++) {
         int16_t *ligne_pixels_Y = malloc(8 * sizeof(int16_t));
         for (uint8_t largeur_pix = 0; largeur_pix < 8; largeur_pix++) {
-          // int16_t *pixel_cb = malloc(sizeof(int16_t));
-          // pixel_cb[0] = (MCU_YCbCr->blocs_Cb[hauteur][largeur_pix/4].pixels[hauteur_pix][2 * largeur_pix] + MCU_YCbCr->blocs_Cb[hauteur][largeur_pix/4].pixels[hauteur_pix][2 * largeur_pix + 1])/2;
           ligne_pixels_Y[largeur_pix] = MCU_YCbCr->blocs_Y[hauteur][largeur].pixels[hauteur_pix][largeur_pix];
         }
         pixels_Y[hauteur_pix] = ligne_pixels_Y;
@@ -287,20 +293,17 @@ struct MCU_YCbCr *sous_echantillonage_horizontal(struct MCU_YCbCr *MCU_YCbCr)
     blocs_Y[hauteur] = ligne_Y;
   }
 
-  /* On sous-echantillone les Cb */
+  /* Sous-échantillonne horizontalement les pixels Cb */
   struct Bloc_YCbCr **sous_blocs_Cb = malloc(MCU_YCbCr->v1 * sizeof(struct Bloc_YCbCr*));
   for (uint8_t hauteur = 0; hauteur < MCU_YCbCr->v1; hauteur++) {
     struct Bloc_YCbCr *sous_ligne_Cb = malloc(MCU_YCbCr->h2 * sizeof(struct Bloc_YCbCr));
     for (uint8_t largeur = 0; largeur < MCU_YCbCr->h2; largeur++) {
-
-      /* On fait la moyenne des pixels */
       int16_t **pixels_Cb = malloc(8 * sizeof(int16_t*));
       for (uint8_t hauteur_pix = 0; hauteur_pix < 8; hauteur_pix++) {
         int16_t *ligne_pixels_Cb = malloc(8 * sizeof(int16_t));
         for (uint8_t largeur_pix = 0; largeur_pix < 8; largeur_pix++) {
-          // int16_t *pixel_cb = malloc(sizeof(int16_t));
-          // pixel_cb[0] = (MCU_YCbCr->blocs_Cb[hauteur][largeur_pix/4].pixels[hauteur_pix][2 * largeur_pix] + MCU_YCbCr->blocs_Cb[hauteur][largeur_pix/4].pixels[hauteur_pix][2 * largeur_pix + 1])/2;
-          // ligne_pixels_Cb[largeur_pix] = (MCU_YCbCr->blocs_Cb[hauteur][largeur_pix/4].pixels[hauteur_pix][2 * (largeur_pix%4)] + MCU_YCbCr->blocs_Cb[hauteur][largeur_pix/4].pixels[hauteur_pix][2 * (largeur_pix%4) + 1])/2;
+          /* Fait la moyenne de x pixels alignés horizontalement et
+          affecte cette valeur au nouveau bloc_Cb sous échantillonné */
           ligne_pixels_Cb[largeur_pix] = moyenne_horizontale_Cb(MCU_YCbCr, hauteur_pix, largeur_pix, hauteur, largeur);
         }
         pixels_Cb[hauteur_pix] = ligne_pixels_Cb;
@@ -310,23 +313,17 @@ struct MCU_YCbCr *sous_echantillonage_horizontal(struct MCU_YCbCr *MCU_YCbCr)
     sous_blocs_Cb[hauteur] = sous_ligne_Cb;
   }
 
-
-  /* On sous-echantillone les Cr */
-
+  /* Sous-échantillonne horizontalement les Cr */
   struct Bloc_YCbCr **sous_blocs_Cr = malloc(MCU_YCbCr->v1 * sizeof(struct Bloc_YCbCr*));
   for (uint8_t hauteur = 0; hauteur < MCU_YCbCr->v1; hauteur++) {
     struct Bloc_YCbCr *sous_ligne_Cr = malloc(MCU_YCbCr->h3 * sizeof(struct Bloc_YCbCr));
     for (uint8_t largeur = 0; largeur < MCU_YCbCr->h3; largeur++) {
-
-
-      /* On fait la moyenne des pixels */
       int16_t **pixels_Cr = malloc(8 * sizeof(int16_t*));
       for (uint8_t hauteur_pix = 0; hauteur_pix < 8; hauteur_pix++) {
         int16_t *ligne_pixels_Cr = malloc(8 * sizeof(int16_t));
         for (uint8_t largeur_pix = 0; largeur_pix < 8; largeur_pix++) {
-          // int16_t *pixel_cb = malloc(sizeof(int16_t));
-          // pixel_cb[0] = (MCU_YCbCr->blocs_Cb[hauteur][largeur_pix/4].pixels[hauteur_pix][2 * largeur_pix] + MCU_YCbCr->blocs_Cb[hauteur][largeur_pix/4].pixels[hauteur_pix][2 * largeur_pix + 1])/2;
-          // ligne_pixels_Cr[largeur_pix] = (MCU_YCbCr->blocs_Cr[hauteur][largeur_pix/4].pixels[hauteur_pix][2 * (largeur_pix%4)] + MCU_YCbCr->blocs_Cr[hauteur][largeur_pix/4].pixels[hauteur_pix][2 * (largeur_pix%4) + 1])/2;
+          /* Fait la moyenne de x pixels alignés horizontalement et
+          affecte cette valeur au nouveau bloc_Cr sous échantillonné */
           ligne_pixels_Cr[largeur_pix] = moyenne_horizontale_Cr(MCU_YCbCr, hauteur_pix, largeur_pix, hauteur, largeur);
         }
         pixels_Cr[hauteur_pix] = ligne_pixels_Cr;
@@ -336,6 +333,8 @@ struct MCU_YCbCr *sous_echantillonage_horizontal(struct MCU_YCbCr *MCU_YCbCr)
     sous_blocs_Cr[hauteur] = sous_ligne_Cr;
   }
 
+  /* Crée la nouvelle MCU sous-échantillonnée à laquelle
+  on affecte les matrices de blocs calculées précédemment */
   struct MCU_YCbCr *sous_MCU = malloc(sizeof(struct MCU_YCbCr));
   sous_MCU->v1 = MCU_YCbCr->v1;
   sous_MCU->h1 = MCU_YCbCr->h1;
@@ -347,25 +346,23 @@ struct MCU_YCbCr *sous_echantillonage_horizontal(struct MCU_YCbCr *MCU_YCbCr)
   sous_MCU->v3 = MCU_YCbCr->v3;
   sous_MCU->h3 = MCU_YCbCr->h3;
 
+  /* Retourne le pointeur de notre nouvelle MCU_YCbCr */
   return sous_MCU;
 }
 
-/* Fonction permettant de sous_echantilloner verticalement une MCU_YCbCr */
-struct MCU_YCbCr *sous_echantillonage_vertical(struct MCU_YCbCr *MCU_YCbCr)
+
+/* Sous-échantillonne verticalement une MCU_YCbCr */
+struct MCU_YCbCr *sous_echantillonnage_vertical(struct MCU_YCbCr *MCU_YCbCr)
 {
-  /* On recopie les Y*/
+  /* Recopie les Y*/
   struct Bloc_YCbCr **blocs_Y = malloc(MCU_YCbCr->v1 * sizeof(struct Bloc_YCbCr*));
   for (uint8_t hauteur = 0; hauteur < MCU_YCbCr->v1; hauteur++) {
     struct Bloc_YCbCr *ligne_Y = malloc(MCU_YCbCr->h1 * sizeof(struct Bloc_YCbCr));
     for (uint8_t largeur = 0; largeur < MCU_YCbCr->h1; largeur++) {
-
-      /* On fait la moyenne des pixels */
       int16_t **pixels_Y = malloc(8 * sizeof(int16_t*));
       for (uint8_t hauteur_pix = 0; hauteur_pix < 8; hauteur_pix++) {
         int16_t *ligne_pixels_Y = malloc(8 * sizeof(int16_t));
         for (uint8_t largeur_pix = 0; largeur_pix < 8; largeur_pix++) {
-          // int16_t *pixel_cb = malloc(sizeof(int16_t));
-          // pixel_cb[0] = (MCU_YCbCr->blocs_Cb[hauteur][largeur_pix/4].pixels[hauteur_pix][2 * largeur_pix] + MCU_YCbCr->blocs_Cb[hauteur][largeur_pix/4].pixels[hauteur_pix][2 * largeur_pix + 1])/2;
           ligne_pixels_Y[largeur_pix] = MCU_YCbCr->blocs_Y[hauteur][largeur].pixels[hauteur_pix][largeur_pix];
         }
         pixels_Y[hauteur_pix] = ligne_pixels_Y;
@@ -375,22 +372,17 @@ struct MCU_YCbCr *sous_echantillonage_vertical(struct MCU_YCbCr *MCU_YCbCr)
     blocs_Y[hauteur] = ligne_Y;
   }
 
-  /* On sous-echantillone les Cb */
+  /* Sous-échantillonne  verticalement les Cb */
   struct Bloc_YCbCr **sous_blocs_Cb = malloc(MCU_YCbCr->v2 * sizeof(struct Bloc_YCbCr*));
   for (uint8_t hauteur = 0; hauteur < MCU_YCbCr->v2; hauteur++) {
     struct Bloc_YCbCr *sous_ligne_Cb = malloc(MCU_YCbCr->h2 * sizeof(struct Bloc_YCbCr));
     for (uint8_t largeur = 0; largeur < MCU_YCbCr->h2; largeur++) {
-
-
-
-      /* On fait la moyenne des pixels */
       int16_t **pixels_Cb = malloc(8 * sizeof(int16_t*));
       for (uint8_t hauteur_pix = 0; hauteur_pix < 8; hauteur_pix++) {
         int16_t *ligne_pixels_Cb = malloc(8 * sizeof(int16_t));
         for (uint8_t largeur_pix = 0; largeur_pix < 8; largeur_pix++) {
-          // int16_t *pixel_cb = malloc(sizeof(int16_t));
-          // pixel_cb[0] = (MCU_YCbCr->blocs_Cb[hauteur][largeur_pix/4].pixels[hauteur_pix][2 * largeur_pix] + MCU_YCbCr->blocs_Cb[hauteur][largeur_pix/4].pixels[hauteur_pix][2 * largeur_pix + 1])/2;
-          // ligne_pixels_Cb[largeur_pix] = (MCU_YCbCr->blocs_Cb[hauteur_pix/4][largeur].pixels[2 * (hauteur_pix%4)][largeur_pix] + MCU_YCbCr->blocs_Cb[hauteur_pix/4][largeur].pixels[2 * (hauteur_pix%4) + 1][largeur_pix])/2;
+          /* Fait la moyenne de x pixels alignés verticalement et
+          affecte cette valeur au nouveau bloc_Cb sous échantillonné */
           ligne_pixels_Cb[largeur_pix] = moyenne_verticale_Cb(MCU_YCbCr, hauteur_pix, largeur_pix, hauteur, largeur);
         }
         pixels_Cb[hauteur_pix] = ligne_pixels_Cb;
@@ -400,24 +392,17 @@ struct MCU_YCbCr *sous_echantillonage_vertical(struct MCU_YCbCr *MCU_YCbCr)
     sous_blocs_Cb[hauteur] = sous_ligne_Cb;
   }
 
-
-  /* On sous-echantillone les Cr */
-
+  /* Sous-échantillonne les Cr */
   struct Bloc_YCbCr **sous_blocs_Cr = malloc(MCU_YCbCr->v3 * sizeof(struct Bloc_YCbCr*));
   for (uint8_t hauteur = 0; hauteur < MCU_YCbCr->v3; hauteur++) {
     struct Bloc_YCbCr *sous_ligne_Cr = malloc(MCU_YCbCr->h3 * sizeof(struct Bloc_YCbCr));
     for (uint8_t largeur = 0; largeur < MCU_YCbCr->h3; largeur++) {
-
-
-
-      /* On fait la moyenne des pixels */
       int16_t **pixels_Cr = malloc(8 * sizeof(int16_t*));
       for (uint8_t hauteur_pix = 0; hauteur_pix < 8; hauteur_pix++) {
         int16_t *ligne_pixels_Cr = malloc(8 * sizeof(int16_t));
         for (uint8_t largeur_pix = 0; largeur_pix < 8; largeur_pix++) {
-          // int16_t *pixel_cb = malloc(sizeof(int16_t));
-          // pixel_cb[0] = (MCU_YCbCr->blocs_Cb[hauteur][largeur_pix/4].pixels[hauteur_pix][2 * largeur_pix] + MCU_YCbCr->blocs_Cb[hauteur][largeur_pix/4].pixels[hauteur_pix][2 * largeur_pix + 1])/2;
-          // ligne_pixels_Cr[largeur_pix] = (MCU_YCbCr->blocs_Cr[hauteur_pix/4][largeur].pixels[2 * (hauteur_pix%4)][largeur_pix] + MCU_YCbCr->blocs_Cr[hauteur_pix/4][largeur].pixels[2 * (hauteur_pix%4) + 1][largeur_pix])/2;
+          /* Fait la moyenne de x pixels alignés verticalement et
+          affecte cette valeur au nouveau bloc_Cr sous échantillonné */
           ligne_pixels_Cr[largeur_pix] = moyenne_verticale_Cr(MCU_YCbCr, hauteur_pix, largeur_pix, hauteur, largeur);
         }
         pixels_Cr[hauteur_pix] = ligne_pixels_Cr;
@@ -427,6 +412,8 @@ struct MCU_YCbCr *sous_echantillonage_vertical(struct MCU_YCbCr *MCU_YCbCr)
     sous_blocs_Cr[hauteur] = sous_ligne_Cr;
   }
 
+  /* Crée la nouvelle MCU sous-échantillonnée à laquelle
+  on affecte les matrices de blocs calculées précédemment */
   struct MCU_YCbCr *sous_MCU = malloc(sizeof(struct MCU_YCbCr));
   sous_MCU->v1 = MCU_YCbCr->v1;
   sous_MCU->h1 = MCU_YCbCr->h1;
@@ -438,50 +425,67 @@ struct MCU_YCbCr *sous_echantillonage_vertical(struct MCU_YCbCr *MCU_YCbCr)
   sous_MCU->v3 = MCU_YCbCr->v3;
   sous_MCU->h3 = MCU_YCbCr->h3;
 
-
+  /* Retourne le pointeur de notre nouvelle MCU_YCbCr */
   return sous_MCU;
 }
 
 
-struct MCU_YCbCr *sous_echantillonage(struct MCU_YCbCr *MCU_YCbCr)
+/* Sous-échantillonne une MCU en supposant que tous les
+paramètres respectent les conditions sur les hi et vi */
+struct MCU_YCbCr *sous_echantillonnage(struct MCU_YCbCr *MCU_YCbCr)
 {
   struct MCU_YCbCr *horizontal;
+  /* Initialise vertical au cas ou on appelle sous_echantillonnage sans sous-échantillonner*/
   struct MCU_YCbCr *vertical = MCU_YCbCr;
+
+  /* Commence par sous-échantillonner horizontalement si nécessaire */
   if (MCU_YCbCr->h2 < MCU_YCbCr->h1 || MCU_YCbCr->h3 < MCU_YCbCr->h1) {
-    horizontal = sous_echantillonage_horizontal(MCU_YCbCr);
+    horizontal = sous_echantillonnage_horizontal(MCU_YCbCr);
+    /* Sous-échantillonne ensuite verticalement */
     if (MCU_YCbCr->v2 < MCU_YCbCr->v1 || MCU_YCbCr->v3 < MCU_YCbCr->v1) {
-      vertical = sous_echantillonage_vertical(horizontal);
+      vertical = sous_echantillonnage_vertical(horizontal);
       horizontal->v2 = horizontal->v1;
       horizontal->v3 = horizontal->v1;
+      /* Libère la mémoire allouée à horizontal qui sera sinon perdue */
       free_MCU(horizontal);
+      /* Retourne une MCU sous échantillonnée horizontalement et verticalement */
       return vertical;
     }
+    /* Retourne une MCU sous échantillonnée horizontalement uniquement */
     return horizontal;
   }
+  /* Sous-échantillonne uniquement de manière verticale */
   if (MCU_YCbCr->v2 < MCU_YCbCr->v1 || MCU_YCbCr->v3 < MCU_YCbCr->v1) {
-    vertical = sous_echantillonage_vertical(MCU_YCbCr);
+    vertical = sous_echantillonnage_vertical(MCU_YCbCr);
+    /* Retourne une MCU sous échantillonnée verticalement uniquement */
     return vertical;
   }
+  /* Retourne une MCU non sous-échantillonnée */
   return vertical;
 }
 
-struct MCU_YCbCr ***sous_echantillone(struct MCU_YCbCr ***MCU_a_sous_ech,
-                                      uint32_t nb_MCUs_largeur,
-                                      uint32_t nb_MCUs_hauteur)
+
+/* Sous-échantillonne une matrice de MCU_YCbCr, on suppose ici aussi
+ que tous les paramètres vérifient les conditions sur les hi et vi */
+struct MCU_YCbCr ***sous_echantillonne(struct MCU_YCbCr ***MCU_a_sous_ech,
+                                            uint32_t nb_MCUs_largeur,
+                                            uint32_t nb_MCUs_hauteur)
 {
   struct MCU_YCbCr ***matrice_MCUs_sous_ech = malloc(nb_MCUs_hauteur * sizeof(struct MCU_YCbCr**));
+  /* Parcourt la matrice en sous-échantillonnant chaque MCU_YCbCr une à une */
   for (uint32_t hauteur = 0; hauteur < nb_MCUs_hauteur; hauteur++) {
       struct MCU_YCbCr **ligne_MCUs_sous_ech = malloc(nb_MCUs_largeur * sizeof(struct MCU_YCbCr*));
       for (uint32_t largeur = 0; largeur < nb_MCUs_largeur; largeur++) {
-        ligne_MCUs_sous_ech[largeur] = sous_echantillonage(MCU_a_sous_ech[hauteur][largeur]);
+        ligne_MCUs_sous_ech[largeur] = sous_echantillonnage(MCU_a_sous_ech[hauteur][largeur]);
       }
       matrice_MCUs_sous_ech[hauteur] = ligne_MCUs_sous_ech;
   }
+  /* Retourne le pointeur de la matrice sous-échantillonnée */
   return matrice_MCUs_sous_ech;
 }
 
 
-
+/* Affiche un bloc */
 void print_bloc(struct Bloc_YCbCr bloc)
 {
   for (uint8_t hauteur = 0; hauteur < 8; hauteur++) {
@@ -492,7 +496,7 @@ void print_bloc(struct Bloc_YCbCr bloc)
   }
 }
 
-
+/* Affiche une MCU_YCbCr */
 void print_MCU_YCbCr_val(struct MCU_YCbCr *MCU_YCbCr)
 {
   printf("Bloc_YCbCrs Y \n");
@@ -526,7 +530,7 @@ void print_matrice_MCU_YCbCr_val(struct MCU_YCbCr ***MCUs_YCbCr_a_afficher,
 {
     for (uint32_t hauteur = 0; hauteur < nb_MCUs_hauteur; hauteur++) {
         for (uint32_t largeur = 0; largeur < nb_MCUs_largeur; largeur++) {
-            printf("MCU n°%u\n\n", largeur + hauteur);
+            printf("MCU n°%u\n\n", largeur + hauteur * nb_MCUs_largeur);
             print_MCU_YCbCr_val(MCUs_YCbCr_a_afficher[hauteur][largeur]);
             printf("\n");
         }
@@ -552,7 +556,7 @@ void print_matrice_MCU_YCbCr_val(struct MCU_YCbCr ***MCUs_YCbCr_a_afficher,
 //    char couleurs_max[10];
 //    fgets(couleurs_max, 10, fichier);
 //
-//    // On calcule les dimensions des MCUs
+//    // On initialise les dimensions des MCUs
 //    uint8_t h1 = 1;
 //    uint8_t v1 = 3;
 //    uint8_t h2 = 1;
@@ -565,31 +569,41 @@ void print_matrice_MCU_YCbCr_val(struct MCU_YCbCr ***MCUs_YCbCr_a_afficher,
 //    nb_MCUs_largeur = dimensions_MCUs[0];
 //    nb_MCUs_hauteur = dimensions_MCUs[1];
 //
+//    /* On découpe notre matrice en MCU puis en blocs */
 //    struct MCU_RGB ***MCUs = decoupage_MCUs(fichier, largeur_image, hauteur_image, nb_MCUs_largeur, nb_MCUs_hauteur, h1, v1, h2, v2, h3, v3);
 //    MCUs = decoupage_MCUs_en_blocs(MCUs, nb_MCUs_largeur, nb_MCUs_hauteur);
+//
+//    /* On converti la matrice en YCbCr */
 //    struct MCU_YCbCr ***matrice_MCUs_converti = conversion_matrice_MCUs(MCUs, nb_MCUs_largeur, nb_MCUs_hauteur);
 //
-//    struct MCU_YCbCr ***matrice_MCUs_sous_ech = sous_echantillone(matrice_MCUs_converti, nb_MCUs_largeur, nb_MCUs_hauteur);
-//    //
-//    // print_MCUs_RGB(MCUs, dimensions_MCUs);
-//    // print_matrice_MCU_YCbCr(matrice_MCUs_converti, nb_MCUs_largeur, nb_MCUs_hauteur);
-//    print_matrice_MCU_YCbCr_val(matrice_MCUs_sous_ech, nb_MCUs_largeur, nb_MCUs_hauteur);
-//    //
-//    free_MCUs_YCbCr_val(matrice_MCUs_sous_ech, dimensions_MCUs);
+//    /* On sous-échantillonne la matrice */
+//    struct MCU_YCbCr ***matrice_MCUs_sous_ech = sous_echantillonne(matrice_MCUs_converti, nb_MCUs_largeur, nb_MCUs_hauteur);
 //
+//    /* On affiche les différentes matrices à l'écran */
+//    print_MCUs_RGB(MCUs, dimensions_MCUs);
+//    print_matrice_MCU_YCbCr(matrice_MCUs_converti, nb_MCUs_largeur, nb_MCUs_hauteur);
+//    print_matrice_MCU_YCbCr_val(matrice_MCUs_sous_ech, nb_MCUs_largeur, nb_MCUs_hauteur);
+//
+//
+//    /* On libère la mémoire allouée aux différentes matrices */
+//    free_MCUs_YCbCr_val(matrice_MCUs_sous_ech, dimensions_MCUs);
 //    free_MCUs_YCbCr(matrice_MCUs_converti, dimensions_MCUs);
 //    free_MCUs_dims_RGB(MCUs, dimensions_MCUs);
 //
 //    fclose(fichier);
 //    return 0;
 // }
-//
 
+
+/* main permettant de tester le sous-échantillonnage
+quand la conversion RGB vers YCbCr n'était pas terminée */
 
 // void main()
 // {
 //   struct MCU_YCbCr *MCU_YCbCr = malloc(sizeof(struct MCU_YCbCr));
 //   MCU_YCbCr->v1 = 1, MCU_YCbCr->h1 = 2;
+//
+//   /* On crée à la main toutes les matrices nécessaires */
 //
 //   int16_t mat_Y_g [8][8] = {  {0xa6, 0xa0, 0x9a, 0x98, 0x9a, 0x9a, 0x96, 0x91},
 //                               {0xa0, 0xa3, 0x9d, 0x8e, 0x88, 0x8f, 0x95, 0x94},
@@ -850,8 +864,9 @@ void print_matrice_MCU_YCbCr_val(struct MCU_YCbCr ***MCUs_YCbCr_a_afficher,
 //
 //   // print_MCU_YCbCr(MCU_YCbCr);
 //
-//   struct MCU_YCbCr *test1 = sous_echantillonage(MCU_YCbCr, 2, 2, 1, 2, 2, 1);
-//   // struct MCU_YCbCr *test2 = sous_echantillonage_horizontal(test1, 2, 2, 1, 1, 1, 1);
+//   /* On sous-échantillonne puis on affiche à l'écran pour vérifier */
+//   struct MCU_YCbCr *test1 = sous_echantillonnage(MCU_YCbCr, 2, 2, 1, 2, 2, 1);
+//   // struct MCU_YCbCr *test2 = sous_echantillonnage_horizontal(test1, 2, 2, 1, 1, 1, 1);
 //
 //
 //   print_MCU_YCbCr(test1);
