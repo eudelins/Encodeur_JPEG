@@ -10,9 +10,9 @@
 
 
 
-/******************************/
-/* Module d'encodage des MCUs */
-/******************************/
+/************************************************/
+/* Module d'encodage des MCUs en niveau de gris */
+/************************************************/
 
 
 /************************************************************/
@@ -20,7 +20,10 @@
 /************************************************************/
 
 
-/* MCU après transformée en cosinus discrète */
+/*
+    MCU après transformée en cosinus discrète, largeur et hauteur sont
+    toujours égales à 8.
+*/
 struct MCU_freq{
     uint8_t largeur;
     uint8_t hauteur;
@@ -41,7 +44,8 @@ double C(uint8_t i)
 
 /* Applique la transformée en cosinus discrète à une MCU */
 struct MCU_freq *transf_cos_MCU(struct MCU *MCU)
-{    
+{
+    // On copier hauteur et largeur    
     struct MCU_freq *MCU_freq = malloc(sizeof(struct MCU_freq));
     MCU_freq->largeur = MCU->largeur;
     MCU_freq->hauteur = MCU->hauteur;
@@ -71,7 +75,7 @@ struct MCU_freq *transf_cos_MCU(struct MCU *MCU)
 }
 
 
-/* Applique la transformée en cosinus discrète aux MCUs */
+/* Applique la transformée en cosinus discrète à toutes les MCUs */
 struct MCU_freq ***transf_cos(struct MCU ***MCUs, uint32_t largeur_MCUs, uint32_t hauteur_MCUs)
 { 
     struct MCU_freq ***MCUs_freq = malloc(hauteur_MCUs * sizeof(struct MCU_freq**));
@@ -148,7 +152,11 @@ void free_MCUs_freq(struct MCU_freq ***MCUs_freq, uint32_t largeur_MCUs, uint32_
 /* Partie consacrée à la réorganisation en zigzag */
 /**************************************************/
 
-/* MCU après réorganisation en zigzag */
+
+/*
+    MCU après réorganisation en zigzag, largeur et hauteur sont
+    toujours égales à 8.
+*/
 struct MCU_zigzag{
     uint8_t largeur;
     uint8_t hauteur;
@@ -197,7 +205,7 @@ struct MCU_zigzag *zigzag_MCU(struct MCU_freq *MCU_freq)
 }
 
 
-/* Applique la réorganisation en zigzag aux MCUs */
+/* Applique la réorganisation en zigzag à toutes les MCUs */
 struct MCU_zigzag ***zigzag(struct MCU_freq ***MCUs_freq, uint32_t largeur_MCUs, uint32_t hauteur_MCUs)
 { 
     struct MCU_zigzag ***MCUs_zigzag = malloc(hauteur_MCUs * sizeof(struct MCU_zigzag**));
@@ -213,7 +221,7 @@ struct MCU_zigzag ***zigzag(struct MCU_freq ***MCUs_freq, uint32_t largeur_MCUs,
 }
 
 
-/* Affiche une MCU réorgansée en zigzag */
+/* Affiche une MCU réorganisée en zigzag */
 void print_MCU_zigzag(struct MCU_zigzag *MCU_zigzag)
 {
     uint8_t largeur_MCU = 8, hauteur_MCU = 8;
@@ -227,7 +235,7 @@ void print_MCU_zigzag(struct MCU_zigzag *MCU_zigzag)
 }
 
 
-/* Affiche les MCUs réorgansées en zigzag */
+/* Affiche les MCUs réorganisées en zigzag */
 void print_MCUs_zigzag(struct MCU_zigzag ***MCUs_zigzag, uint32_t largeur_MCUs, uint32_t hauteur_MCUs)
 {
     for (uint32_t hauteur = 0; hauteur < hauteur_MCUs; hauteur++){
@@ -288,50 +296,6 @@ void quantification(struct MCU_zigzag ***MCUs_zigzag, uint32_t largeur_MCUs, uin
 /**************************************************/
 
 
-
-/************************************/
-/* Partie consacrée au codage AC/DC */
-/************************************/
-
-
-// int8_t *codage_AC_DC(int16_t *pixels)
-// {
-//     int8_t pixels_AC_DC = malloc(64 * sizeof(int8_t));
-
-//     // Codage AC
-//     uint8_t compteur_0;
-//     for(uint8_t indice = 1; indice < 64; indice++){
-//         if (pixels[indice] == 0 and compteur_0 < 16) {
-//             compteur_0 += 1;
-//         } else if (pixels[indice] == 0 and compteur_0 < 16) {
-//             compteur_0 = 0;
-//             pixels_AC_DC[indice] = 0xF0;
-//         } else {
-//             // On décale le nombre de 0 de 4 bits vers la gauche (bits de poids forts)
-//             compteur = compteur_0 << 4;
-
-//             // On calcule la magnitude du pixel
-//             int8_t magnitude = 1;
-//             while (!(-(2**magnitude) < pixels[indice] < 2**magnitude)){
-//                 magnitude += 1;
-//             }
-
-//             pixels_AC_DC[indice] = compteur_0 + magnitude;
-
-//             // On remet le compteur à 0
-//             compteur_0 = 0;
-//         }
-
-//     }
-// }
-
-
-/**********************************************/
-/* Fin de la partie consacrée au codage AC/DC */
-/**********************************************/
-
-
-
 // int main(void)
 // {    
 //     FILE *fichier = ouvrir_fichier("../images/gris.pgm", "r");
@@ -359,36 +323,3 @@ void quantification(struct MCU_zigzag ***MCUs_zigzag, uint32_t largeur_MCUs, uin
 //     fermer_fichier(fichier);
 //     return 0;
 // }
-
-    
-
-    
-    // struct MCU *MCU = malloc(sizeof(struct MCU));
-    // MCU->hauteur = 8, MCU->largeur = 8;
-    
-    // uint8_t matrice [8][8] = {  {0xa6, 0xa0, 0x9a, 0x98, 0x9a, 0x9a, 0x96, 0x91},
-    //                             {0xa0, 0xa3, 0x9d, 0x8e, 0x88, 0x8f, 0x95, 0x94},
-    //                             {0xa5, 0x97, 0x96, 0xa1, 0x9f, 0x90, 0x90, 0x9e},
-    //                             {0xa6, 0x9a, 0x91, 0x91, 0x92, 0x90, 0x90, 0x93},
-    //                             {0xc9, 0xd9, 0xc8, 0x98, 0x85, 0x98, 0xa2, 0x95},
-    //                             {0xf0, 0xf5, 0xf9, 0xea, 0xbf, 0x98, 0x90, 0x9d},
-    //                             {0xe9, 0xe1, 0xf3, 0xfd, 0xf2, 0xaf, 0x8a, 0x90},
-    //                             {0xe6, 0xf2, 0xf1, 0xed, 0xf8, 0xfb, 0xd0, 0x95}};
-
-    // uint8_t **pixels = malloc(MCU->hauteur * sizeof(uint8_t *));
-    // for (uint8_t i = 0; i < MCU->hauteur; i++){
-    //     uint8_t *ligne_pixels = malloc(MCU->largeur * sizeof(uint8_t));
-    //     for (uint8_t j = 0; j < MCU->largeur; j++){
-    //         ligne_pixels[j] = matrice[i][j];
-    //     }
-    //     pixels[i] = ligne_pixels;
-    // }
-    // MCU->pixels = pixels;
-    
-    // struct MCU_freq *MCU_freq = transf_cos_MCU(MCU);
-    // print_MCU_freq(MCU_freq);
-    // printf("\n");
-    // struct MCU_zigzag *MCU_zigzag = zigzag_MCU(MCU_freq);
-    // print_MCU_zigzag(MCU_zigzag);
-    
-    // return 0;
