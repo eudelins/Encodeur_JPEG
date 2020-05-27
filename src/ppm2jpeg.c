@@ -232,9 +232,6 @@ int main(int argc, char **argv)
         } else {
             ppm2jpeg_couleur_sous_echantillonage(fichier, argv[3], chemin_jpg, param, h1, v1, h2, v2, h3, v3);
         }
-
-        free(param);
-        fermer_fichier(fichier);
     }
 
     // Cas où sample puis outfile
@@ -262,13 +259,10 @@ int main(int argc, char **argv)
         } else {
             ppm2jpeg_couleur_sous_echantillonage(fichier, argv[3], chemin_jpg, param, h1, v1, h2, v2, h3, v3);
         }
-
-        free(param);
-        fermer_fichier(fichier);
     }
     
     else if (parametres[0] == 'e') {
-      affichage_erreur();
+        affichage_erreur();
     }
 
     free(parametres);
