@@ -7,29 +7,14 @@
 #include <math.h>
 
 
+/*********************************************************/
+/* Module d'encodage des MCUs pour les images en couleur */
+/*********************************************************/
+
+
 /************************************************************/
 /* Partie consacrée à la transformation en cosinus discrète */
 /************************************************************/
-
-
-// /* Défini un Bloc_YCbCr */
-// struct Bloc_YCbCr {
-//     int16_t **pixels;      // un Bloc_YCbCr = une matrice de pixels
-// };
-
-
-// /* MCU après conversion en YCbCr */
-// struct MCU_YCbCr{
-//     uint8_t h1;
-//     uint8_t v1;
-//     uint8_t h2;
-//     uint8_t v2;
-//     uint8_t h3;
-//     uint8_t v3;
-//     struct Bloc_YCbCr **blocs_Y;
-//     struct Bloc_YCbCr **blocs_Cb;
-//     struct Bloc_YCbCr **blocs_Cr;
-// };
 
 
 /* Défini un bloc après DCT */
@@ -52,8 +37,9 @@ struct MCU_freq_Y{
 };
 
 
-/* Applique la transformée en cosinus discrète à une MCU */
+/* Applique la transformée en cosinus discrète à un bloc */
 struct Bloc_freq transf_cos_bloc(struct Bloc_YCbCr Bloc);
+
 
 /* Applique la transformée en cosinus discrète à une MCU YCbCr */
 struct MCU_freq_Y *transf_cos_MCU_YCbCr(struct MCU_YCbCr *MCU);
@@ -69,7 +55,6 @@ void print_bloc_freq(struct Bloc_freq Bloc_freq);
 
 /* Affiche une MCU transformée */
 void print_MCU_freq_Y(struct MCU_freq_Y *MCU_freq);
-
 
 
 /* Affiche les MCUs transformées */
@@ -127,7 +112,7 @@ struct MCU_zigzag_Y{
 struct Bloc_zigzag zigzag_bloc(struct Bloc_freq Bloc_freq);
 
 
-/* Applique la transformée en cosinus discrète à une MCU YCbCr */
+/* Applique la réorganisation en zigzag à une MCU_freq_Y */
 struct MCU_zigzag_Y *zigzag_MCU_Y(struct MCU_freq_Y *MCU_freq);
 
 
@@ -135,23 +120,23 @@ struct MCU_zigzag_Y *zigzag_MCU_Y(struct MCU_freq_Y *MCU_freq);
 struct MCU_zigzag_Y ***zigzag_Y(struct MCU_freq_Y ***MCUs_freq, uint32_t nb_MCUs_largeur, uint32_t nb_MCUs_hauteur);
 
 
-/* Affiche un bloc transformée */
+/* Affiche un bloc réorganisé en zigzag */
 void print_bloc_zigzag(struct Bloc_zigzag Bloc_zigzag);
 
 
-/* Affiche une MCU transformée */
+/* Affiche une MCU réorganisée en zigzag */
 void print_MCU_zigzag_Y(struct MCU_zigzag_Y *MCU_zigzag);
 
 
-/* Affiche les MCUs transformées */
+/* Affiche les MCUs réorganisées en zigzag */
 void print_MCUs_zigzag_Y(struct MCU_zigzag_Y ***MCUs_zigzag, uint32_t nb_MCUs_largeur, uint32_t nb_MCUs_hauteur);
 
 
-/* Libère la mémoire allouée à une MCU fréquentielle */
+/* Libère la mémoire allouée à une MCU réorganisée en zigzag */
 void free_MCU_zigzag_Y(struct MCU_zigzag_Y *MCU_zigzag);
 
 
-/* Libère la mémoire allouée aux MCUs fréquentielles */
+/* Libère la mémoire allouée aux MCUs réorganisées en zigzag */
 void free_MCUs_zigzag_Y(struct MCU_zigzag_Y ***MCUs_zigzag, uint32_t nb_MCUs_largeur, uint32_t nb_MCUs_hauteur);
 
 
@@ -164,19 +149,19 @@ void free_MCUs_zigzag_Y(struct MCU_zigzag_Y ***MCUs_zigzag, uint32_t nb_MCUs_lar
 /* Partie consacrée à la quantification */
 /****************************************/
 
-/* Applique la quantification à un bloc */
+/* Applique la quantification à un bloc Y */
 void quantification_bloc_Y(struct Bloc_zigzag *Bloc_zigzag);
 
 
-/* Applique la quantification à un bloc */
+/* Applique la quantification à un bloc Cb ou Cr */
 void quantification_bloc_CbCr(struct Bloc_zigzag *Bloc_zigzag);
 
 
-/* Applique la quantification à une MCU */
+/* Applique la quantification à une MCU réorganisée en zigzag */
 void quantification_MCU_couleur(struct MCU_zigzag_Y *MCU_zigzag);
 
 
-/* Applique la quantification aux MCUs */
+/* Applique la quantification aux MCUs réorganisées en zigzag */
 void quantification_couleur(struct MCU_zigzag_Y ***MCUs_zigzag, uint32_t largeur_MCUs, uint32_t hauteur_MCUs);
 
 
