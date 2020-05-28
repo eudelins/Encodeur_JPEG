@@ -285,9 +285,6 @@ bool verif_conditions(uint8_t h1,
                 printf("Les facteurs d'échantillonnage des chrominances ne divisent pas ceux de la luminance\n");
                 conditions = false;
             }
-            else {
-                printf("Tout est ok\n");
-            }
         }
     }
 
