@@ -135,16 +135,29 @@ void ppm2jpeg_couleur_sous_echantillonnage(FILE *fichier,
 int main(int argc, char **argv)
 {
 
+    // Pas de nom de fichier rentré, ni de paramètre
+    if (argc == 1) {
+        printf("Pas de nom de fichier ni de paramètre rentré\n");
+        affichage_erreur();
+        return EXIT_FAILURE;
+    }
+
     char *parametres = paras_optionnels(argc, argv);
 
-    // Aucun paramètre optionnel
+    // Aucun paramètre optionnel connu
     if (parametres[0] == 'r') {
-        // char *chemin = chemin_fichier(argv[1]);
         FILE *fichier = ouvrir_fichier(argv[1], "r");
         // Si on ne connait pas le fichier
         if (fichier == NULL) {
-            printf("Fichier \"%s\" non connu\n", argv[1]);
-            affichage_erreur();
+            if (strncmp(argv[1], "--xx", 2) == 0) {
+                printf("Paramètre \"%s\" non connu\n", argv[1]);
+                affichage_erreur();
+            }
+            else {
+                printf("Fichier \"%s\" non connu\n", argv[1]);
+                affichage_erreur();
+            }
+            free(parametres);
             return EXIT_FAILURE;
         }
 
@@ -164,6 +177,7 @@ int main(int argc, char **argv)
         if (fichier == NULL) {
             printf("Fichier \"%s\" non connu\n", argv[2]);
             affichage_erreur();
+            free(parametres);
             return EXIT_FAILURE;
         }
 
@@ -176,16 +190,19 @@ int main(int argc, char **argv)
         }
     }
 
+    // option help
     else if (parametres[0] == 'h') {
         affichage_help();
     }
 
+    // option échantillonage
     else if (parametres[0] == 's') {
         FILE *fichier = ouvrir_fichier(argv[2], "r");
         // Si on ne connait pas le fichier
         if (fichier == NULL) {
             printf("Fichier \"%s\" non connu\n", argv[2]);
             affichage_erreur();
+            free(parametres);
             return EXIT_FAILURE;
         }
 
@@ -193,9 +210,21 @@ int main(int argc, char **argv)
         uint32_t h1, v1, h2, v2, h3, v3;
         sscanf(argv[1], "--sample=%ux%u,%ux%u,%ux%u", &h1, &v1, &h2, &v2, &h3, &v3);
 
+        // si on n'a pas de sous_échantillonnage avec les paramètres drentrés
+        if (h1 == h2 && h1 == h3 && v1 == v2 && v1 == v3) {
+            char *chemin_jpg = cree_chemin_jpg(argv[1]);
+            if (param[0] == 5){
+                ppm2jpeg_niveau_de_gris(fichier, argv[2], chemin_jpg, param);
+            } else {
+                ppm2jpeg_couleur(fichier, argv[2], chemin_jpg, param);
+            }
+        }
+
+        // sinon
         bool conditions = verif_conditions(h1, v1, h2, v2, h3, v3);
         if (conditions == false) {
             fprintf(stderr, "\nVérifiez les valeurs entrées pour h1, v1, h2, v2, h3 et v3 : elles ne respectent pas les conditions requises\n\n");
+            free(parametres);
             return EXIT_FAILURE;
         }
 
@@ -214,15 +243,30 @@ int main(int argc, char **argv)
         if (fichier == NULL) {
             printf("Fichier \"%s\" non connu\n", argv[3]);
             affichage_erreur();
+            free(parametres);
             return EXIT_FAILURE;
         }
 
         uint32_t *param = paras(fichier);
         uint32_t h1, v1, h2, v2, h3, v3;
+
         sscanf(argv[2], "--sample=%ux%u,%ux%u,%ux%u", &h1, &v1, &h2, &v2, &h3, &v3);
+
+         // si on n'a pas de sous_échantillonnage avec les paramètres drentrés
+        if (h1 == h2 && h1 == h3 && v1 == v2 && v1 == v3) {
+            char *chemin_jpg = cree_chemin_jpg(argv[1]);
+            if (param[0] == 5){
+                ppm2jpeg_niveau_de_gris(fichier, argv[3], chemin_jpg, param);
+            } else {
+                ppm2jpeg_couleur(fichier, argv[3], chemin_jpg, param);
+            }
+        }
+
+        // sinon
         bool conditions = verif_conditions(h1, v1, h2, v2, h3, v3);
         if (conditions == false) {
             fprintf(stderr, "\nVérifiez les valeurs entrées pour h1, v1, h2, v2, h3 et v3 : elles ne respectent pas les conditions requises\n\n");
+            free(parametres);
             return EXIT_FAILURE;
         }
 
@@ -241,15 +285,29 @@ int main(int argc, char **argv)
         if (fichier == NULL) {
             printf("Fichier \"%s\" non connu\n", argv[3]);
             affichage_erreur();
+            free(parametres);
             return EXIT_FAILURE;
         }
 
         uint32_t *param = paras(fichier);
         uint32_t h1, v1, h2, v2, h3, v3;
         sscanf(argv[1], "--sample=%ux%u,%ux%u,%ux%u", &h1, &v1, &h2, &v2, &h3, &v3);
+
+        // si on n'a pas de sous_échantillonnage avec les paramètres drentrés
+        if (h1 == h2 && h1 == h3 && v1 == v2 && v1 == v3) {
+            char *chemin_jpg = cree_chemin_jpg(argv[1]);
+            if (param[0] == 5){
+                ppm2jpeg_niveau_de_gris(fichier, argv[3], chemin_jpg, param);
+            } else {
+                ppm2jpeg_couleur(fichier, argv[3], chemin_jpg, param);
+            }
+        }
+
+        // sinon
         bool conditions = verif_conditions(h1, v1, h2, v2, h3, v3);
         if (conditions == false) {
             fprintf(stderr, "\nVérifiez les valeurs entrées pour h1, v1, h2, v2, h3 et v3 : elles ne respectent pas les conditions requises\n\n");
+            free(parametres);
             return EXIT_FAILURE;
         }
 
