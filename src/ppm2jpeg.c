@@ -206,33 +206,44 @@ int main(int argc, char **argv)
             return EXIT_FAILURE;
         }
 
+        if (strlen(argv[1]) < 20){
+            fprintf(stderr, "Trop peu de facteurs de sous-échantillonage\n");
+            affichage_erreur();
+            free(parametres);
+            return EXIT_FAILURE;
+        } else if (strlen(argv[1]) > 20){
+            fprintf(stderr, "Trop de facteurs de sous-échantillonage\n");
+            affichage_erreur();
+            free(parametres);
+            return EXIT_FAILURE;
+        }
+
         uint32_t *param = paras(fichier);
         uint32_t h1, v1, h2, v2, h3, v3;
         sscanf(argv[1], "--sample=%ux%u,%ux%u,%ux%u", &h1, &v1, &h2, &v2, &h3, &v3);
 
-        // si on n'a pas de sous_échantillonnage avec les paramètres drentrés
+        // si on n'a pas de sous_échantillonnage avec les paramètres rentrés
         if (h1 == h2 && h1 == h3 && v1 == v2 && v1 == v3) {
-            char *chemin_jpg = cree_chemin_jpg(argv[1]);
+            char *chemin_jpg = cree_chemin_jpg(argv[2]);
             if (param[0] == 5){
                 ppm2jpeg_niveau_de_gris(fichier, argv[2], chemin_jpg, param);
             } else {
                 ppm2jpeg_couleur(fichier, argv[2], chemin_jpg, param);
             }
-        }
-
-        // sinon
-        bool conditions = verif_conditions(h1, v1, h2, v2, h3, v3);
-        if (conditions == false) {
-            fprintf(stderr, "\nVérifiez les valeurs entrées pour h1, v1, h2, v2, h3 et v3 : elles ne respectent pas les conditions requises\n\n");
-            free(parametres);
-            return EXIT_FAILURE;
-        }
-
-        char *chemin_jpg = cree_chemin_jpg(argv[2]);
-        if (param[0] == 5){
-            ppm2jpeg_niveau_de_gris(fichier, argv[2], chemin_jpg, param);
         } else {
-            ppm2jpeg_couleur_sous_echantillonnage(fichier, argv[2], chemin_jpg, param, h1, v1, h2, v2, h3, v3);
+            bool conditions = verif_conditions(h1, v1, h2, v2, h3, v3);
+            if (conditions == false) {
+                fprintf(stderr, "\nVérifiez les valeurs entrées pour h1, v1, h2, v2, h3 et v3 : elles ne respectent pas les conditions requises\n\n");
+                free(parametres);
+                return EXIT_FAILURE;
+            }
+
+            char *chemin_jpg = cree_chemin_jpg(argv[2]);
+            if (param[0] == 5){
+                ppm2jpeg_niveau_de_gris(fichier, argv[2], chemin_jpg, param);
+            } else {
+                ppm2jpeg_couleur_sous_echantillonnage(fichier, argv[2], chemin_jpg, param, h1, v1, h2, v2, h3, v3);
+            }
         }
     }
 
@@ -250,31 +261,42 @@ int main(int argc, char **argv)
         uint32_t *param = paras(fichier);
         uint32_t h1, v1, h2, v2, h3, v3;
 
+        if (strlen(argv[2]) < 20){
+            fprintf(stderr, "Trop peu de facteurs de sous-échantillonage\n");
+            affichage_erreur();
+            free(parametres);
+            return EXIT_FAILURE;
+        } else if (strlen(argv[2]) > 20){
+            fprintf(stderr, "Trop de facteurs de sous-échantillonage\n");
+            affichage_erreur();
+            free(parametres);
+            return EXIT_FAILURE;
+        }
+
         sscanf(argv[2], "--sample=%ux%u,%ux%u,%ux%u", &h1, &v1, &h2, &v2, &h3, &v3);
 
          // si on n'a pas de sous_échantillonnage avec les paramètres drentrés
         if (h1 == h2 && h1 == h3 && v1 == v2 && v1 == v3) {
-            char *chemin_jpg = cree_chemin_jpg(argv[1]);
+            char *chemin_jpg = recup_nom(argv[1], 10);
             if (param[0] == 5){
                 ppm2jpeg_niveau_de_gris(fichier, argv[3], chemin_jpg, param);
             } else {
                 ppm2jpeg_couleur(fichier, argv[3], chemin_jpg, param);
             }
-        }
-
-        // sinon
-        bool conditions = verif_conditions(h1, v1, h2, v2, h3, v3);
-        if (conditions == false) {
-            fprintf(stderr, "\nVérifiez les valeurs entrées pour h1, v1, h2, v2, h3 et v3 : elles ne respectent pas les conditions requises\n\n");
-            free(parametres);
-            return EXIT_FAILURE;
-        }
-
-        char *chemin_jpg = recup_nom(argv[1], 10);
-        if (param[0] == 5){
-            ppm2jpeg_niveau_de_gris(fichier, argv[3], chemin_jpg, param);
         } else {
-            ppm2jpeg_couleur_sous_echantillonnage(fichier, argv[3], chemin_jpg, param, h1, v1, h2, v2, h3, v3);
+            bool conditions = verif_conditions(h1, v1, h2, v2, h3, v3);
+            if (conditions == false) {
+                fprintf(stderr, "\nVérifiez les valeurs entrées pour h1, v1, h2, v2, h3 et v3 : elles ne respectent pas les conditions requises\n\n");
+                free(parametres);
+                return EXIT_FAILURE;
+            }
+
+            char *chemin_jpg = recup_nom(argv[1], 10);
+            if (param[0] == 5){
+                ppm2jpeg_niveau_de_gris(fichier, argv[3], chemin_jpg, param);
+            } else {
+                ppm2jpeg_couleur_sous_echantillonnage(fichier, argv[3], chemin_jpg, param, h1, v1, h2, v2, h3, v3);
+            }
         }
     }
 
@@ -289,33 +311,44 @@ int main(int argc, char **argv)
             return EXIT_FAILURE;
         }
 
+        if (strlen(argv[1]) < 20){
+            fprintf(stderr, "Trop peu de facteurs de sous-échantillonage\n");
+            affichage_erreur();
+            free(parametres);
+            return EXIT_FAILURE;
+        } else if (strlen(argv[1]) > 20){
+            fprintf(stderr, "Trop de facteurs de sous-échantillonage\n");
+            affichage_erreur();
+            free(parametres);
+            return EXIT_FAILURE;
+        }
+
         uint32_t *param = paras(fichier);
         uint32_t h1, v1, h2, v2, h3, v3;
         sscanf(argv[1], "--sample=%ux%u,%ux%u,%ux%u", &h1, &v1, &h2, &v2, &h3, &v3);
 
         // si on n'a pas de sous_échantillonnage avec les paramètres drentrés
         if (h1 == h2 && h1 == h3 && v1 == v2 && v1 == v3) {
-            char *chemin_jpg = cree_chemin_jpg(argv[1]);
+            char *chemin_jpg = recup_nom(argv[2], 10);
             if (param[0] == 5){
                 ppm2jpeg_niveau_de_gris(fichier, argv[3], chemin_jpg, param);
             } else {
                 ppm2jpeg_couleur(fichier, argv[3], chemin_jpg, param);
             }
-        }
-
-        // sinon
-        bool conditions = verif_conditions(h1, v1, h2, v2, h3, v3);
-        if (conditions == false) {
-            fprintf(stderr, "\nVérifiez les valeurs entrées pour h1, v1, h2, v2, h3 et v3 : elles ne respectent pas les conditions requises\n\n");
-            free(parametres);
-            return EXIT_FAILURE;
-        }
-
-        char *chemin_jpg = recup_nom(argv[2], 10);
-        if (param[0] == 5){
-            ppm2jpeg_niveau_de_gris(fichier, argv[3], chemin_jpg, param);
         } else {
-            ppm2jpeg_couleur_sous_echantillonnage(fichier, argv[3], chemin_jpg, param, h1, v1, h2, v2, h3, v3);
+            bool conditions = verif_conditions(h1, v1, h2, v2, h3, v3);
+            if (conditions == false) {
+                fprintf(stderr, "\nVérifiez les valeurs entrées pour h1, v1, h2, v2, h3 et v3 : elles ne respectent pas les conditions requises\n\n");
+                free(parametres);
+                return EXIT_FAILURE;
+            }
+
+            char *chemin_jpg = recup_nom(argv[2], 10);
+            if (param[0] == 5){
+                ppm2jpeg_niveau_de_gris(fichier, argv[3], chemin_jpg, param);
+            } else {
+                ppm2jpeg_couleur_sous_echantillonnage(fichier, argv[3], chemin_jpg, param, h1, v1, h2, v2, h3, v3);
+            }
         }
     }
 

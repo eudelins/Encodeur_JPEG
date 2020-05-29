@@ -99,8 +99,8 @@ char *paras_optionnels(uint8_t argc, char **argv) {
 
     // on vérifie qu'on a bien des paramètres optionnels
     if (argc <= 1) {
-        // "r" => rien
-        paras[0] = 'r';
+        // "e" => erreur (ici trop ou pas assez de paramètres)
+        paras[0] = 'e';
         return paras;
     }
 
@@ -133,11 +133,11 @@ char *paras_optionnels(uint8_t argc, char **argv) {
             paras[0] = 'h';
             return paras;
         }
-        else if (strncmp(argv[i], "--samplexx", 6) == 0) {
+        else if (strncmp(argv[i], "--sample=", 9) == 0) {
             sample = true;
             longueur += 1;
         }
-        else if (strncmp(argv[i], "--outfilexx", 7) == 0) {
+        else if (strncmp(argv[i], "--outfile=", 10) == 0) {
             outfile = true;
             indice_outfile = i;
             longueur += 1;
@@ -163,6 +163,7 @@ char *paras_optionnels(uint8_t argc, char **argv) {
         }
         else {
             // "e" => erreur (ici mauvais argument)
+            paras[0] = 'e';
         }
     }
     else if (longueur == 3) {
