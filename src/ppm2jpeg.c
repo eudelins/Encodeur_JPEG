@@ -181,6 +181,14 @@ int main(int argc, char **argv)
             return EXIT_FAILURE;
         }
 
+        if (strlen(argv[1]) < 11){
+            fprintf(stderr, "Pas de nom pour le fichier de sortie\n");
+            affichage_erreur();
+            free(parametres);
+            fermer_fichier(fichier);
+            return EXIT_FAILURE;
+        }
+
         char *chemin_jpg = recup_nom(argv[1], 10);
         uint32_t *param = paras(fichier);
         if (param[0] == 5){
@@ -210,11 +218,13 @@ int main(int argc, char **argv)
             fprintf(stderr, "Trop peu de facteurs de sous-échantillonage\n");
             affichage_erreur();
             free(parametres);
+            fermer_fichier(fichier);
             return EXIT_FAILURE;
         } else if (strlen(argv[1]) > 20){
             fprintf(stderr, "Trop de facteurs de sous-échantillonage\n");
             affichage_erreur();
             free(parametres);
+            fermer_fichier(fichier);
             return EXIT_FAILURE;
         }
 
@@ -235,6 +245,8 @@ int main(int argc, char **argv)
             if (conditions == false) {
                 fprintf(stderr, "\nVérifiez les valeurs entrées pour h1, v1, h2, v2, h3 et v3 : elles ne respectent pas les conditions requises\n\n");
                 free(parametres);
+                free(param);
+                fermer_fichier(fichier);
                 return EXIT_FAILURE;
             }
 
@@ -258,21 +270,30 @@ int main(int argc, char **argv)
             return EXIT_FAILURE;
         }
 
-        uint32_t *param = paras(fichier);
-        uint32_t h1, v1, h2, v2, h3, v3;
+        if (strlen(argv[1]) < 11){
+            fprintf(stderr, "Pas de nom pour le fichier de sortie\n");
+            affichage_erreur();
+            free(parametres);
+            fermer_fichier(fichier);
+            return EXIT_FAILURE;
+        }
 
         if (strlen(argv[2]) < 20){
             fprintf(stderr, "Trop peu de facteurs de sous-échantillonage\n");
             affichage_erreur();
             free(parametres);
+            fermer_fichier(fichier);
             return EXIT_FAILURE;
         } else if (strlen(argv[2]) > 20){
             fprintf(stderr, "Trop de facteurs de sous-échantillonage\n");
             affichage_erreur();
             free(parametres);
+            fermer_fichier(fichier);
             return EXIT_FAILURE;
         }
 
+        uint32_t *param = paras(fichier);
+        uint32_t h1, v1, h2, v2, h3, v3;
         sscanf(argv[2], "--sample=%ux%u,%ux%u,%ux%u", &h1, &v1, &h2, &v2, &h3, &v3);
 
          // si on n'a pas de sous_échantillonnage avec les paramètres drentrés
@@ -288,6 +309,8 @@ int main(int argc, char **argv)
             if (conditions == false) {
                 fprintf(stderr, "\nVérifiez les valeurs entrées pour h1, v1, h2, v2, h3 et v3 : elles ne respectent pas les conditions requises\n\n");
                 free(parametres);
+                free(param);
+                fermer_fichier(fichier);
                 return EXIT_FAILURE;
             }
 
@@ -315,11 +338,22 @@ int main(int argc, char **argv)
             fprintf(stderr, "Trop peu de facteurs de sous-échantillonage\n");
             affichage_erreur();
             free(parametres);
+            fermer_fichier(fichier);
             return EXIT_FAILURE;
         } else if (strlen(argv[1]) > 20){
             fprintf(stderr, "Trop de facteurs de sous-échantillonage\n");
             affichage_erreur();
             free(parametres);
+            fermer_fichier(fichier);
+            return EXIT_FAILURE;
+        }
+
+
+        if (strlen(argv[2]) < 11){
+            fprintf(stderr, "Pas de nom pour le fichier de sortie\n");
+            affichage_erreur();
+            free(parametres);
+            fermer_fichier(fichier);
             return EXIT_FAILURE;
         }
 
@@ -340,6 +374,8 @@ int main(int argc, char **argv)
             if (conditions == false) {
                 fprintf(stderr, "\nVérifiez les valeurs entrées pour h1, v1, h2, v2, h3 et v3 : elles ne respectent pas les conditions requises\n\n");
                 free(parametres);
+                free(param);
+                fermer_fichier(fichier);
                 return EXIT_FAILURE;
             }
 
